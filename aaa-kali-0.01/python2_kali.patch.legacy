@@ -1,0 +1,22 @@
+diff -rupN compiz-0.9.10+13.10.20131011/debian/rules compiz-0.9.10+13.10.20131011_modified/debian/rules
+--- compiz-0.9.10+13.10.20131011/debian/rules	2013-10-23 22:23:31.000000000 +0200
++++ compiz-0.9.10+13.10.20131011_modified/debian/rules	2013-10-23 22:20:25.469312755 +0200
+@@ -65,13 +65,16 @@ endif
+ 	#rm -rf debian/tmp/usr/share/gconf/schemas/
+ 
+ 	# ugly hack to install xml files
+-	mkdir -p debian/tmp/usr/share/gnome-control-center/keybindings
+-	find */gtk/gnome -name *.xml | xargs cp -at debian/tmp/usr/share/gnome-control-center/keybindings/
++	#mkdir -p debian/tmp/usr/share/gnome-control-center/keybindings
++	#find */gtk/gnome -name *.xml | xargs cp -at debian/tmp/usr/share/gnome-control-center/keybindings/
+ 
+ 	dh_install --fail-missing
+ 
+ 	# remove the compizconfig dev file from compiz-dev
+ 	rm debian/compiz-dev/usr/share/compiz/cmake/LibCompizConfigCommon.cmake
++	
++override_dh_python2:
++	dh_python2 --no-guessing-versions
+ 
+ override_dh_gencontrol:
+ 	dh_gencontrol -- -Vcoreabiversion=$(CORE_ABIVERSION)

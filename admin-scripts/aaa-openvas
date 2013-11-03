@@ -1,0 +1,9 @@
+#!/bin/bash
+
+
+##### Install openvas
+apt-get -y install openvas
+openvas-setup   #<--- Doesn't automate
+#--- Remove 'default' user (admin), and create a new admin user (root).
+test -e /var/lib/openvas/users/admin && openvasad -c remove_user -n admin
+test -e /var/lib/openvas/users/root || openvasad -c add_user -n root -r Admin   #<--- Doesn't automate

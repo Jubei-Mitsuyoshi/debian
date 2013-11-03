@@ -1,0 +1,32 @@
+#!/bin/bash
+
+
+##### Install geany
+apt-get -y install geany
+#--- Add to panel
+dconf load /org/gnome/gnome-panel/layout/objects/geany/ << EOT
+[instance-config]
+location='/usr/share/applications/geany.desktop'
+
+[/]
+object-iid='PanelInternalFactory::Launcher'
+pack-index=3
+pack-type='start'
+toplevel-id='top-panel'
+EOT
+dconf write /org/gnome/gnome-panel/layout/object-id-list "$(dconf read /org/gnome/gnome-panel/layout/object-id-list | sed "s/]/, 'geany']/")"
+#--- Configure geany
+geany & sleep 5; killall -w geany   # Start and kill. Files needed for first time run
+# Geany -> Edit -> Preferences. Editor -> Newline strips trailing spaces: Enable. -> Indentation -> Type: Spaces. -> Files -> Strip trailing spaces and tabs: Enable. Replace tabs by space: Enable. -> Apply -> Ok
+sed -i 's/^.*indent_type.*/indent_type=0/' /root/.config/geany/geany.conf   # Spaces over tabs
+sed -i 's/^.*pref_editor_newline_strip.*/pref_editor_newline_strip=true/' /root/.config/geany/geany.conf
+sed -i 's/^.*pref_editor_replace_tabs.*/pref_editor_replace_tabs=true/' /root/.config/geany/geany.conf
+sed -i 's/^.*pref_editor_trail_space.*/pref_editor_trail_space=true/' /root/.config/geany/geany.conf
+sed -i 's/^check_detect_indent=.*/check_detect_indent=true/' /root/.config/geany/geany.conf
+sed -i 's/^pref_editor_ensure_convert_line_endings=.*/pref_editor_ensure_convert_line_endings=true/' /root/.config/geany/geany.conf
+# Geany -> Tools -> Plugin Manger -> Save Actions -> HTML Characters: Enabled. Split WIndows: Enabled. Save Actions: Enabled. -> Preferences -> Backup Copy -> Enable -> Directory to save backup files in: /root/backups/geany/. Directory levels to include in the backup destination: 5 -> Apply -> Ok -> Ok
+sed -i 's/^.*active_plugins.*/active_plugins=\/usr\/lib\/geany\/htmlchars.so;\/usr\/lib\/geany\/saveactions.so;\/usr\/lib\/geany\/splitwindow.so;/' /root/.config/geany/geany.conf
+mkdir -p /root/backups/geany/
+mkdir -p /root/.config/geany/plugins/saveactions/
+echo -e '\n[saveactions]\nenable_autosave=false\nenable_instantsave=false\nenable_backupcopy=true\n\n[autosave]\nprint_messages=false\nsave_all=false\ninterval=300\n\n[instantsave]\ndefault_ft=None\n\n[backupcopy]\ndir_levels=5\ntime_fmt=%Y-%m-%d-%H-%M-%S\nbackup_dir=/root/backups/geany' > /root/.config/geany/plugins/saveactions/saveactions.conf
+

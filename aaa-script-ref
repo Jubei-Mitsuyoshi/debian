@@ -1,0 +1,508 @@
+# find only folders in a directory
+
+#!/bin/sh
+
+for i in `find ./ -maxdepth 1 -mindepth 1 -type d`; do
+   if [ $i = "./.git" ]; then
+      continue
+   fi
+   cd $i
+   echo     ....
+   echo     ....
+   echo     ........................................... BUILDING: $i
+   echo     ....
+   echo     ....
+   dpkg-buildpackage -j$((    $(cat /proc/cpuinfo | grep processor | wc -l)+1    ))
+   cd ..
+done
+
+
+# srtip extensions
+NAME=$(echo "$I" | sed s/\.[iI][sS][oO]$//) #strip .iso extension if present
+
+
+
+#
+# NAME:		Image Mounting Script
+# AUTHOR:	Magnus Anderson <anderson@sonic2000.org>
+# LICENSE:	GPL (http://www.gnu.org/licenses/gpl.html)
+# REQUIRES:	cdemu, zenity, gnomesu
+# VERSION:	1.1
+# DESCRIPTION:	A script that will mount ISO, CUE and NRG files with ease.
+#		It will use cdemu to mount cue/bin files.
+#		Gnomesu is used to make sure users are able to mount images even tough we have no fstab entry
+# CHANGELOG:	1.1: My system for checking for a valid extention for the file was not working as it should
+# ----------------
+
+# Configure Section
+# ----------------
+
+# Mount Path to use (ie, /mnt/ISO)
+MOUNT_PATH="/mnt/ISO"
+
+# Configure Section End
+# ----------------
+CD_IMAGE=$1
+CD_IMAGE_EXT=`echo ${CD_IMAGE##*.} | tr A-Z a-z`
+STOP=FALSE
+
+if [ ${CD_IMAGE_EXT} == "cue" ]; then
+ STOP=FALSE
+elif [ ${CD_IMAGE_EXT} == "nrg" ]; then
+ STOP=FALSE
+elif [ ${CD_IMAGE_EXT} == "iso" ]; then
+ STOP=FALSE
+else
+ STOP=TRUE
+fi
+
+if [ ${STOP} == "TRUE" ]; then
+ zenity --error --title "Error" --text "$STOP : Filetype \"${CD_IMAGE_EXT}\" can not be mounted with this script. ISO, NRG and CUE files are supported"; 
+ exit;
+fi
+
+
+# If the directory $MOUNT_PATH does not exists we need to tell the user that
+if [ ! -d $MOUNT_PATH ]; then
+ zenity --error --title "Error" --text "$MOUNT_PATH does not exists, please create it and run the script again";
+ exit;
+fi;
+
+MOUNT_SIZE=0
+
+if [ ${CD_IMAGE_EXT} == "iso" ]; then
+ while [ "$MOUNT_SIZE" -eq 0 ]; do
+  gnomesu -t "Image Mount (ISO)" -c "umount $MOUNT_PATH; mount -o ro,loop \"$CD_IMAGE\" $MOUNT_PATH";
+  MOUNT_SIZE=`ls -l $MOUNT_PATH | grep total | awk '{print $2}'`; sleep 2;
+ done
+fi
+
+if [ ${CD_IMAGE_EXT} == "nrg" ]; then
+ while [ "$MOUNT_SIZE" -eq 0 ]; do
+  gnomesu -t "Image Mount (Nero Image)" -c "umount $MOUNT_PATH; mount -o ro,offset=307200,loop \"$CD_IMAGE\" $MOUNT_PATH";
+  MOUNT_SIZE=`ls -l $MOUNT_PATH | grep total | awk '{print $2}'`; sleep 2;
+ done
+fi
+
+if [ ${CD_IMAGE_EXT} == "cue" ]; then
+ while [ "$MOUNT_SIZE" -eq 0 ]; do
+  gnomesu -t "Image Mount (Binary)" -c "cdemu -u 0; cdemu 0 \"$CD_IMAGE\"; umount $MOUNT_PATH; mount -t iso9660 /dev/cdemu0 $MOUNT_PATH";
+  MOUNT_SIZE=`ls -l $MOUNT_PATH | grep total | awk '{print $2}'`; sleep 2;
+ done
+fi
+
+
+
+step "Installing XFS filesystem tools:"
+try rpm -i xfsprogs-*.rpm
+next
+
+step "Configuring udev:"
+try cp *.rules /etc/udev/rules.d
+try udevtrigger
+next
+
+step "Adding rc.postsysinit hook:"
+try cp rc.postsysinit /etc/rc.d/
+try ln -s rc.d/rc.postsysinit /etc/rc.postsysinit
+try echo $'\nexec /etc/rc.postsysinit' >> /etc/rc.sysinit
+next
+
+Output
+
+Installing XFS filesystem tools:        [  OK  ]
+Configuring udev:                       [FAILED]
+Adding rc.postsysinit hook:             [  OK  ]
+
+Code
+
+#!/bin/bash
+
+. /etc/init.d/functions
+
+# Use step(), try(), and next() to perform a series of commands and print
+# [  OK  ] or [FAILED] at the end. The step as a whole fails if any individual
+# command fails.
+#
+# Example:
+#     step "Remounting / and /boot as read-write:"
+#     try mount -o remount,rw /
+#     try mount -o remount,rw /boot
+#     next
+step() {
+    echo -n "$@"
+
+    STEP_OK=0
+    [[ -w /tmp ]] && echo $STEP_OK > /tmp/step.$$
+}
+
+try() {
+    # Check for `-b' argument to run command in the background.
+    local BG=
+
+    [[ $1 == -b ]] && { BG=1; shift; }
+    [[ $1 == -- ]] && {       shift; }
+
+    # Run the command.
+    if [[ -z $BG ]]; then
+        "$@"
+    else
+        "$@" &
+    fi
+    
+    
+    
+    echo "Reading system-wide config...." >&2
+. /etc/cool.cfg
+if [ -r ~/.coolrc ]; then
+  echo "Reading user config...." >&2
+  . ~/.coolrc
+fi
+
+
+
+
+
+
+
+
+
+
+
+if [[ -e $HOME/.mini-dinstall.conf ]]; then
+	Warn "[aaa-sp].mini-dinstall.conf already exists so you have been playing with the settings"
+	Warn "[aaa-sp]already , so backing up original and writing mine if you want to keep your changes"
+	Warn "bad luck, i need the config "
+	mv "$HOME/.mini-dinstall.conf" "$HOME/.mini-dinstall.conf.backup"
+	echo "#config writen by aaa, original config saved to $HOME/.mini-dinstall.conf.back " > "$HOME/.mini-dinstall.conf"
+else
+	Info "[aaa-sp]writing new .mini-dinstall.conf"
+	echo "#config writen by aaa, feel free to modify but dont fuck anything ! " > "$HOME/.mini-dinstall.conf"
+fi	
+	
+echo "[DEFAULT]
+architectures = all, i386, amd64
+archivedir = $aaa_pbuilder_localrepo
+use_dnotify = 0
+verify_sigs = 0
+extra_keyrings = ~/.gnupg/pubring.gpg
+mail_on_success = 0
+archive_style = flat
+poll_time = 10
+mail_log_level = NONE
+
+[unstable]
+architectures = all, i386, amd64
+archivedir = $aaa_pbuilder_localrepo
+use_dnotify = 0
+verify_sigs = 0
+extra_keyrings = ~/.gnupg/pubring.gpg
+mail_on_success = 0
+archive_style = flat
+poll_time = 10
+mail_log_level = NONE
+
+[testing]
+architectures = all, i386, amd64
+archivedir = $aaa_pbuilder_localrepo
+use_dnotify = 0
+verify_sigs = 0
+extra_keyrings = ~/.gnupg/pubring.gpg
+mail_on_success = 0
+archive_style = flat
+poll_time = 10
+mail_log_level = NONE
+
+[stable]
+architectures = all, i386, amd64
+archivedir = $aaa_pbuilder_localrepo
+use_dnotify = 0
+verify_sigs = 0
+extra_keyrings = ~/.gnupg/pubring.gpg
+mail_on_success = 0
+archive_style = flat
+poll_time = 10
+mail_log_level = NONE
+
+[kali]
+architectures = all, i386, amd64
+archivedir = $aaa_pbuilder_localrepo
+use_dnotify = 0
+verify_sigs = 0
+extra_keyrings = ~/.gnupg/pubring.gpg
+mail_on_success = 0
+archive_style = flat
+poll_time = 10
+mail_log_level = NONE
+" >> "$HOME/.mini-dinstall.conf"
+if [[ ! $? -eq 0 ]]; then
+	Fuck "failed to modify $HOME/.mini-dinstall.conf exiting "
+	AnyKey
+	exit 1
+fi
+
+mini-dinstall
+mini-dinstall -k
+
+
+
+
+
+
+Block "checking for and writing .dput.cf if necessary"
+
+if [[ -e "$HOME/.dput.cf" ]]; then
+	Warn "[aaa-sp].dput.cf already exists so you have been playing with the settings"
+	Warn "[aaa-sp]already , so backing up original and writing mine if you want to keep your changes"
+	Warn "bad luck, i need the config "
+	mv "$HOME/.dput.cf" "$HOME/.dput.cf.backup"
+	echo "#config writen by aaa, original config saved to $HOME/.dput.cf.back " > "$HOME/.dput.cf"
+else
+	Info "[aaa-sp]writing new .dput.cf"
+	echo "#config writen by aaa, feel free to modify but dont fuck anything ! " > "$HOME/.dput.cf"
+fi	
+	
+echo "[local]
+method = local
+incoming = $aaa_pbuilder_localrepo/mini-dinstall/incoming
+allow_non-us_software = 1
+run_dinstall = 0
+post_upload_command = mini-dinstall --batch" >> "$HOME/.dput.cf"
+if [[ ! $? -eq 0 ]]; then
+	Fuck "failed to modify $HOME/.dput.cf exiting "
+	AnyKey
+	exit 1
+fi
+
+
+
+sed -i '1s/^/emerald (0.9.5-0-jessiekali1) testing; urgency=medium\
+\
+  * recompiled fror jessiekali by me\
+\
+ -- Jubei-Mitsuyoshi <jubei.house.of.five.masters@gmail.com>  '"$(date +"%a, %d %b %Y %H:%M:%S %z   ")\n\n/" changelog
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ # Codenames for Debian suites according to their alias. Update these when
+# needed.
+UNSTABLE_CODENAME="sid"
+TESTING_CODENAME="jessie"
+STABLE_CODENAME="wheezy"
+STABLE_BACKPORTS_SUITE="$STABLE_CODENAME-backports"
+
+# List of Debian suites.
+DEBIAN_SUITES=($UNSTABLE_CODENAME $TESTING_CODENAME $STABLE_CODENAME
+    "unstable" "testing" "stable")
+
+# List of Ubuntu suites. Update these when needed.
+UBUNTU_SUITES=("saucy" "raring" "precise")
+
+# Mirrors to use. Update these to your preferred mirror.
+DEBIAN_MIRROR="ftp.us.debian.org"
+UBUNTU_MIRROR="mirrors.kernel.org"
+
+# Optionally use the changelog of a package to determine the suite to use if
+# none set.
+if [ -z "${DIST}" ] && [ -r "debian/changelog" ]; then
+    DIST=$(dpkg-parsechangelog | awk '/^Distribution: / {print $2}')
+    # Use the unstable suite for certain suite values.
+    if $(echo "experimental UNRELEASED" | grep -q $DIST); then
+        DIST="$UNSTABLE_CODENAME"
+    fi
+    # Use the stable suite for stable-backports.
+    if $(echo "$STABLE_BACKPORTS_SUITE" | grep -q $DIST); then
+        DIST="$STABLE"
+    fi
+fi
+
+# Optionally set a default distribution if none is used. Note that you can set
+# your own default (i.e. ${DIST:="unstable"}).
+: ${DIST:="$(lsb_release --short --codename)"}
+
+# Optionally change Debian release states in $DIST to their names.
+case "$DIST" in
+    unstable)
+        DIST="$UNSTABLE_CODENAME"
+        ;;
+    testing)
+        DIST="$TESTING_CODENAME"
+        ;;
+    stable)
+        DIST="$STABLE_CODENAME"
+        ;;
+esac
+
+# Optionally set the architecture to the host architecture if none set. Note
+# that you can set your own default (i.e. ${ARCH:="i386"}).
+: ${ARCH:="$(dpkg --print-architecture)"}
+
+NAME="$DIST"
+if [ -n "${ARCH}" ]; then
+    NAME="$NAME-$ARCH"
+    DEBOOTSTRAPOPTS=("--arch" "$ARCH" "${DEBOOTSTRAPOPTS[@]}")
+fi
+BASETGZ="/var/cache/pbuilder/$NAME-base.tgz"
+# Optionally, set BASEPATH (and not BASETGZ) if using cowbuilder
+# BASEPATH="/var/cache/pbuilder/$NAME/base.cow/"
+DISTRIBUTION="$DIST"
+BUILDRESULT="/var/cache/pbuilder/$NAME/result/"
+APTCACHE="/var/cache/pbuilder/$NAME/aptcache/"
+BUILDPLACE="/var/cache/pbuilder/build/"
+BINDMOUNTS="/var/cache/archive"
+
+if $(echo ${DEBIAN_SUITES[@]} | grep -q $DIST); then
+    # Debian configuration
+    MIRRORSITE="http://$DEBIAN_MIRROR/debian/"
+    COMPONENTS="main contrib non-free"
+    DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--keyring=/usr/share/keyrings/debian-archive-keyring.gpg")
+    OTHERMIRROR="deb file:///var/cache/archive $DIST/"
+
+elif $(echo ${UBUNTU_SUITES[@]} | grep -q $DIST); then
+    # Ubuntu configuration
+    MIRRORSITE="http://$UBUNTU_MIRROR/ubuntu/"
+    COMPONENTS="main restricted universe multiverse"
+    DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--keyring=/usr/share/keyrings/ubuntu-archive-keyring.gpg")
+    OTHERMIRROR="deb file:///var/cache/archive $DIST/"
+else
+    echo "Unknown distribution: $DIST"
+    exit 1
+fi
+
+
+
+  * recompiled for $aaa_pkg_tag by me
+  
+  * most ubuntu patches removed
+  
+  * patched to remove all unity references, session migration etc
+  
+  * further patched to remove bug while compiling for kali
+  
+  
+  
+  local aaa_old_maintainer=""
+
+vername=$(sed -n 1p "./debian/changelog" | sed 's/-.*//')
+
+sed -i '1s/^/'"$vername-$aaa_pkg_tag) $aaa_debian_distro"'; urgency=medium\
+\
+  * recompiled for $aaa_pkg_tag by me\
+\
+ -- '"$aaa_maintainer  $(date +"%a, %d %b %Y %H:%M:%S %z   ")\n\n/" "./debian/changelog"
+ 
+aaa_old_maintainer=$(grep -F -m 1 "Maintainer" "./debian/control" | sed 's/Maintainer: //')
+
+sed -i "s/$aaa_old_maintainer/$aaa_maintainer/" "./debian/control"
+
+
+
+if [[ ! -d "$aaa_localrepo_dir/dists" ]]; then
+	cd "$aaa_work_dir"
+	
+	for repo_target in $aaa_extra_repos; do
+			case "$repo_target" in
+				kali|testing|unstable) DownLoad "http://ftp.dk.debian.org/debian/pool/main/s/sed/sed_4.2.2-2_amd64.deb" ;;
+				trusty|saucy) DownLoad "http://dk.archive.ubuntu.com/ubuntu/pool/main/s/sed/sed_4.2.2-1ubuntu1_amd64.deb" ;;
+				raring) DownLoad "http://dk.archive.ubuntu.com/ubuntu/pool/main/s/sed/sed_4.2.1-10ubuntu2_amd64.deb" ;;
+			esac
+			
+		reprepro -b "$aaa_localrepo_dir" includedeb $repo_target *.deb  || Fuck "failed to add sample package to reprepro exiting "
+		rm -rf *.deb
+	done
+	reprepro -b "$aaa_localrepo_dir" createsymlinks  || Fuck "failed to create  suite symlinks"
+	
+	cd $HOME
+fi
+
+
+#example of find linked with executable
+find */gtk/gnome -name *.xml | xargs cp -at debian/tmp/usr/share/gnome-control-center/keybindings/
+
+update-alternatives --install /usr/bin/bin2c bin2c /usr/bin/gcc-4.6 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.6
+
+
+#! /bin/sh
+
+set -e
+
+set -x
+
+. /usr/share/gitpkg/hooks/repo-config-helper
+
+find -name Makefile -type l -print -delete
+#rm -r  src/Makefile
+#. /usr/share/gitpkg/hooks/quilt-patches-deb-export-hook
+
+patch_list=debian/source/git-patches
+patch_dir=debian/patches
+
+if [ ! -r "$patch_list" ]; then
+    echo "No $patch_list file, I guess you've pushed them all upstream."
+    echo "Good Work!"
+    exit 0
+fi
+
+if [ -e "$patch_dir" ]; then
+    echo "Uh oh.  You already have a $patch_dir here."
+    echo "You probably don't want us to scribble on that without asking."
+    exit 1
+fi
+
+if [ -z "$REPO_DIR" ]; then
+    # support running as a free-standing script, without gitpkg
+    DEB_VERSION="$(dpkg-parsechangelog | sed -rne 's/^Version: ([^:]+:)?//p')"
+    UPSTREAM_VERSION="${DEB_VERSION%-*}"
+    REPO_DIR=.
+fi
+
+DEB_REF=$(sanitise_git_ref $DEB_VERSION)
+UPSTREAM_REF="${DEB_REF%-*}"
+
+#tar xf ../systemd_$UPSTREAM_VERSION.orig.tar.* --strip-components=1 --keep-newer-files
+
+do_patches (){
+    while read -r line
+    do
+	[ -n "$line" ] || continue
+	case $line in
+	    \#*)
+		;;
+	    *)
+		git --git-dir "$REPO_DIR/.git" diff "$line" > "$patch_dir/$line"
+                echo "$line" >> "$patch_dir/series"
+                echo "$line" >> ".pc/applied-patches"
+                if [ ! -s "$patch_dir/$line" ]; then
+                    echo "$line generated empty patch, please fix."
+                    exit 1
+                fi
+                ;;
+        esac
+    done
+}
+
+mkdir -p "$patch_dir" || exit 1
+mkdir -p ".pc" || exit 1
+echo "# $patch_list exported from git by export-hook" > "$patch_dir/series"
+
+(sed -e "s/\$DEB_VERSION/$DEB_VERSION/g"		\
+    -e "s/\${DEB_VERSION}/$DEB_VERSION/g"		\
+    -e "s/\$UPSTREAM_VERSION/$UPSTREAM_VERSION/g"	\
+    -e "s/\${UPSTREAM_VERSION}/$UPSTREAM_VERSION/g"	\
+    -e "s/\$DEB_REF/$DEB_REF/g"				\
+    -e "s/\${DEB_REF}/$DEB_REF/g"			\
+    -e "s/\$UPSTREAM_REF/$UPSTREAM_REF/g"		\
+    -e "s/\${UPSTREAM_REF}/$UPSTREAM_REF/g"		\
+    < "$patch_list" ; echo ) | do_patches || exit 1
+

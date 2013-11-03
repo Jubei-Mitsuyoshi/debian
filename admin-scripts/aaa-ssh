@@ -1,0 +1,10 @@
+#!/bin/bash
+
+##### Setup ssh
+rm -f /etc/ssh/ssh_host_*
+rm -f /root/.ssh/*
+ssh-keygen -A
+ssh-keygen -b 4096 -t rsa -f /root/.ssh/id_rsa -P ""
+#update-rc.d -f ssh remove; update-rc.d ssh enable    # Enable SSH at startup
+
+

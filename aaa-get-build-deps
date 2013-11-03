@@ -1,0 +1,142 @@
+#!/bin/bash
+
+#
+# ##################################################################
+#
+# If you don't pass it any argument, this script will check if
+# there's a control (debian/control) file somewhere in the current
+# directory, and if it's so, it'll install the build dependencies
+# listed there.
+#
+# If it gets a single argument, and it's the name of a file, it will
+# read it, supposing that each line contains the name of a package,
+# and install the build dependencies for all those.
+#
+# Otherwise, if there is more than one argument, or the given argument
+# isn't the name of an existing file, it will suppose that the each
+# argument is the name of a package, and install the dependencies for
+# all of them.
+
+#source common functions
+. /usr/bin/aaa-common-functions
+
+
+if [ $# -eq 0 ]
+then
+	#########################################################
+	# Install the dependencies for the source package the
+	# user is working on.
+	
+	if [ -f ../debian/control ]; then
+		cd ..
+	elif [ ! -f ./debian/control ]; then
+		Info "\
+Couldn't find file debian/control. You have to be inside the \
+source directory of a Debian package or pass the name of the \
+package(s) whose build dependencies you want to install in order \
+to use this script."
+		exit 1
+	fi
+	
+	filepath="`pwd`/debian/control"
+	missing_dependencies=$(dpkg-checkbuilddeps 2>&1)
+	
+	if [ -z "$missing_dependencies" ]; then
+		Info "The build dependencies described in «$filepath» are already satisfied."
+		exit 0
+	fi
+	
+	Info "ok going to simulate your packages installation with dpkg-checkbuilddeps, check shit !!"
+	Info "source = «$filepath» "
+	Info "$missing_dependencies"
+	Info "if your mixing repos between stable etc WATCH out results can be unpredictable"
+	MenuActive "q" "to quit, any other key to continue"
+	read -s -n1 aaatmpchr
+	if [[ $aaatmpchr == "q" ]]; then
+		exit 1
+	fi
+
+	aptitude -s install $(echo $missing_dependencies | awk -F: '{ print $3 }' | sed 's/([^)]*)//g' | sed 's/|\s[^\s]*//g')
+	#' <--- Fix to avoid Geanys markup breaking
+		
+		
+	Info "all cool ?????"
+	MenuActive "q" "to quit with a return of 0"
+	MenuActive "any other key" "to quit with a return of 1"
+	MenuActive "p" "to try to use pbuilder if installed on the system"
+	MenuActive "y" "to process the apt action"
+	Info "proceed with caution, pbuilder does this fully automatic"
+	Info "if not setup correctly it can and will fuck your system"
+	read -s -n1 aaatmpchr
+	if [[ $aaatmpchr == "y" ]]; then
+		aptitude install $(echo $missing_dependencies | awk -F: '{ print $3 }' | sed 's/([^)]*)//g' | sed 's/|\s[^\s]*//g')
+		#' <--- Fix to avoid Geanys markup breaking
+		exit 0
+	fi
+	if [[ $aaatmpchr == "p" ]]; then
+		if [[ -x /usr/lib/pbuilder/pbuilder-satisfydepends ]];then
+			Warn "proceed with caution, pbuilder does this fully automatic"
+			Warn "if not setup correctly it can and will fuck your system"
+			Warn "so its best you vcheck it functions correctly before proceeding"
+			MenuActive "y" "to proceed with pbuilder"
+			read -s -n1 aaatmpchr
+			if [[ $aaatmpchr == "y" ]]; then
+				/usr/lib/pbuilder/pbuilder-satisfydepends
+			else
+				exit 1
+			fi
+		else
+			axe_fuck "pbuilder not installed"
+			exit 1
+		fi
+	fi
+	[[ $aaatmpchr == "q" ]] && exit 0
+	exit 1
+elif [ $# -eq 1 ]
+then
+	#########################################################
+	# Check if the given argument is a file name, else
+	# continue after the if.
+	if [ -f $1 ]
+	then
+		packages=''
+		Info "you passsed the argument $1 you sure ?"
+		Info "q to quit, any other key to continue"
+		read -s -n1 aaatmpchr
+		if [[ $aaatmpchr == "q" ]]; then
+			exit 0
+		fi
+		Info "Installing the build dependencies for the following packages $1:"
+		
+		while read line
+		do
+			echo $line
+			packages="$packages $line"
+		done < $1
+		echo
+		apt-get build-dep $packages
+		exit 0
+	fi
+
+	#########################################################
+	# All arguments should be package names, install
+	# their build dependencies.
+
+	echo -e -n  "ok going to simulate your packages installation, check shit !!"
+	MenuActive "q" "to quit, any other key to continue"
+	read -s -n1 aaatmpchr
+	if [[ $aaatmpchr == "q" ]]; then
+		exit 0
+	fi
+	apt-get --simulate build-dep $*
+
+	Info "all cool ?????"
+	MenuActive "q" "to quit, any other key to continue"
+	read -s -n1 aaatmpchr
+	if [[ $aaatmpchr == "q" ]]; then
+		exit 0
+	fi
+
+	apt-get build-dep $*
+
+fi

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+
+##### Configure metasploit ~ http://docs.kali.org/general-use/starting-metasploit-framework-in-kali
+#--- Start services
+service postgresql start
+service metasploit start
+#--- Misc
+export GOCOW=1   # Always a cow logo ;)
+grep -q GOCOW /root/.bashrc || echo 'GOCOW=1' >> /root/.bashrc
+#--- First time run
+echo 'exit' > /tmp/msf.rc   #echo -e 'go_pro\nexit' > /tmp/msf.rc
+msfconsole -r /tmp/msf.rc
+#--- Sort out metasploiit
+bash /opt/metasploit/scripts/launchui.sh    #<--- Doesn't automate. May take a little while to kick in
+#--- Clean up
+rm -f /tmp/msf.rc

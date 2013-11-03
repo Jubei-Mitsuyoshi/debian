@@ -1,0 +1,366 @@
+#!/bin/bash
+
+
+#source common functions
+. /usr/bin/aaa-common-functions
+
+#source settings
+if [ -r $HOME/.aaa_settings ]; then
+  axe_info "found a settings file.. reading it"
+  . $HOME/.aaa_settings
+fi
+
+#source config
+if [ -r /usr/share/aaa/aaa-master-config ]; then
+  axe_info "found my master config file.. reading it"
+	if [ -r $HOME/.aaa-local-config ]; then
+		axe_info "found a local settings file.. reading it"
+		. $HOME/.aaa-local-config
+	fi
+else
+	axe_fuck "Failed to find master settings file quitting"
+	exit 1
+fi
+
+function build_it()
+{
+	#argument 1
+	#name of directory to cd into and build
+	axe_block "building $1 "
+	cd "$workingdir/$1"
+	aaa-get-build-deps
+	if [[ ! $? -eq 0 ]]; then
+		axe_fuck " something wrong with aa-get-build-deps, check the output"
+		exit 1
+	fi
+	dpkg-buildpackage -b -us -uc -j$((    $(cat /proc/cpuinfo | grep processor | wc -l)+1    ))
+		if [[ ! $? -eq 0 ]]; then
+		axe_fuck " something wrong with dpkg-buildpackage -b -us -uc check the output"
+		exit 1
+	fi
+	cd "$workingdir"
+	rm -f *.changes
+}
+
+
+#check for previous working copy
+if [ -d "$workingdir" ]; then
+	axe_info "$workingdir already exists"
+	axe_menu_active "k" "to keep all sources"
+	axe_menu_active "s" "to to decide weather to keep individual sources"
+	axe_menu_active "q" "to quit with a return of 1"
+	axe_menu_active "any other key" "delete old directory"
+	read -s -n1 _AXE_TMP_CHAR
+	case "$_AXE_TMP_CHAR" in
+		q) exit 1 ;;
+		k) keeps="y" ;;
+		s) keeps="n" ;;
+		*) rm -fr $workingdir 
+			mkdir -pv "$workingdir"
+			mkdir -pv "$outdir" ;;
+	esac
+fi
+
+cd "$workingdir"
+
+#clone all the latest gits
+
+
+for _package in $cinnamon_git_list; do
+	if [ -d "$workingdir/$_package" ]; then
+		axe_info "$workingdir/$_package already exists"
+		if [[ $keeps == "n" ]]; then
+			axe_menu_active "k" "to keep these sources"
+			axe_menu_active "any other key" "to delete old directory and fetch fresh from git"
+			read -s -n1 _AXE_TMP_CHAR
+			if [[ ! $_AXE_TMP_CHAR == "k" ]]; then
+				rm -fr "$workingdir/$_package"
+				axe_debug "git://github.com/linuxmint/$_package.git"
+				git clone "git://github.com/linuxmint/$_package.git"
+			fi
+		fi
+	else
+		axe_debug "git://github.com/linuxmint/$_package.git"
+		git clone "git://github.com/linuxmint/$_package.git"
+	fi
+done
+
+
+#build each but have to do it in order and install everything along the way
+#1-needed by none
+build_it "cinnamon-translations"
+#what do i install
+dpkg -i cinnamon-translations_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+mv -f *.deb "$outdir"
+
+#2-needed by none
+build_it "cinnamon-desktop"
+#what do i install
+# cinnamon-desktop-data required by libcinnamon-desktop0
+dpkg -i cinnamon-desktop-data_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+dpkg -i libcinnamon-desktop0_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+dpkg -i gir1.2-cinnamondesktop-3.0_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+dpkg -i libcinnamon-desktop-dev_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+mv -f *.deb "$outdir"
+
+#3-needed by
+build_it "cjs"
+rm -f *.changes
+
+dpkg -i libcjs0c_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+dpkg -i cjs_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+# libcjs0c required by libcjs-dev
+dpkg -i libcjs-dev_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+mv -f *.deb "$outdir"
+
+#12-relevent build deps libcinnamon-desktop-dev
+cd "$workingdir/nemo"
+patch -p1 < "$patch_dir/remove_elevated_privelages_banner-patch"
+build_it "nemo"
+
+dpkg -i nemo-data_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+dpkg -i libnemo-extension1_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+dpkg -i gir1.2-nemo-3.0_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+#libnemo-extension-dev needs libnemo-extension1 as install dep
+dpkg -i libnemo-extension-dev_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+mv -f *.deb "$outdir"
+
+
+#4-needed by
+build_it "cinnamon-settings-daemon"
+# cinnamon-settings-daemon needs nemo data as a installation dep
+dpkg -i cinnamon-settings-daemon_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+dpkg -i cinnamon-settings-daemon-dev_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+mv -f *.deb "$outdir"
+
+
+
+
+#5-needed by
+build_it "cinnamon-session"
+dpkg -i cinnamon-session-common_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+#cinnamon-session has cinnamon-desktop-data as an install dep
+dpkg -i cinnamon-session_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+mv -f *.deb "$outdir"
+
+#6-relevent build deps libcinnamon-desktop-dev
+build_it "muffin"
+
+dpkg -i muffin-common_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+dpkg -i libmuffin0_*
+#libmuffin0 needs muffin-common as install dep
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+#muffin needs muffin-common as install dep
+dpkg -i muffin_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+dpkg -i gir1.2-muffin-3.0_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+#libmuffin-dev has libmuffin0 gir1.2-muffin-3.0 as install deps
+dpkg -i libmuffin-dev_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+#muffin-dbg has libmuffin0 as an install dep
+dpkg -i muffin-dbg_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+mv -f *.deb "$outdir"
+
+#has  cinnamon-settings-daemon,cinnamon-settings-daemon-dev, as relevent build deps
+build_it "cinnamon-control-center"
+
+dpkg -i cinnamon-control-center-data_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+dpkg -i libcinnamon-control-center1_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+#ibcinnamon-control-center-dev has ibcinnamon-control-center-dev as a install dep
+dpkg -i libcinnamon-control-center-dev_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+# cinnamon-control-center has cinnamon-control-center-data, cinnamon-desktop-data,cinnamon-settings-daemon,cinnamon-translations as installdeps
+dpkg -i cinnamon-control-center_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+mv -f *.deb "$outdir"
+
+
+#8 has libcinnamon-desktop-dev, libmuffin-dev as relevent build deps
+build_it "Cinnamon"
+dpkg -i cinnamon-common_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+# has cinnamon-common cinnamon-translations,cinnamon-control-center,cinnamon-settings-daemon,cinnamon-session,cinnamon-desktop-data as install deps
+dpkg -i cinnamon_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+#has cinnamon as relevent install dep
+dpkg -i cinnamon-dbg_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+mv -f *.deb "$outdir"
+
+
+#7-needed by
+cd "$outdir"
+# needs cinnamon-desktop-data, cinnamon-translations, cinnamon, nemo-data, as install deps
+dpkg -i nemo_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+# needs nemo as install dep
+dpkg -i nemo-dbg_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+
+
+
+#has cinnamon-settings-daemon, cinnamon-settings-daemon-dev,cinnamon-settings-daemon-dev,libcinnamon-control-center-dev, libcinnamon-desktop-dev as releven build deps
+build_it "cinnamon-bluetooth"
+# cinnamon bluetooth has cinnamon-control-center,cinnamon-settings-daemon,cinnamon-translations, as relevent install deps
+dpkg -i cinnamon-bluetooth_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+mv -f *.deb "$outdir"
+
+#has libcinnamon-desktop-dev as relevent build deps
+build_it "cinnamon-screensaver"
+#has cinnamon-desktop-data cinnamon,cinnamon-translations as relevent install deps
+dpkg -i cinnamon-screensaver_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+mv -f *.deb "$outdir"
+
+#11-needed by
+build_it "cinnamon-themes"
+dpkg -i cinnamon-themes_*
+if [[ ! $? -eq 0 ]]; then
+	apt-get install -f
+	exit 1
+fi
+mv -f *.deb "$outdir"
+
+
+
+
+cd "$workingdir/nemo-extensions" 
+
+for _extension in $(ls -d */); do
+	cd "$workingdir/nemo-extensions/"${_extension%%/}
+	aaa-get-build-deps
+	if [[ ! $? -eq 0 ]]; then
+		axe_fuck " something wrong with aa-get-build-deps, check the output"
+		exit 1
+	fi
+	dpkg-buildpackage -b -us -uc -j$((    $(cat /proc/cpuinfo | grep processor | wc -l)+1    ))
+	if [[ ! $? -eq 0 ]]; then
+		axe_fuck " something wrong with dpkg-buildpackage -b -us -uc check the output"
+		exit 1
+	fi
+	cd "$workingdir/nemo-extensions"
+	rm -f *.changes
+	mv -f *.deb "$outdir"
+done
+
