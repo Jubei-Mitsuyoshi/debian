@@ -113,9 +113,10 @@ aaa_old_maintainer=$(grep -F -m 1 "Maintainer" "./debian/control" | sed 's/Maint
 sed -i "s/$aaa_old_maintainer/$aaa_maintainer/" "./debian/control"
 
 # set package type
-MakeADir "./debian/source"
-echo "3.0 (native)" > "./debian/source/format"
-
+#MakeADir "./debian/source"
+#echo "3.0 (quilt)" > "./debian/source/format"
+#ugly hack
+rm -f ./debian/source/format
 
 }
 
@@ -182,8 +183,9 @@ sed -i '/ccsm_add_first_run_warning.patch/d' "./debian/patches/series"
 # this cant go into the patch since pkgtag changes
 ModDEbFiles
 
-#repack source cos pbuilder will only work with source here, dont try to conver to pdebuild, wont work
-cd .. && dpkg-source -b compiz-0.9.10+13.10.20131011
+#ugly hack
+cd ..
+dpkg-source --format=1.0 -b compiz-0.9.10+13.10.20131011
 
 #Debug "check source format etc"
 
