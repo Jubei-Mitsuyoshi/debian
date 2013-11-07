@@ -39,7 +39,7 @@ conflinks="aaa-master-config"
 
 for f in $binlinks; do 
 	rm -f "$bin_path/$f"
-	ln -s $f "$bin_path/$f"
+	ln -s "$(pwd)/$f" "$bin_path/$f"
  done
 
 MakeADir /usr/share/aaa/patches
@@ -47,16 +47,16 @@ MakeADir /usr/share/aaa/pbuilder/hooks
 	
 for f in $patchlinks; do 
 	rm -f "$patch_path/$f"
-	ln -s "$f" "$patch_path/$f"
+	ln -s "$(pwd)/$f" "$patch_path/$f"
 done	
  
 for f in $hooklinks; do 
 	rm -f "$hook_path/$f"
-	ln -s "$f" "$hook_path/$f"
+	ln -s "$(pwd)/$f" "$hook_path/$f"
 done
 
 for f in $conflinks; do 
 	rm -f "$conf_path/$f"
-	ln -s "$f" "$conf_path/$f"
+	ln -s "$(pwd)/$f" "$conf_path/$f"
 done
 

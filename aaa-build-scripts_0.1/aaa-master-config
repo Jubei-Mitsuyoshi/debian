@@ -193,7 +193,7 @@ cinnamon_git_dir="$HOME/cinnamon-git"
 
 ##########################################################
 #locatin for built package cache
-aaa_cinnamon_cache_dir="$HOME/git/github/KALI-JESSIE/cinnamon-git-built"
+aaa_cinnamon_cache_dir="$HOME/git/github/debian-public-packages"
 ##########################################################
 
 ##########################################################
