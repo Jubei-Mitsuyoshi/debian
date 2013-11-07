@@ -239,7 +239,7 @@ reprepro -b "$aaa_localrepo_dir" include $aaa_debian_distro "emerald_0.9.5-$aaa_
 find . -maxdepth 1 -mindepth 1 -type f -exec mv -f '{}' "$aaa_compiz_cache_dir/$aaa_debian_distro" \;
 
 cd $HOME
-CleanMyRepo  $aaa_work_repo "compiz libdecoration0 emerald libemeraldengine"
+CleanMyRepo  $aaa_work_repo "compiz libdecoration0 emerald libemeraldengine dh-migrations dh-translations libxorg-gtest-dev libxorg-gtest-data"
 rm -rf "$aaa_work_dir"
 rm -rf "$aaa_build_location"
 rm -rf "$aaa_build_result"

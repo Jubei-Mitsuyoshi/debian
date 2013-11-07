@@ -109,6 +109,7 @@ BINDMOUNTS=\"$aaa_bindmounts\"
 HOOKDIR=\"$aaa_pbuilder_hookdir\"
 EXTRAPACKAGES=\"$aaa_extra_packages\"
 
+APTCACHE=\"$aaa_apt_cache_dir\"
 DEBEMAIL=\"$aaa_maintainer\"
 BUILDRESULT=\"$aaa_build_result\"
 COMPONENTS=\"$aaa_base_components\"

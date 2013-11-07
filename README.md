@@ -1,19 +1,43 @@
-KALI-JESSIE
+debian related packages source and scripts
 
+Package list ( sources mainly packaged and repackaged by me )
+
+pup-volume-monitor
+hopefully a complete replacement for udisks/2 and gvfs
+
+
+winexe and cuda-toolkit
+repackaged to fix a file confilict in kali
+
+
+
+
+
+
+
+
+
+
+
+
+
+Scripts list...... note this readme is not updated often :)
+note... i run a root only system, if you cnt su into your linux
+box dont even attemt running these scripts, sudo nshould also work
+
+
+KALI-JESSIE ( and possibly others )
+
+
+aaa-build-scripts_0.1
+new......................................................
+a make file is now available and all the debian distros
+are now supported ( kali jessie sid wheezy )
+
+
+.........................................................
 
 Scripts and related configs for kali-jessie linux
-
-Built packages for Debian testing and 
-backported for Kali Linux
-
-Package list
-Cinnamon-Git ( >2.02 ) and associated components
-Compiz ( all ) 0.9.10+13.10.20131011
-Emerald 0.9.5
-
-
-
-
 AAA-Build-And-Associated-Scripts
 
 Platform.... Debian ( wheezy,jessie,kali,sid)
@@ -25,7 +49,7 @@ aaa-common-functions
 usage: none
 
 	common functions for all other aaa
-	scripts
+	scripts, only sourced do not run
 
 aaa-master-config
 ---- Bash script

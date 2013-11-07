@@ -63,6 +63,12 @@ aaa_patch_dir="/usr/share/aaa/patches"
 aaa_pbuilder_hookdir="/usr/share/aaa/pbuilder/hooks"
 ####################################################
 
+####################################################
+#pbuilder base apt-cache dir, subdires for each distro will be used
+#wastes a lot of hdd space but essential for multi distro
+aaa_apt_cache_base_dir="/var/cache/pbuilder/aptcache"
+####################################################
+
 ######################################
 #dir to keep base distro immage gz
 aaa_base_gz_dir="/var/cache/pbuilder"
@@ -193,7 +199,7 @@ cinnamon_git_dir="$HOME/cinnamon-git"
 
 ##########################################################
 #locatin for built package cache
-aaa_cinnamon_cache_dir="$HOME/git/github/debian-public-packages"
+aaa_cinnamon_cache_dir="$HOME/git/github/debian-public-packages/cinnamon"
 ##########################################################
 
 ##########################################################
@@ -209,7 +215,7 @@ aaa_cinnamon_git_list="cinnamon-translations cinnamon-desktop cjs nemo cinnamon-
 
 ##########################################################
 #locatin for built package cache
-aaa_compiz_cache_dir="$HOME/git/github/KALI-JESSIE/compiz-built"
+aaa_compiz_cache_dir="$HOME/git/github/debian-public-packages/compiz"
 ##########################################################
 
 
@@ -293,6 +299,8 @@ aaa_bindmounts=("$aaa_localrepo_dir""$aaa_tmp")
 #possible extra debootstrapopt
 # -m$aaa_maintainer
 
+aaa_apt_cache_dir="$aaa_apt_cache_base_dir/$aaa_debian_distro"
+
 
 if [[ ! "$AAA_SUPRESS_LOCAL_PBUILDERRC" == "yes" ]]; then
 	echo "MIRRORSITE=\"$aaa_mirror\"
@@ -301,6 +309,7 @@ BINDMOUNTS=\"$aaa_bindmounts\"
 HOOKDIR=\"$aaa_pbuilder_hookdir\"
 EXTRAPACKAGES=\"$aaa_extra_packages\"
 
+APTCACHE=\"$aaa_apt_cache_dir\"
 DEBEMAIL=\"$aaa_maintainer\"
 BUILDRESULT=\"$aaa_build_result\"
 COMPONENTS=\"$aaa_base_components\"
