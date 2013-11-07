@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#Get paramaters
+sysname="$1"
+unix_dev="$2"
+fstype="$3"
+mntpnt="$4"
+label="$5"
+uuid="$6"
+
+#Execute...
+umount "$unix_dev"

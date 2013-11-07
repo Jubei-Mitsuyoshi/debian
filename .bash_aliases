@@ -1,1 +1,1 @@
-alias build='dpkg-buildpackage -b -us -uc -j$((    $(cat /proc/cpuinfo | grep processor | wc -l)+1    ))'
+alias build='dpkg-buildpackage -us -uc -j$((    $(cat /proc/cpuinfo | grep processor | wc -l)+1    ))'

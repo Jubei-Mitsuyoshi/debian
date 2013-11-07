@@ -1,0 +1,84 @@
+#!/bin/sh -e
+# $Id: sv-run,v 1.9 2005/02/24 03:55:07 dean Exp $
+#
+#    Author: Dean Hall <dean.hall@gmail.com>
+# Copyright: (c) 2005, Dean Hall
+#   License: BSD (see COPYING)
+#
+# sv-run runs a service (in the foreground). It optionally
+# runs sv-checkdeps and then runs the service script.
+#
+# If the environment variable SV_NO_DEPS is not set to "1",
+# sv-run runs sv-checkdeps. When running sv-checkdeps, if
+# the environment variable SV_DEPS_ENVDIR is set, it runs
+# sv-checkdeps with the environment found in that envdir.
+#
+# When running the service script, sv-run execs the path
+# specified in the environment variable SV_RUN or, if
+# SV_RUN is zero-length, it execs ./run-service. If the
+# envirionment variable SV_RUN_ENVDIR is non-zero-length,
+# it also runs the service script with the environment set
+# in that envdir.
+#
+# (See sv-checkdeps for its environment requirements.)
+#
+PATH='/usr/sbin:/usr/bin:/sbin:/bin'
+
+die()
+{
+	echo "sv-run: $*" 1>&2
+	exit 111
+}
+
+check_envdir()
+{
+	envdir="$1"
+	if test ! -d "$envdir" ; then
+		die "Directory '$envdir' does not exist."
+	fi
+}
+
+check_exe()
+{
+	exe="$1"
+	if test ! -e "$exe" ; then
+		die "File '$exe' does not exist."
+	elif test ! -f "$exe" ; then
+		die "File '$exe' is not a file."
+	elif test ! -x "$exe" ; then
+		die "File '$exe' is not executable."
+	fi
+}
+
+# Optionally check dependencies.
+if test "$SV_NO_DEPS" != '1' ; then
+	# Use a user-specified envdir.
+	if test -n "$SV_DEPS_ENVDIR" ; then
+		check_envdir "$SV_DEPS_ENVDIR"
+		envdir "$SV_DEPS_ENVDIR" \
+			sv-checkdeps
+	# Use no envdir.
+	else
+		sv-checkdeps
+	fi
+fi
+
+# Default to running ./run-service.
+if test -z "$SV_RUN" ; then
+	SV_RUN='./run-service'
+fi
+check_exe "$SV_RUN"
+
+# Use a user-specified envdir.
+if test -n "$SV_RUN_ENVDIR" ; then
+	check_envdir "$SV_RUN_ENVDIR"
+	exec \
+		envdir "$SV_RUN_ENVDIR" \
+		sv-runlock \
+		"$SV_RUN"
+# Use no envdir.
+else
+	exec \
+		sv-runlock \
+		"$SV_RUN"
+fi

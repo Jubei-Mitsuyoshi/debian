@@ -1,0 +1,62 @@
+#!/bin/bash
+
+
+
+function MakeADir()
+{
+	
+	#first argument dir path
+		#xxxxxx ...variable name name
+	
+	if [[ ! -d "$1" ]]; then
+			mkdir -p "$1" || Fuck "failed to make $1 directory"
+	fi
+	
+	
+}
+
+hook_path="/usr/share/aaa/pbuilder/hooks"
+patch_path="/usr/share/aaa/patches"
+bin_path="/usr/bin"
+conf_path="/usr/share/aaa"
+
+
+binlinks="aaa-build \
+aaa-build-cinnamon-pbuilder \
+aaa-build-compiz-emerald \
+aaa-common-functions \
+aaa-setup-build-env \
+aaa-setup-tmpfs"
+
+
+	
+patchlinks="remove_elevated_privelages_banner.patch \
+convert_to_debian.patch"
+	
+hooklinks="D05deps"
+
+conflinks="aaa-master-config"
+
+for f in $binlinks; do 
+	rm -f "$bin_path/$f"
+	ln -s $f "$bin_path/$f"
+ done
+
+MakeADir /usr/share/aaa/patches
+MakeADir /usr/share/aaa/pbuilder/hooks
+	
+for f in $patchlinks; do 
+	rm -f "$patch_path/$f"
+	ln -s "$f" "$patch_path/$f"
+done	
+ 
+for f in $hooklinks; do 
+	rm -f "$hook_path/$f"
+	ln -s "$f" "$hook_path/$f"
+done
+
+for f in $conflinks; do 
+	rm -f "$conf_path/$f"
+	ln -s "$f" "$conf_path/$f"
+done
+

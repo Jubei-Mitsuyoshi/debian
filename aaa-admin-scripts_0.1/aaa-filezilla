@@ -1,0 +1,8 @@
+#!/bin/bash
+
+
+##### Install filezilla
+apt-get -y install filezilla
+#--- Configure filezilla
+filezilla & sleep 5; killall -w filezilla   # Start and kill. Files needed for first time run
+sed -i 's/^.*"Default editor".*/\t<Setting name="Default editor" type="string">2\/usr\/bin\/geany<\/Setting>/' /root/.filezilla/filezilla.xml

@@ -1,0 +1,3 @@
+winexe has bin2c and so does cuda toolkit
+rather than change source package i modified the debs to create alternatives for both
+check the code

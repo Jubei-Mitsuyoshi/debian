@@ -1,0 +1,6 @@
+# List of source files containing translatable strings.
+
+src/main.c
+src/desklet.c
+src/icon.c
+src/settings.c

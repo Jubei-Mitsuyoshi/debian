@@ -1,0 +1,66 @@
+diff -rupN compiz-0.9.10+13.10.20131011/debian/compiz-gnome.gconf-defaults compiz-0.9.10+13.10.20131011.mod/debian/compiz-gnome.gconf-defaults
+--- compiz-0.9.10+13.10.20131011/debian/compiz-gnome.gconf-defaults	2013-10-24 16:34:51.000000000 +0200
++++ compiz-0.9.10+13.10.20131011.mod/debian/compiz-gnome.gconf-defaults	2013-10-24 16:18:50.385333000 +0200
+@@ -4,7 +4,4 @@
+ /apps/gwd/blur_type							all
+ /apps/gwd/metacity_theme_opacity					1.0
+ /apps/gwd/metacity_theme_shade_opacity					true
+-/apps/compizconfig-1/profiles/unity/general/screen0/options/active_plugins [core,composite,opengl,compiztoolbox,decor,vpswitch,snap,mousepoll,resize,place,move,wall,grid,regex,imgpng,session,gnomecompat,animation,fade,unitymtgrabhandles,workarounds,scale,expo,ezoom,unityshell]
+-/apps/compizconfig-1/profiles/unity/plugins/gnomecompat/screen0/options/main_menu_key ""
+-/apps/compizconfig-1/profiles/unity/plugins/gnomecompat/screen0/options/run_key ""
+ /apps/compizconfig-1/profiles/Default/general/screen0/options/active_plugins [core,composite,opengl,compiztoolbox,decor,vpswitch,snap,mousepoll,resize,place,move,wall,grid,regex,imgpng,session,gnomecompat,animation,fade,workarounds,scale,expo,ezoom]
+diff -rupN compiz-0.9.10+13.10.20131011/debian/compiz-gnome.gsettings-override compiz-0.9.10+13.10.20131011.mod/debian/compiz-gnome.gsettings-override
+--- compiz-0.9.10+13.10.20131011/debian/compiz-gnome.gsettings-override	2013-10-24 16:34:51.000000000 +0200
++++ compiz-0.9.10+13.10.20131011.mod/debian/compiz-gnome.gsettings-override	2013-10-24 16:18:50.385333000 +0200
+@@ -1,5 +1,5 @@
+ [org.compiz.core]
+-active-plugins=['core','composite','opengl','compiztoolbox','decor','vpswitch','snap','mousepoll','resize','place','move','wall','grid','regex','imgpng','session','gnomecompat','animation','fade','unitymtgrabhandles','workarounds','scale','expo','ezoom','unityshell']
++active-plugins=['core','composite','opengl','compiztoolbox','decor','vpswitch','snap','mousepoll','resize','place','move','wall','grid','regex','imgpng','session','gnomecompat','animation','fade','workarounds','scale','expo','ezoom']
+ 
+ [org.compiz.gnomecompat]
+ main-menu-key=""
+diff -rupN compiz-0.9.10+13.10.20131011/debian/compiz-gnome.install compiz-0.9.10+13.10.20131011.mod/debian/compiz-gnome.install
+--- compiz-0.9.10+13.10.20131011/debian/compiz-gnome.install	2013-10-24 16:34:51.000000000 +0200
++++ compiz-0.9.10+13.10.20131011.mod/debian/compiz-gnome.install	2013-10-24 16:18:50.385333000 +0200
+@@ -3,9 +3,5 @@ debian/tmp/usr/share/gnome-control-cente
+ debian/tmp/usr/share/gconf/schemas/*.schemas
+ debian/tmp/usr/share/glib-2.0/schemas/*.xml
+ debian/tmp/usr/bin/gtk-window-decorator
+-debian/65compiz_profile-on-session /etc/X11/Xsession.d
+-debian/unity.ini /etc/compizconfig/
+-debian/profile_upgrades/*.upgrade usr/share/compizconfig/upgrades
+ debian/tmp/usr/lib/compizconfig/backends/libgsettings.so
+ debian/tmp/usr/lib/libcompizconfig_gsettings_backend.so
+-postinst/convert-files/*.convert usr/lib/compiz/migration/
+diff -rupN compiz-0.9.10+13.10.20131011/debian/rules compiz-0.9.10+13.10.20131011.mod/debian/rules
+--- compiz-0.9.10+13.10.20131011/debian/rules	2013-10-24 16:34:51.000000000 +0200
++++ compiz-0.9.10+13.10.20131011.mod/debian/rules	2013-10-24 16:18:50.389333000 +0200
+@@ -72,6 +72,9 @@ endif
+ 
+ 	# remove the compizconfig dev file from compiz-dev
+ 	rm debian/compiz-dev/usr/share/compiz/cmake/LibCompizConfigCommon.cmake
++	
++override_dh_python2:
++	dh_python2 --no-guessing-versions
+ 
+ override_dh_gencontrol:
+ 	dh_gencontrol -- -Vcoreabiversion=$(CORE_ABIVERSION)
+diff -rupN compiz-0.9.10+13.10.20131011/debian/source_compiz.py compiz-0.9.10+13.10.20131011.mod/debian/source_compiz.py
+--- compiz-0.9.10+13.10.20131011/debian/source_compiz.py	2013-10-24 16:34:51.000000000 +0200
++++ compiz-0.9.10+13.10.20131011.mod/debian/source_compiz.py	2013-10-24 16:18:50.389333000 +0200
+@@ -20,15 +20,6 @@ def add_info(report, ui):
+     # User configuration
+     report['GconfCompiz'] = command_output(['gconftool-2', '-R', '/apps/compiz-1'])
+ 
+-    unity_bug = False
+-    if ui and "unity" in report['CompizPlugins'] and report['SourcePackage'] != "unity":
+-        if ui.yesno("Thanks for reporting this bug. It seems you have unity running. Is the issue you are reporting is related to unity itself rather than compiz?"):
+-            unity_bug = True
+-            
+-    if unity_bug:
+-        report.add_package_info('unity')
+-        report.add_hooks_info(ui, srcpackage='unity')
+-        return
+ 
+     # add all relevant info like xorg ones
+     report.add_hooks_info(ui, srcpackage='xorg')

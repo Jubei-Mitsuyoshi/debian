@@ -1,0 +1,10 @@
+#!/bin/sh
+ 
+    set -e
+ 
+    case "$1" in
+    configure)
+    update-alternatives --remove   bin2c /usr/bin/bin2c.cuda
+    update-alternatives --install /usr/bin/bin2c bin2c /usr/bin/bin2c.cuda 80
+    ;;
+    esac

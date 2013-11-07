@@ -1,0 +1,35 @@
+#!/bin/sh -e
+# $Id: envdir-print,v 1.6 2005/02/24 03:55:07 dean Exp $
+#
+# envdir-print prints the contents of an envdir.
+#
+#    Author: Dean Hall <dean.hall@gmail.com>
+# Copyright: (c) 2005, Dean Hall
+#   License: BSD (see COPYING)
+#
+PATH='/usr/sbin:/usr/bin:/sbin:/bin'
+
+# the envdir:
+dir="$1"
+
+# Test usage.
+if test -z "$dir"; then
+	echo "Usage: `basename $0` <envdir>" 2>&1
+	exit 100
+fi
+
+# The envdir doesn't exist or isn't readable.
+if test ! -d "$dir" -o ! -r "$dir" ; then
+	echo "$dir is either not a directory or is not readable." 2>&1
+	exit 111
+fi
+
+cd "$dir"
+
+# Get and print all variables from the envdir.
+for var in * ; do
+	if test -r "$var" -a -f "$var" ; then
+		val="`head -n 1 $var`"
+		echo "${var}='${val}'"
+	fi
+done

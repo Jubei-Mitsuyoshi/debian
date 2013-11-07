@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: pupvm
+Description: Volume management plugin library
+Version: @VERSION@
+
+Requires: glib-2.0
+Libs: -lpupvm -lm
+Cflags: 

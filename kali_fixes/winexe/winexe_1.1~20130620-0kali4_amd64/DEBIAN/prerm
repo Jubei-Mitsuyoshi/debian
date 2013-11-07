@@ -1,0 +1,9 @@
+#!/bin/sh
+ 
+    set -e
+ 
+    case "$1" in
+    remove)
+    update-alternatives --remove   bin2c /usr/bin/bin2c.winexe
+    ;;
+    esac

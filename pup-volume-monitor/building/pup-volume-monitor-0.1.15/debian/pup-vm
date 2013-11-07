@@ -1,0 +1,62 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          pup-volume-monitor
+# Required-Start:    $remote_fs dbus udev
+# Required-Stop:     $remote_fs dbus udev
+# Should-Start:	     
+# Should-Stop:       
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: udisks replacement
+# Description:       Daemon for automatically mounting
+#					and unmounting of storage devices.
+### END INIT INFO
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DESC="disk volume exporter"
+NAME="pup-volume-monitor-admin"
+
+DAEMON=/usr/bin/$NAME
+
+PIDFILE=/var/run/$NAME/$NAME.pid
+
+SCRIPTNAME=/etc/init.d/pup-vm
+
+# Gracefully exit if the package has been removed.
+test -x $DAEMON || exit 0
+
+. /lib/lsb/init-functions
+
+
+case "$1" in
+  start)
+	log_daemon_msg "Starting $DESC" "$NAME"
+	pup-volume-monitor-admin --start
+	case "$?" in
+		0) log_end_msg 0 ;;
+		*) log_end_msg "already started or a fault" ;;
+	esac
+	;;
+  stop)
+	log_daemon_msg "Stopping $DESC" "$NAME"
+	pup-volume-monitor-admin --stop
+	case "$?" in
+		0) log_end_msg 0 ;;
+		*) *) log_end_msg "already stopped or a fault" ;;
+	esac
+	;;
+  restart|force-reload)
+	$0 stop
+	sleep 1
+	$0 start
+	;;
+  status)
+	status_of_proc $DAEMON $NAME && exit 0 || exit $?
+	;;
+  *)
+	echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload|status}" >&2
+	exit 1
+	;;
+esac
+
+exit 0

@@ -1,0 +1,236 @@
+#!/bin/bash
+
+#
+# ##################################################################
+#
+#
+
+shopt -s extglob
+
+cd "$HOME"
+
+Usage() {
+  cat <<EOF
+usage: aaa-setup-build-env
+
+  Currently this script takes no options
+  it writes /etc/pbuilderrc as a default
+  when HOME/.pbuilderrc is not present,
+  It also sets up a local repo controlled
+  by reprepro finally it writes the local
+  repo entries to /etc/apt/sources.d
+  and creates a default base immage
+
+EOF
+}
+
+if [[ $1 = @(-h|--help) ]]; then
+  Usage
+  exit 1
+fi
+
+export AAA_DEBIAN_DISTRO=""
+export AAA_SUPRESS_LOCAL_PBUILDERRC="yes"
+
+#source common functions
+. /usr/bin/aaa-common-functions
+
+#check script dependencies
+CheckMyDeps "pbuilder reprepro"
+
+
+
+#source settings
+if [[ -e $HOME/.aaa_settings ]]; then
+  Info "found a settings file.. reading it"
+  . $HOME/.aaa_settings
+fi
+
+#source config
+if [[ -e /usr/share/aaa/aaa-master-config ]]; then
+  Info "found my master config file.. reading it"
+	. /usr/share/aaa/aaa-master-config
+	if [[ -e $HOME/.aaa-local-config ]]; then
+		Info "[aaa-setup-pbuilder]found a local  config file.. reading it"
+		. $HOME/.aaa-local-config
+	fi
+else
+	Fuck "Failed to find master config file quitting"
+fi
+
+
+#final check on build env
+
+
+if [[ $enable_tmpfs == yes ]]; then
+	if [[ $aaa_tmpfs_exists_yes_no == yes ]]; then
+		Info "my settings say aaa-tmpfs already set up"
+		[[ -d "$aaa_tmpfs_location" ]] || Fuck "critical error $aaa_tmpfs_location does not exist,, this conflicts with my settings file"
+	else
+		Info "master config say tmpfs is desired"
+		Info "local settings say tmpfs has not been set up yet"
+		Info "please run aaa-setup-tmpfs before proceeding"
+		exit 0
+	fi
+else
+	Warn "master settings say tmpfs not desired"
+	Warn "using $aaa_hdd_build_location as build directory"
+	Warn "this is not great unless you have a SSD, building"
+	Warn "in ram is much more desireable"
+	AnyKey
+fi
+
+
+
+
+# clean up after any other runs
+MakeADir "$aaa_localrepo_dir/conf"
+CleanMyBuildArea
+[[ -e "$HOME/.pbuilderrc" ]] && rm -f "$HOME/.pbuilderrc"
+
+
+
+Block "writing pbuilderrc"
+
+if [[ -e "/etc/pbuilderrc" ]]; then
+	Warn "/etc/pbuilderrc already exists"
+	Warn "backing up original and writing new"
+	mv "/etc/pbuilderrc"  "/etc/pbuilderrc.bak"
+	echo "# Masterconfig writen by aaa, original config saved to /etc/pbuilderrc.back " > "/etc/pbuilderrc"
+else
+
+	Info "writing new pbuilderrc"
+	echo "#Master config writen by aaa, feel free to modify but dont fuck anything ! " > "/etc/pbuilderrc"
+fi
+	
+echo "MIRRORSITE=\"$aaa_mirror\"
+OTHERMIRROR=\"deb [trusted=yes] file://$aaa_localrepo_dir $aaa_work_repo main\"
+BINDMOUNTS=\"$aaa_bindmounts\"
+HOOKDIR=\"$aaa_pbuilder_hookdir\"
+EXTRAPACKAGES=\"$aaa_extra_packages\"
+
+DEBEMAIL=\"$aaa_maintainer\"
+BUILDRESULT=\"$aaa_build_result\"
+COMPONENTS=\"$aaa_base_components\"
+DEBBUILDOPTS=\"$aaa_buildopts\"
+DEBOOTSTRAPOPTS=('--variant=buildd' '--keyring=$aaa_keyring')
+BUILDUSERNAME=\"\"
+AUTO_DEBSIGN=no
+DISTRIBUTION=$aaa_debian_distro
+APTCACHEHARDLINK=$aaa_hardlink
+BASETGZ=\"$aaa_base_gz_dir/$aaa_base_gz\"
+BUILDPLACE=\"$aaa_build_location\"" >> "/etc/pbuilderrc" || Fuck "failed to append to existing master pbuildrc exiting"
+
+
+
+Block "writing $aaa_localrepo_dir/conf/distributions"
+
+if [[ -z "$aaa_sign_key" ]]; then
+	sign_with_marker=""
+	PassPhraseMarker=""
+else
+	sign_with_marker="SignWith: $aaa_sign_key"
+	PassPhraseMarker="ask-passphrase"
+fi
+
+
+if [[ -e "$aaa_localrepo_dir/conf/distributions" ]]; then
+	Warn "$aaa_localrepo_dir/conf/distributions already exists"
+	Warn "backing up original and writing new"
+	mv "$aaa_localrepo_dir/conf/distributions"  "$aaa_localrepo_dir/conf/distributions.backup"
+	echo "#config writen by aaa, original config saved to $aaa_localrepo_dir/conf/distributions.back " > "$aaa_localrepo_dir/conf/distributions"
+else
+
+	Info "writing new $aaa_localrepo_dir/conf/distributions"
+	echo "#config writen by aaa, feel free to modify but dont fuck anything ! " > "$aaa_localrepo_dir/conf/distributions"
+fi
+
+
+aaa_tmp=""
+for repo_target in $aaa_extra_repos; do
+	case "$repo_target" in
+		unstable) aaa_suite="Suite: sid" ;;
+		testing) aaa_suite="Suite: jessie" ;;
+		kali) aaa_suite="Suite: wheezy" ;;
+		*) aaa_suite="" ;;		
+	esac
+
+	aaa_tmp=("Origin: aaa.$repo_target.org
+Label: aaa-$repo_target-local-repo
+Codename: $repo_target
+Version: 1.0
+Architectures: i386 amd64 source armel armhf
+Components: main
+Description: local custom repo for $repo_target packages
+$aaa_suite
+$sign_with_marker
+
+$aaa_tmp")
+done
+
+echo "$aaa_tmp" >> "$aaa_localrepo_dir/conf/distributions" || Fuck "failed to append to existing $aaa_localrepo_dir/conf/distributions exiting "
+
+
+Block "writing $aaa_localrepo_dir/conf/options"
+
+if [[ -e "$aaa_localrepo_dir/conf/options" ]]; then
+	Warn "$aaa_localrepo_dir/conf/options already exists"
+	Warn "backing up original and writing new"
+	mv "$aaa_localrepo_dir/conf/options"  "$aaa_localrepo_dir/conf/options.backup"
+	echo "#config writen by aaa, original config saved to $aaa_localrepo_dir/conf/options.back " > "$aaa_localrepo_dir/conf/options"
+else
+
+	Info "writing new $aaa_localrepo_dir/conf/options"
+	echo "#config writen by aaa, feel free to modify but dont fuck anything ! " > "$aaa_localrepo_dir/conf/options"
+fi
+echo "verbose
+basedir $aaa_localrepo_dir
+$PassPhraseMarker" >> "$aaa_localrepo_dir/conf/options" || Fuck "failed to append to existing $aaa_localrepo_dir/conf/options exiting "
+
+
+#create repro dir struture by downloading , installing,  package
+
+if [[ ! -d "$aaa_localrepo_dir/dists" ]]; then
+	cd "$aaa_work_dir"
+	DownLoad "http://dk.archive.ubuntu.com/ubuntu/pool/main/u/ubuntu-keyring/ubuntu-keyring_2012.05.19_all.deb"
+	reprepro -b "$aaa_localrepo_dir" includedeb  $aaa_work_repo *.deb  || Fuck "failed to add sample package to reprepro exiting "
+	rm -rf *.deb
+	cd $HOME
+fi
+
+Block "setup local repo entry in sources.list.d"
+
+
+if [[ -e "/etc/apt/sources.list.d/pbuilder_local.list" ]]; then
+	Warn "./etc/apt/sources.list.d/pbuilder_local.list already exists"
+	Warn "overwriting"
+fi
+echo "deb [trusted=yes] file://$aaa_localrepo_dir testing main" > "/etc/apt/sources.list.d/pbuilder_local.list" || Fuck "failed to write to /etc/apt/sources.list.d/pbuilder_local.list exiting "
+
+
+
+
+Block "create pbuilder base immage"
+
+if [[ -e "$aaa_base_gz_dir/$aaa_base_gz" ]]; then
+	pbuilder --update --override-config
+else
+
+	aaa_escape=0
+	while [[ $aaa_escape -eq 0 ]]; do
+		pbuilder --create
+		if [[ ! $? -eq 0 ]]; then
+			Warn "pbuilder --create bugged out, mostly due to failed downloads"
+			Warn "hence going to try again, if thats not good for you ${aaa_ctrl_c} to quit"
+			AnyKey
+		else
+			aaa_escape=1
+		fi
+	done
+fi
+
+
+SaveSettings "aaa_build_env_setup_complete_yes_no" "yes"
+
+
+

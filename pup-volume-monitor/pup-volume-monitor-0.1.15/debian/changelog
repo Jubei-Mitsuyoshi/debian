@@ -1,0 +1,9 @@
+pup-volume-monitor (0.1.15-aaa1) unstable; urgency=low
+
+  * Initial release.source here
+  http://dl.dropbox.com/u/58347439/pup-vm/pup-volume-monitor-0.1.15.tar.gz
+  http://www.murga-linux.com/puppy/viewtopic.php?p=633245#633245
+  to do... split docs libs and dev, as is debian policy
+   (Closes: #XXXXXX)
+
+ -- Jubei Mitsuyoshi <jubei.house.of.five.masters@gmail.com>  Wed, 06 Nov 2013 20:27:15 +0100

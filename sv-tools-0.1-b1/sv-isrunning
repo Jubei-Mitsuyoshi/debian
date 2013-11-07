@@ -1,0 +1,31 @@
+#!/bin/sh -e
+# $Id: sv-isrunning,v 1.6 2005/02/24 03:55:07 dean Exp $
+#
+#    Author: Dean Hall <dean.hall@gmail.com>
+# Copyright: (c) 2005, Dean Hall
+#   License: BSD (see COPYING)
+#
+# sv-isrunning determines whether a service is running by
+# checking for the lock set by sv-runlock. If the
+# environment variable SV_LOCKFILE is non-zero-length,
+# sv-isrunning uses the path specified by SV_LOCKFILE as
+# the lockfile; otherwise it uses $1/sv-lock.
+#
+PATH='/usr/sbin:/usr/bin:/sbin:/bin'
+
+# the service directory:
+dir="$1"
+
+# Test usage.
+if test -z "$dir" ; then
+	echo "Usage: `basename $0` <directory>" 1>&2
+	exit 100
+fi
+
+if test -z "$SV_LOCKFILE" ; then
+	SV_LOCKFILE="$dir/sv-lock"
+fi
+
+SV_LOCKFILE="$dir/sv-lock" \
+SV_INVERSE='1' \
+	exec sv-runlock "$SV_LOCKFILE"
