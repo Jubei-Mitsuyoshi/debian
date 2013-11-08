@@ -33,6 +33,7 @@ aaa-build-scripts_0.1
 new......................................................
 a make file is now available and all the debian distros
 are now supported ( kali jessie sid wheezy )
+fixed compiz build script
 
 
 .........................................................

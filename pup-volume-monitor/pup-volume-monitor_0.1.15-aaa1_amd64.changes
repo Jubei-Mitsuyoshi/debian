@@ -1,0 +1,35 @@
+Format: 1.8
+Date: Wed, 06 Nov 2013 20:27:15 +0100
+Source: pup-volume-monitor
+Binary: pup-volume-monitor
+Architecture: source amd64
+Version: 0.1.15-aaa1
+Distribution: unstable
+Urgency: low
+Maintainer: Jubei Mitsuyoshi <jubei.house.of.five.masters@gmail.com>
+Changed-By: Jubei Mitsuyoshi <jubei.house.of.five.masters@gmail.com>
+Description: 
+ pup-volume-monitor - this is the experemental version of
+Changes: 
+ pup-volume-monitor (0.1.15-aaa1) unstable; urgency=low
+ .
+   * Initial release.source here
+   http://dl.dropbox.com/u/58347439/pup-vm/pup-volume-monitor-0.1.15.tar.gz
+   http://www.murga-linux.com/puppy/viewtopic.php?p=633245#633245
+   to do... split docs libs and dev, as is debian policy
+    (Closes: #XXXXXX)
+Checksums-Sha1: 
+ 440cf0d631b9e87ce8f34e253092d16dc3166b41 1157 pup-volume-monitor_0.1.15-aaa1.dsc
+ 2f7704228f93073613a043e1b151b5e1c3aa1ddb 399876 pup-volume-monitor_0.1.15.orig.tar.gz
+ d266d86164da1bd5872f7e08b72c5b8917bb14c7 2872 pup-volume-monitor_0.1.15-aaa1.debian.tar.gz
+ 37ff9b662b0594c19968484529a8dc51eecc4955 92680 pup-volume-monitor_0.1.15-aaa1_amd64.deb
+Checksums-Sha256: 
+ 8c02d1671275fa69944741cc0b4dc3349756be417f1aed22c00310a2ba180313 1157 pup-volume-monitor_0.1.15-aaa1.dsc
+ 70561ce4c9dd5ccf8b507e4422ae503305361069dc26abe11ad840e2e1e158eb 399876 pup-volume-monitor_0.1.15.orig.tar.gz
+ 22c4e95670ba80b8e4ecc9af667f622f8c1f89a075dfdd08826ef55e0749a4a4 2872 pup-volume-monitor_0.1.15-aaa1.debian.tar.gz
+ 168ee0e8a5bf8fdf7ed97eb01d04bb19c49c595fcbd6082cdb13d3310ceeba40 92680 pup-volume-monitor_0.1.15-aaa1_amd64.deb
+Files: 
+ 86dc1ce0f40b0b9a60262cb1dd68b2cf 1157 gnome extra pup-volume-monitor_0.1.15-aaa1.dsc
+ 6c3f4be658a7b0e49f98358510000b2a 399876 gnome extra pup-volume-monitor_0.1.15.orig.tar.gz
+ 49d99e18155f7be390bce658b579c87a 2872 gnome extra pup-volume-monitor_0.1.15-aaa1.debian.tar.gz
+ 8a3bb5d7f7e70ea1f02482263df40586 92680 gnome extra pup-volume-monitor_0.1.15-aaa1_amd64.deb
