@@ -248,7 +248,7 @@ fi
 #setup working dir
 
 CleanMyBuildArea
-MakeADir "$aaa_cinnamon_cache_dir/release/$aaa_debian_distro/$bdate"
+MakeADir "$aaa_cinnamon_cache_dir/release-builds/$aaa_debian_distro/$bdate"
 
 #update / create base immage
 UpdateBase
