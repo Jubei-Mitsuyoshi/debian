@@ -179,20 +179,9 @@ function BuildOne()
 	rm -f ./debian/source/format
 	cd ..
 	
-	#rename folder from relese version if necessary
 	case "$vername" in
-		"cinnamon") # check that dir is not called "New release etc"
-					#  list dirs, format output a little    |  strip ./ from start of line | print line with "New" in it | strip everything after first -
-					aaa_dir_check=$(find . -mindepth 1 -maxdepth 1 -type d  \( ! -iname ".*" \) | sed 's|^\./||g' | grep "New" | sed 's/-.*//')
-					if [[ $aaa_dir_check ]]; then
-						mv *New* "${aaa_dir_check,,}"
-					else
-						mv Cinnamon cinnamon
-					fi ;;
-					
-	
+		"cinnamon") mv "Cinnamon-$ver_number" "cinnamon-$ver_number" ;;
 	esac
-	
 
 	# build modified source package
 	dpkg-source --format=1.0 -b "$vername-$ver_number"
