@@ -198,6 +198,11 @@ cinnamon_git_dir="$HOME/cinnamon-git"
 ##########################################################
 
 ##########################################################
+#locatin for cinnamon releases download
+cinnamon_release_dir="$HOME/cinnamon-releases"
+##########################################################
+
+##########################################################
 #locatin for built package cache
 aaa_cinnamon_cache_dir="$HOME/git/github/debian-public-packages/cinnamon"
 ##########################################################
