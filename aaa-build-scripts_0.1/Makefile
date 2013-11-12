@@ -4,6 +4,7 @@ CONFDIR = /usr/share/aaa
 
 BINPROGS = \
 	aaa-build \
+	aaa-install-cinnamon \
 	aaa-build-cinnamon-pbuilder-git \
 	aaa-build-cinnamon-pbuilder-release \
 	aaa-build-compiz-emerald \

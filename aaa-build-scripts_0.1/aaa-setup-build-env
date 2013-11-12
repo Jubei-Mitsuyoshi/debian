@@ -33,7 +33,19 @@ export AAA_DEBIAN_DISTRO=""
 export AAA_SUPRESS_LOCAL_PBUILDERRC="yes"
 
 #source common functions
-. /usr/bin/aaa-common-functions
+if [[ -r /usr/bin/aaa-common-functions ]]; then
+	. /usr/bin/aaa-common-functions
+	if [[ ! $? -eq 0 ]]; then
+		echo " failed to source common functions at /usr/bin/aaa-common-functions"
+		echo "quitting !! "
+		exit 1
+	fi
+else
+	echo " failed to find common functions at /usr/bin/aaa-common-functions"
+	echo "quitting !! "
+	exit 1
+fi
+
 
 #check script dependencies
 CheckMyDeps "pbuilder reprepro"
@@ -207,7 +219,7 @@ if [[ -e "/etc/apt/sources.list.d/pbuilder_local.list" ]]; then
 	Warn "./etc/apt/sources.list.d/pbuilder_local.list already exists"
 	Warn "overwriting"
 fi
-echo "deb [trusted=yes] file://$aaa_localrepo_dir testing main" > "/etc/apt/sources.list.d/pbuilder_local.list" || Fuck "failed to write to /etc/apt/sources.list.d/pbuilder_local.list exiting "
+echo "deb [trusted=yes] file://$aaa_localrepo_dir $aaa_debian_distro main" > "/etc/apt/sources.list.d/pbuilder_local.list" || Fuck "failed to write to /etc/apt/sources.list.d/pbuilder_local.list exiting "
 
 
 

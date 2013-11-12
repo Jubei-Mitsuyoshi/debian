@@ -9,7 +9,7 @@ cd "$HOME"
 
 Usage() {
   cat <<EOF
-usage: aaa-setup-tmpfs
+usage: ${0##*/}
 
   Currently this script takes no
   options or arguments, when called it
