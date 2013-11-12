@@ -75,8 +75,8 @@ aaa_base_gz_dir="/var/cache/pbuilder"
 ######################################
 
 ######################################################
-aaa_debian_distro="testing"
-#aaa_debian_distro="unstable"
+#aaa_debian_distro="testing"
+aaa_debian_distro="unstable"
 #aaa_debian_distro="kali"
 ######################################################
 
@@ -193,12 +193,12 @@ aaa_pkg_tag_ubuntu="saucy"
 ############################## aaa-build-cinnamon-pbuilder ##################################
 
 ##########################################################
-#locatin for cinnamon git download
+#locatin for cinnamon git download and storage
 cinnamon_git_dir="$HOME/cinnamon-git"
 ##########################################################
 
 ##########################################################
-#locatin for cinnamon releases download
+#locatin for cinnamon releases download and storage
 cinnamon_release_dir="$HOME/cinnamon-releases"
 ##########################################################
 
@@ -243,8 +243,6 @@ case "$AAA_DEBIAN_DISTRO" in
 	 ubuntu) aaa_debian_distro="ubuntu" 
 		echo "AAA_MASTER_CONFIG--->Responding to environmental variable AAA_DEBIAN_DISTRO=$AAA_DEBIAN_DISTRO" ;;
 esac
-
-
 
 case "$aaa_debian_distro" in
 

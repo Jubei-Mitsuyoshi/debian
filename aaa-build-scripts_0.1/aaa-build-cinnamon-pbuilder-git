@@ -5,6 +5,7 @@
 shopt -s extglob
 
 cd "$HOME"
+bdate=$(date +%Y%m%d-%H%M%S)
 
 Usage() {
   cat <<EOF
@@ -179,7 +180,7 @@ function BuildOne()
 		reprepro -b "$aaa_localrepo_dir" include $aaa_debian_distro "$vername"_"$ver_number-$aaa_pkg_tag""_amd64.changes" || Fuck "something wrong with-- reprepro -b $aaa_localrepo_dir include $aaa_debian_distro *.changes ---check the output"
 	
 		#clean up
-		find . -maxdepth 1 -mindepth 1 -type f -exec mv -f '{}' "$aaa_cinnamon_cache_dir/$aaa_debian_distro" \;
+		find . -maxdepth 1 -mindepth 1 -type f -exec mv -f '{}' "$aaa_cinnamon_cache_dir/git-builds/$aaa_debian_distro/$bdate" \;
 	else
 		FailOkFilter "$vername"
 	fi
@@ -240,7 +241,7 @@ done
 #setup working dir
 
 CleanMyBuildArea
-MakeADir "$aaa_cinnamon_cache_dir/$aaa_debian_distro"
+MakeADir "$aaa_cinnamon_cache_dir/git-builds/$aaa_debian_distro/$bdate"
 
 #update / create base immage
 UpdateBase
@@ -265,10 +266,10 @@ if [[ -d "$cinnamon_git_dir" ]]; then
 		k) decide="keep" ;;
 		s) decide="choose" ;;
 		*) rm -fr $cinnamon_git_dir 
-			mkdir -p "$cinnamon_git_dir" || Fuck "failed to make $cinnamon_git_dir exiting" ;;
+			MakeADir "$cinnamon_git_dir" ;;
 	esac
 else
-	mkdir -p "$cinnamon_git_dir" || Fuck "failed to make $cinnamon_git_dir exiting" 
+	MakeADir "$cinnamon_git_dir"
 fi
 
 

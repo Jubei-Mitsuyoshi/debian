@@ -112,7 +112,20 @@ function CheckMyDeps()
 		#xxxxxx ...variable name name
 	
 for _checks in $1; do
-	command -v $_checks >/dev/null 2>&1 || Fuck "----$1------ is a dependency for this script, plese install"
+	command -v $_checks >/dev/null 2>&1
+	if [[ ! $? -eq 0 ]]; then
+		Warn"----$1------ is a dependency for this script, want me to install it?"
+		MenuActive "any other key" "to apt-get install $1"
+		read -s -n1 aaa_tmpchr
+		if [[ ! $aaa_tmpchr == q ]]; then
+			apt-get update
+			apt-get install "$1"
+		else
+			Fuck "----$1------ is a dependency for this script,... quitting untill its met"
+		fi
+	else
+		aaa_escape=1
+	fi
 done
 
 

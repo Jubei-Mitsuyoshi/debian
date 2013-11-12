@@ -102,6 +102,7 @@ else
 	Info "writing new pbuilderrc"
 	echo "#Master config writen by aaa, feel free to modify but dont fuck anything ! " > "/etc/pbuilderrc"
 fi
+
 	
 echo "MIRRORSITE=\"$aaa_mirror\"
 OTHERMIRROR=\"deb [trusted=yes] file://$aaa_localrepo_dir $aaa_work_repo main\"
@@ -114,7 +115,7 @@ DEBEMAIL=\"$aaa_maintainer\"
 BUILDRESULT=\"$aaa_build_result\"
 COMPONENTS=\"$aaa_base_components\"
 DEBBUILDOPTS=\"$aaa_buildopts\"
-DEBOOTSTRAPOPTS=('--variant=buildd' '--keyring=$aaa_keyring')
+DEBOOTSTRAPOPTS=$aaa_debootstrap_opts
 BUILDUSERNAME=\"\"
 AUTO_DEBSIGN=no
 DISTRIBUTION=$aaa_debian_distro
