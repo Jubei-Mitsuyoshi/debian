@@ -1,28 +1,137 @@
-#!/bin/bash
 
-function GetRelease()
+
+# Avoid any encoding problems
+export LANG=C
+
+# check if messages are to be printed using color
+unset txtrst txtbld bldblu bldgrn bldred bldylw
+if [[ -t 2 ]]; then
+	# prefer terminal safe colobldred and bold text when tput is supported
+	if tput setaf 0 &>/dev/null; then
+		txtrst="$(tput sgr0)"
+		txtbld="$(tput bold)"
+		bldblu="${txtbld}$(tput setaf 4)"
+		bldgrn="${txtbld}$(tput setaf 2)"
+		bldred="${txtbld}$(tput setaf 1)"
+		bldylw="${txtbld}$(tput setaf 3)"
+		bldcyn="${txtbld}$(tput setaf 5)"
+		bldwht="${txtbld}$(tput setaf 6)"
+		txtblu="$(tput setaf 4)"
+		txtgrn="$(tput setaf 2)"
+		txtred="$(tput setaf 1)"
+		txtylw="$(tput setaf 3)"
+		txtcyn="$(tput setaf 5)"
+		txtwht="$(tput setaf 6)"
+	else
+		txtrst="\e[1;0m"
+		txtbld="\e[1;1m"
+		bldblu="${txtbld}\e[1;34m"
+		bldgrn="${txtbld}\e[1;32m"
+		bldred="${txtbld}\e[1;31m"
+		bldylw="${txtbld}\e[1;33m"
+		bldpur="${txtbld}\e[1;35m" # purple
+		bldcyn="${txtbld}\e[1;36m" # cyan
+		bldwht="${txtbld}\e[1;37m" # white
+		txtred='\e[0;31m' # red
+		txtgrn='\e[0;32m' # green
+		txtylw='\e[0;33m' # yellow
+		txtblu='\e[0;34m' # blue
+		txtpur='\e[0;35m' # purple
+		txtcyn='\e[0;36m' # cyan
+		txtwht='\e[0;37m' # white
+	fi
+fi
+readonly txtrst txtbld bldblu bldgrn bldred bldylw txtred txtgrn txtylw txtblu txtpur txtcyn txtwht
+
+	
+	# Feedback indicators
+	aaa_any_key="${bldblu} ANY KEY ${bldwht}"
+	aaa_any_other_key="${bldblu} ANY OTHER KEY ${bldwht}"
+	aaa_ctrl_c="${bldcyn} CTRL-C ${bldwht}"
+
+
+
+# dialog functions *********************************************************************************************************************************************
+#***************************************************************************************************************************************************************
+
+function AnyKey()
+{
+		echo -e " ${bldgrn}aaa-->${bldwht} press ${aaa_any_key} to continue  ${txtrst}"
+		read -n1 -s
+}
+
+function Info()
 {
 
-	#first argument dl link
-		#xxxxxx ...variable name name
-release_version=$(curl -s https://github.com/linuxmint/$1/releases | grep -m 3 "/linuxmint/$1/archive/" | sed 's/.*.zip"//' | sed -n 's/.*\///p' | sed 's/".*//')
-Info " i made thew relese version as $release_version"
+	local mesg=$1; shift
+	printf "${bldgrn}info-->${bldwht}${mesg}${txtrst}\n" "${bldwht}$@${txtrst}" >&2
 		
-aaa_escape=0
-while [[ $aaa_escape -eq 0 ]]; do
-	wget "https://github.com/linuxmint/Cinnamon/archive/$release_version"
-	if [[ ! $? -eq 0 ]]; then
-		Warn "failed to download the release version of $1"
-		Warn "since with this build i cant miss this download i need to try again"
-		Warn "or it could be down to the webpage formate changing"
-		Warn "if thats not good for you ${aaa_ctrl_c} to quit"
-		AnyKey
-	else
-		tar -xzf $1*.tar.gz
-		aaa_escape=1
-	fi
-done
+		
+function Fuck()
+{
+
+	#argument 1 text to display
+		# xxx .. text to display...
+		
+		echo -e "${bldred}ERROR!!!!!!-->$$@{txtrst}"
+		exit 2
+}
 
 }
 
-GetRelease nemo
+function Block()
+{
+
+	#argument 1 text to display
+		# xxx .. text to display...
+		
+		echo -e "${bldblu}block-->${txtgrn}$@{txtrst}"
+}
+
+function Warn()
+{
+
+	#argument 1 text to display
+		# xxx .. text to display...
+		
+		echo -e "  ${bldylw}WARNING-->${bldwht}$@{txtrst}"
+}
+
+function Debug()
+{
+
+	#argument 1 text to display
+		# xxx .. text to display...
+		
+		echo -e "${bldpur}debug-->${bldwht}$@${txtrst}"
+		AnyKey
+}
+
+function MenuInactive()
+{
+	#argument 1 menu key
+		# x .. key to display
+	#argument 2 text to display
+		# xxx .. text to display...
+		
+		echo -e "${bldwht}key======  ${bldblu}$1${txtcyn} $2 ${txtrst}"
+}
+
+function MenuActive()
+{
+	#argument 1 menu key
+		# x .. key to display
+	#argument 2 text to display
+		# xxx .. text to display...
+		
+		echo -e "${bldwht}key======  ${bldblu}$1${txtgrn} $2 ${txtrst}"
+}
+
+function Test()
+{
+	
+        "$@" || Fuck "$@ failed"
+  
+}
+
+Info "info" "info2" "info3"

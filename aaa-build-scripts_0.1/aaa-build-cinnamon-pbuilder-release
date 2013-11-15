@@ -157,47 +157,32 @@ done
 function BuildOne()
 {
 	
-	#stamp pkg
-	vername_raw=$(sed -n 1p "./debian/changelog" | sed 's/).*//')
-	vername=$(echo "$vername_raw" | sed 's/ .*//')
-	Block "building $vername "
+	local version=$(dpkg-parsechangelog --show-field Version)
+	local name=$(dpkg-parsechangelog --show-field Source)
+	dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
+with possible modifications"
 	
-	ver_number=$(echo "$vername_raw" | sed "s/$vername (//" | sed "s/-$aaa_pkg_tag//")
-	Info "decided $ver_number is the version number"
-	
-
-	sed -i '1s/^/'"$vername_raw-$aaa_pkg_tag) $aaa_debian_distro"'; urgency=medium\
-\
-  * recompiled for '"$aaa_pkg_tag"' by me\
-\
- -- '"$aaa_maintainer  $(date +"%a, %d %b %Y %H:%M:%S %z   ")\n\n/" "./debian/changelog"
-	#swap maintainers to me
-	aaa_old_maintainer=$(grep -F -m 1 "Maintainer" "./debian/control" | sed 's/Maintainer: //')
-	sed -i "s/$aaa_old_maintainer/$aaa_maintainer/" "./debian/control"
 
 #	echo '3.0 (quilt)' > ./debian/source/format
 	rm -f ./debian/source/format
 	cd ..
 	
-	case "$vername" in
-		"cinnamon") mv "Cinnamon-$ver_number" "cinnamon-$ver_number" ;;
-	esac
 
 	# build modified source package
-	dpkg-source --format=1.0 -b "$vername-$ver_number"
+	dpkg-source --format=1.0 -b $(ls -d */)
 	
 	# build a binary and source
-	pbuilder --build "$vername"_"$ver_number-$aaa_pkg_tag.dsc"
+	pbuilder --build *.dsc
 	if [[ $? -eq 0 ]]; then
 		#add package to result repo and working repo
 		cd "$aaa_build_result"
-		reprepro -b "$aaa_localrepo_dir" includedeb $aaa_work_repo *.deb || Fuck "something wrong ---check the output"
-		reprepro -b "$aaa_localrepo_dir" include $aaa_debian_distro "$vername"_"$ver_number-$aaa_pkg_tag""_amd64.changes" || Fuck "something wrong with-- reprepro -b $aaa_localrepo_dir include $aaa_debian_distro *.changes ---check the output"
+		Test reprepro -b "$aaa_localrepo_dir" includedeb $aaa_work_repo *.deb
+		Test reprepro -b "$aaa_localrepo_dir" include $aaa_debian_distro *.changes
 	
 		#clean up
 		find . -maxdepth 1 -mindepth 1 -type f -exec mv -f '{}' "$aaa_cinnamon_cache_dir/release-builds/$aaa_debian_distro/$bdate" \;
 	else
-		FailOkFilter "$vername"
+		FailOkFilter "$name"
 	fi
 	cd $HOME
 	rm -rf "$aaa_work_dir"
@@ -305,11 +290,10 @@ for _package in $aaa_cinnamon_git_list; do
 done
 
 
+
 cd $HOME
-CleanMyRepo  $aaa_work_repo "cinnamon muffin nemo cjs"
-
-
-
+apt-get update
+apt-get --no-upgrade --no-install-recommends install --reinstall "cinnamon*" "muffin*" "cjs*" "nemo*"
 
 
 #BuildIt "cinnamon-translations"

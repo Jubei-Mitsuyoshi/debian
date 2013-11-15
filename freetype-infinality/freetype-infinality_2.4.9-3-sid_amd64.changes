@@ -1,0 +1,32 @@
+Format: 1.8
+Date: Thu, 14 Nov 2013 20:08:30 +0000
+Source: freetype-infinality
+Binary: freetype-infinality libfreetype-infinality6
+Architecture: source all amd64
+Version: 2.4.9-3-sid
+Distribution: unstable
+Urgency: low
+Maintainer: Xiao-Long Chen <chenxiaolong@cxl.epac.to>
+Changed-By: Jubei-Mitsuyoshi <jubei.house.of.five.masters@gmail.com>
+Description: 
+ freetype-infinality - FreeType 2 font engine, with the Infinality patch set
+ libfreetype-infinality6 - FreeType 2 font engine, with the Infinality patch set, shared lib
+Changes: 
+ freetype-infinality (2.4.9-3-sid) unstable; urgency=low
+ .
+   * recompiled for sid by me with possible modifications
+Checksums-Sha1: 
+ 0407a3a559d20c321950fcb637d6896f9c432c82 806 freetype-infinality_2.4.9-3-sid.dsc
+ db5fd95b70e42ff98279b3c2c6a65165c78cabec 2118228 freetype-infinality_2.4.9-3-sid.tar.gz
+ cd3da0663bdb5d97637757d6616e5c44237d8c3b 60636 freetype-infinality_2.4.9-3-sid_all.deb
+ 9c1168b592f401b2dec523e957b9d64002ada601 288498 libfreetype-infinality6_2.4.9-3-sid_amd64.deb
+Checksums-Sha256: 
+ 65717764adf3d3a588e59ee4269e25fe2082f8a54eca1fcf1ae37a9139b5826b 806 freetype-infinality_2.4.9-3-sid.dsc
+ 9f6b6b40e37d47a3c25b5c1ddace626c0cdcc3d23b5486103274a2be33b0167c 2118228 freetype-infinality_2.4.9-3-sid.tar.gz
+ 25b53afa1d343ba1f4269cdca15ab749d21f2efcea40d7c4eecaa543a93de6a1 60636 freetype-infinality_2.4.9-3-sid_all.deb
+ 1d2610a3c18ad50ae4bd12d9ef40894b49dd58cebb69b8ab92e6cc845546582a 288498 libfreetype-infinality6_2.4.9-3-sid_amd64.deb
+Files: 
+ 7cbb77c76fb7899c2f2f3d53277f556e 806 libs optional freetype-infinality_2.4.9-3-sid.dsc
+ 3b7f6d98306d8aa39a61dfb82006ac51 2118228 libs optional freetype-infinality_2.4.9-3-sid.tar.gz
+ 7daa6822d309475948076e79c38af34a 60636 misc optional freetype-infinality_2.4.9-3-sid_all.deb
+ c2768eeee32b39d3988d3523ac34c785 288498 libs optional libfreetype-infinality6_2.4.9-3-sid_amd64.deb

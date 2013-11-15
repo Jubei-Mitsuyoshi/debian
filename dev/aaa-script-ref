@@ -20,7 +20,7 @@ done
 # srtip extensions
 NAME=$(echo "$I" | sed s/\.[iI][sS][oO]$//) #strip .iso extension if present
 
-
+#####################################################################################################################################################################################################
 
 #
 # NAME:		Image Mounting Script
@@ -92,6 +92,7 @@ if [ ${CD_IMAGE_EXT} == "cue" ]; then
 fi
 
 
+#####################################################################################################################################################################################################
 
 step "Installing XFS filesystem tools:"
 try rpm -i xfsprogs-*.rpm
@@ -150,7 +151,8 @@ try() {
         "$@" &
     fi
     
-    
+
+#####################################################################################################################################################################################################    
     
     echo "Reading system-wide config...." >&2
 . /etc/cool.cfg
@@ -160,6 +162,7 @@ if [ -r ~/.coolrc ]; then
 fi
 
 
+#####################################################################################################################################################################################################
 
 
 
@@ -940,4 +943,243 @@ done
 
 FANCYTTY=
 [ -e /etc/lsb-base-logging.sh ] && . /etc/lsb-base-logging.sh || true
+
+
+#!/bin/bash
+
+# Avoid any encoding problems
+export LANG=C
+
+# check if messages are to be printed using color
+unset ALL_OFF BOLD BLUE GREEN RED YELLOW
+if [[ -t 2 ]]; then
+	# prefer terminal safe colored and bold text when tput is supported
+	if tput setaf 0 &>/dev/null; then
+		ALL_OFF="$(tput sgr0)"
+		BOLD="$(tput bold)"
+		BLUE="${BOLD}$(tput setaf 4)"
+		GREEN="${BOLD}$(tput setaf 2)"
+		RED="${BOLD}$(tput setaf 1)"
+		YELLOW="${BOLD}$(tput setaf 3)"
+	else
+		ALL_OFF="\e[1;0m"
+		BOLD="\e[1;1m"
+		BLUE="${BOLD}\e[1;34m"
+		GREEN="${BOLD}\e[1;32m"
+		RED="${BOLD}\e[1;31m"
+		YELLOW="${BOLD}\e[1;33m"
+	fi
+fi
+readonly ALL_OFF BOLD BLUE GREEN RED YELLOW
+
+plain() {
+	local mesg=$1; shift
+	printf "${BOLD}    ${mesg}${ALL_OFF}\n" "$@" >&2
+}
+
+msg() {
+	local mesg=$1; shift
+	printf "${GREEN}==>${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@" >&2
+}
+
+msg2() {
+	local mesg=$1; shift
+	printf "${BLUE}  ->${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@" >&2
+}
+
+warning() {
+	local mesg=$1; shift
+	printf "${YELLOW}==> WARNING:${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@" >&2
+}
+
+error() {
+	local mesg=$1; shift
+	printf "${RED}==> ERROR:${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@" >&2
+}
+
+stat_busy() {
+	local mesg=$1; shift
+	printf "${GREEN}==>${ALL_OFF}${BOLD} ${mesg}...${ALL_OFF}" >&2
+}
+
+stat_done() {
+	printf "${BOLD}done${ALL_OFF}\n" >&2
+}
+
+setup_workdir() {
+	[[ -z $WORKDIR ]] && WORKDIR=$(mktemp -d --tmpdir "${0##*/}.XXXXXXXXXX")
+}
+
+cleanup() {
+	[[ -n $WORKDIR ]] && rm -rf "$WORKDIR"
+	[[ $1 ]] && exit $1
+}
+
+abort() {
+	msg 'Aborting...'
+	cleanup 0
+}
+
+trap_abort() {
+	trap - EXIT INT QUIT TERM HUP
+	abort
+}
+
+trap_exit() {
+	trap - EXIT INT QUIT TERM HUP
+	cleanup
+}
+
+die() {
+	(( $# )) && error "$@"
+	cleanup 1
+}
+
+trap 'trap_abort' INT QUIT TERM HUP
+trap 'trap_exit' EXIT
+
+##
+#  usage : in_array( $needle, $haystack )
+# return : 0 - found
+#          1 - not found
+##
+in_array() {
+	local needle=$1; shift
+	local item
+	for item in "$@"; do
+		[[ $item = $needle ]] && return 0 # Found
+	done
+	return 1 # Not Found
+}
+
+##
+#  usage : get_full_version( [$pkgname] )
+# return : full version spec, including epoch (if necessary), pkgver, pkgrel
+##
+get_full_version() {
+	# set defaults if they weren't specified in buildfile
+	pkgbase=${pkgbase:-${pkgname[0]}}
+	epoch=${epoch:-0}
+	if [[ -z $1 ]]; then
+		if [[ $epoch ]] && (( ! $epoch )); then
+			echo $pkgver-$pkgrel
+		else
+			echo $epoch:$pkgver-$pkgrel
+		fi
+	else
+		for i in pkgver pkgrel epoch; do
+			local indirect="${i}_override"
+			eval $(declare -f package_$1 | sed -n "s/\(^[[:space:]]*$i=\)/${i}_override=/p")
+			[[ -z ${!indirect} ]] && eval ${indirect}=\"${!i}\"
+		done
+		if (( ! $epoch_override )); then
+			echo $pkgver_override-$pkgrel_override
+		else
+			echo $epoch_override:$pkgver_override-$pkgrel_override
+		fi
+	fi
+}
+
+##
+#  usage : lock( $fd, $file, $message )
+##
+lock() {
+	eval "exec $1>"'"$2"'
+	if ! flock -n $1; then
+		stat_busy "$3"
+		flock $1
+		stat_done
+	fi
+}
+
+##
+#  usage : slock( $fd, $file, $message )
+##
+slock() {
+	eval "exec $1>"'"$2"'
+	if ! flock -sn $1; then
+		stat_busy "$3"
+		flock -s $1
+		stat_done
+	fi
+}
+
+
+base_packages=(base-devel)
+makechrootpkg_args=(-c -n)
+
+cmd="${0##*/}"
+if [[ "${cmd%%-*}" == 'multilib' ]]; then
+	repo="${cmd%-build}"
+	arch='x86_64'
+	base_packages+=(multilib-devel)
+else
+	tag="${cmd%-build}"
+	repo=${tag%-*}
+	arch=${tag##*-}
+fi
+chroots='/var/lib/archbuild'
+clean_first=false
+
+usage() {
+	echo "Usage: $cmd [options] -- [makechrootpkg args]"
+	echo '    -h         This help'
+	echo '    -c         Recreate the chroot before building'
+	echo '    -r <dir>   Create chroots in this directory'
+	echo ''
+	echo "Default makechrootpkg args: ${makechrootpkg_args[*]}"
+	echo ''
+	exit 1
+}
+
+while getopts 'hcr:' arg; do
+	case "${arg}" in
+		c) clean_first=true ;;
+		r) chroots="$OPTARG" ;;
+		*) usage ;;
+	esac
+done
+
+# Pass all arguments after -- right to makepkg
+makechrootpkg_args+=("${@:$OPTIND}")
+
+if (( EUID )); then
+	die 'This script must be run as root.'
+fi
+
+if ${clean_first} || [[ ! -d "${chroots}/${repo}-${arch}" ]]; then
+	msg "Creating chroot for [${repo}] (${arch})..."
+
+	for copy in "${chroots}/${repo}-${arch}"/*; do
+		[[ -d $copy ]] || continue
+		msg2 "Deleting chroot copy '$(basename "${copy}")'..."
+
+		lock 9 "$copydir.lock" "Locking chroot copy '$copy'"
+
+		if [[ "$(stat -f -c %T "${copy}")" == btrfs ]]; then
+			{ type -P btrfs && btrfs subvolume delete "${copy}"; } &>/dev/null
+		fi
+		rm -rf --one-file-system "${copy}"
+	done
+	exec 9>&-
+
+	rm -rf --one-file-system "${chroots}/${repo}-${arch}"
+	mkdir -p "${chroots}/${repo}-${arch}"
+	setarch "${arch}" mkarchroot \
+		-C "/usr/local/share/devtools/pacman-${repo}.conf" \
+		-M "/usr/local/share/devtools/makepkg-${arch}.conf" \
+		"${chroots}/${repo}-${arch}/root" \
+		"${base_packages[@]}" || abort
+else
+	lock 9 "${chroots}/${repo}-${arch}/root.lock" "Locking clean chroot"
+	arch-nspawn \
+		-C "/usr/local/share/devtools/pacman-${repo}.conf" \
+		-M "/usr/local/share/devtools/makepkg-${arch}.conf" \
+		"${chroots}/${repo}-${arch}/root" \
+                pacman -Syu --noconfirm || abort
+fi
+
+msg "Building in chroot for [${repo}] (${arch})..."
+exec makechrootpkg -r "${chroots}/${repo}-${arch}" "${makechrootpkg_args[@]}"
+
 

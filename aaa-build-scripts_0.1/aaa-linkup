@@ -22,7 +22,6 @@ conf_path="/usr/share/aaa"
 
 
 binlinks="aaa-build \
-aaa-install-cinnamon \
 aaa-build-cinnamon-pbuilder-git \
 aaa-build-cinnamon-pbuilder-release \
 aaa-build-compiz-emerald \
@@ -33,6 +32,7 @@ aaa-setup-tmpfs"
 
 	
 patchlinks="remove_elevated_privelages_banner.patch \
+142DPI.patch \
 convert_to_debian.patch"
 	
 hooklinks="D05deps"

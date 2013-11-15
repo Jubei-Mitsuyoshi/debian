@@ -3,11 +3,9 @@
 ################ common header identical except for usage, getopts etc #########################################################################################################
 shopt -s extglob
 
-cd "$HOME"
-
 Usage() {
   cat <<EOF
-usage: ${0##*/} [options] distro
+usage: ${0##*/} [options] distro dir
 
   Currently this script takes one option
   and 2 arguments
@@ -17,40 +15,12 @@ usage: ${0##*/} [options] distro
   This script uses pbuilder and reprepro
   to build the package in the current dir
   
+  
 
 EOF
 }
 
-function ModDEbFiles()
-{
-	
-  local aaa_old_maintainer=""
 
-vername=$(sed -n 1p "./debian/changelog" | sed 's/-.*//')
-
-sed -i '1s/^/'"$vername-$aaa_pkg_tag) $aaa_debian_distro"'; urgency=medium \
-\
-  * recompiled for '"$aaa_pkg_tag by me"' \
-\
-  * most ubuntu patches removed \
-\
-  * patched to remove all unity references, session migration etc \
-\
-  * further patched to remove bug while compiling for kali \
-\
- -- '"$aaa_maintainer  $(date +"%a, %d %b %Y %H:%M:%S %z   ")\n\n/" "./debian/changelog"
- 
-aaa_old_maintainer=$(grep -F -m 1 "Maintainer" "./debian/control" | sed 's/Maintainer: //')
-
-sed -i "s/$aaa_old_maintainer/$aaa_maintainer/" "./debian/control"
-
-# set package type
-#MakeADir "./debian/source"
-#echo "3.0 (quilt)" > "./debian/source/format"
-#ugly hack
-rm -f ./debian/source/format
-
-}
 
 if [[ $1 = @(-h|--help) ]]; then
   Usage
@@ -81,7 +51,7 @@ fi
 export AAA_DEBIAN_DISTRO=""
 export AAA_SUPRESS_LOCAL_PBUILDERRC="yes"
 #remove previous run config if any, will be rewritten when aaa-master-config is sourced
-#if no command arguments /etc/pbuilderrc is used instead which is testing fallback
+#if no command arguments /etc/pbuilderrc is used instead which is  fallback
 rm -rf $HOME/.pbuilderrc
 
 while getopts ":d:" opt; do
@@ -118,9 +88,24 @@ fi
 
 ########## end of common header #############################################################################################################################################
 
+function ModDEbFiles()
+{
+	
+	local version=$(dpkg-parsechangelog --show-field Version)
+	local name=$(dpkg-parsechangelog --show-field Source)
+	dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
+with possible modifications"
+
+# set package type
+#MakeADir "./debian/source"
+#echo "3.0 (quilt)" > "./debian/source/format"
+#ugly hack
+rm -f ./debian/source/format
+
+}
 
 #check script dependencies
-CheckMyDeps "reprepro pbuilder sed dpkg-source"
+CheckMyDeps "reprepro pbuilder dpkg-source"
 [[ $aaa_build_env_setup_complete_yes_no == "yes" ]] || Fuck "this script need the build environment setup, run aaa-setup-build-env"
 
 #setup working dirs
@@ -136,10 +121,8 @@ cd ..
 # build modified source package
 dpkg-source --format=1.0 -b $(ls -d */)
 
-###################### COMPIZ ####################################################
-# clean out work and destination repo of old packages
 
-pbuilder --build *.dsc || Fuck "something wrong with pdebuild check the output"
+Test pbuilder --build *.dsc
 
 cd "$aaa_build_result"
 dir

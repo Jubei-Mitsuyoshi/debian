@@ -4,7 +4,6 @@ CONFDIR = /usr/share/aaa
 
 BINPROGS = \
 	aaa-build \
-	aaa-install-cinnamon \
 	aaa-build-cinnamon-pbuilder-git \
 	aaa-build-cinnamon-pbuilder-release \
 	aaa-build-compiz-emerald \
@@ -14,6 +13,7 @@ BINPROGS = \
 	
 PATCHES = \
 	remove_elevated_privelages_banner.patch \
+	142DPI.patch \
 	convert_to_debian.patch
 	
 HOOKS = \

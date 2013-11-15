@@ -310,10 +310,8 @@ done
 
 
 cd $HOME
-CleanMyRepo  $aaa_work_repo "cinnamon muffin nemo cjs"
-
-
-
+apt-get update
+apt-get --no-upgrade --no-install-recommends install --reinstall "cinnamon*" "muffin*" "cjs*" "nemo*"
 
 #BuildIt "cinnamon-translations"
 

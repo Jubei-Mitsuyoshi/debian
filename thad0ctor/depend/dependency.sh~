@@ -1,0 +1,517 @@
+#!/bin/sh
+##install dependencies##
+function f_dependinstall {	
+	if [ "$dep0" = "0" ]; then ##unzip
+		echo
+		echo "Installing unzip..."
+		echo
+		apt-get install unzip
+	elif [ "$dep1" = "0" ]; then ##nano
+		echo
+		echo "Installing nano..."
+		echo
+		apt-get install nano
+	elif [ "$dep2" = "0" ]; then ##pyrit
+		echo
+		echo "Installing pyrit..."
+		echo
+		apt-get install pyrit
+	elif [ "$dep3" = "0" ]; then ##aircrack
+		echo
+		echo "Installing aircrack-ng..."
+		echo
+		apt-get install aircrack-ng
+	elif [ "$dep4" = "0" ]; then ##find
+		echo
+		echo "Installing find..."
+		echo
+		apt-get install find
+	elif [ "$dep5" = "0" ]; then ##cat
+		echo
+		echo "Installing cat..."
+		echo
+		apt-get install cat
+	elif [ "$dep6" = "0" ]; then ##sed
+		echo
+		echo "Installing sed..."
+		echo
+		apt-get install sed
+	elif [ "$dep7" = "0" ]; then ##grep
+		echo
+		echo "Installing grep..."
+		echo
+		apt-get install grep
+	elif [ "$dep8" = "0" ]; then ##zenity
+		echo
+		echo "Installing zenity..."
+		echo
+		apt-get install zenity
+	elif [ "$dep9" = "0" ]; then ##pdftotext
+		echo
+		echo "Installing pdftotext..."
+		echo
+		apt-get install pdftotext
+	elif [ "$dep10" = "0" ]; then ##cewl
+		echo
+		echo "Installing CEWL dependencies..."
+		echo
+		gem install nokogiri
+		gem install hpricot
+		gem install http_configuration
+		gem install mime-types
+		gem install rubyzip
+		gem install spider
+		gem source -c
+		gem install --user-install spider http_configuration mini_exiftool zip mime-types
+		RUBYOPT="rubygems"
+		echo
+		echo "Downloading cewl..."
+		echo
+		wget http://dl.dropbox.com/u/40006489/BT5_Downloads/cewl.zip
+		echo
+		echo "Installing cewl..."
+		mkdir /pentest/passwords/cewl
+		echo
+		unzip cewl.zip
+                rm -r cewl.zip
+                cd cewl
+		mv cewl /usr/share/
+		rm -r cewl
+		if [ -e /usr/share/cewl/cewl.rb ] && [ -e /usr/share/cewl/cewl_lib.rb ] && [ -e /usr/share/cewl/fab.rb ]; then
+			echo
+			echo "cewl successfully installed!"
+			echo
+			sleep 3
+		else
+			echo "Install failed!"
+			echo
+			sleep 2
+			echo "Try to install dependencies again..."
+			echo
+			sleep 3
+		fi	
+	elif [ "$dep11" = "0" ]; then ##cupp
+		echo
+		echo "Downloading cewl..."
+		echo
+		wget http://dl.dropbox.com/u/40006489/BT5_Downloads/cupp.zip
+		echo
+		echo "Installing cewl..."
+		echo
+		unzip cupp.zip
+                rm -r cupp.zip
+                cd cupp
+		mv cupp.py /usr/bin/cupp
+                mv cupp.cfg /usr/bin/cupp.cfg
+                rm -r cupp
+		if [ -e /usr/bin/cupp ] && [ -e /usr/bin/cupp.cfg ]; then
+			echo
+			echo "cupp successfully installed!"
+			echo
+			sleep 3
+		else
+			echo "Install failed!"
+			echo
+			sleep 2
+			echo "Try to install dependencies again..."
+			echo
+			sleep 3
+		fi	
+	elif [ "$dep12" = "0" ] || [ "$dep13" = "0" ] || [ "$dep14" = "0" ]; then ##dictstat, maskgen, policygen
+		echo
+		echo "Downloading dictstat, maskgen and policygen..."
+		echo
+		wget http://dl.dropbox.com/u/40006489/BT5_Downloads/pack.zip
+		echo
+		echo "Installing dictstat, maskgen and policygen..."
+		cd /usr/bin/
+		echo
+		unzip pack.zip
+                cd pack 
+                rm -r pack.zip
+		mv dictstat.py /usr/bin/dictstat
+                mv maskgen.py /usr/bin/maskgen
+                mv policygen.py /usr/bin/policygen
+		rm -r pack
+		if [ -e /usr/bin/policygen ] && [ -e /usr/bin/maskgen ] && [ -e /usr/bin/dictstat ]; then
+			echo
+			echo "dictstat, maskgen and policygen successfully installed!"
+			echo
+			sleep 3
+		else
+			echo "Install failed!"
+			echo
+			sleep 2
+			echo "Try to install dependencies again..."
+			echo
+			sleep 3
+		fi
+	elif [ "$dep15" = "0" ]; then ##calibre
+		echo
+		echo "Installing calibre..."
+		echo
+		apt-get install calibre
+	elif [ "$dep16" = "0" ]; then ##awk
+		echo
+		echo "Installing awk..."
+		echo
+		apt-get install awk
+	elif [ "$dep17" = "0" ]; then ##wc
+		echo
+		echo "Installing wc..."
+		echo
+		apt-get install wc
+	elif [ "$dep18" = "0" ]; then ##tr
+		echo
+		echo "Installing tr..."
+		echo
+		apt-get install tr
+	elif [ "$dep19" = "0" ]; then ##rev
+		echo
+		echo "Installing rev..."
+		echo
+		apt-get install rev
+	elif [ "$dep20" = "0" ]; then ##paste
+		echo
+		echo "Installing paste..."
+		echo
+		apt-get install paste
+	elif [ "$dep21" = "0" ]; then ##gnome-terminal
+		echo
+		echo "Installing gnome-terminal..."
+		echo
+		apt-get install gnome-terminal
+	elif [ "$dep22" = "0" ]; then ##nautilus
+		echo
+		echo "Installing nautilus..."
+		echo
+		apt-get install nautilus
+	elif [ "$dep23" = "0" ]; then ##wget
+		echo
+		echo "Installing wget..."
+		echo
+		apt-get install wget
+	elif [ "$dep24" = "0" ]; then ##file
+		echo
+		echo "Installing file..."
+		echo
+		apt-get install file
+	elif [ "$dep25" = "0" ]; then ##xmlstarlet
+		echo
+		echo "Installing xmlstarlet..."
+		echo
+		apt-get install xmlstarlet
+	elif [ "$dep26" = "0" ]; then ##script
+		echo
+		echo "Installing script..."
+		echo
+		apt-get install script
+	fi
+}
+##check dependencies##
+function f_depend {
+	dep0="1" ##unzip
+	dep1="1" ##nano
+	dep2="1" ##pyrit
+	dep3="1" ##aircrack
+	dep4="1" ##find
+	dep5="1" ##cat
+	dep6="1" ##sed
+	dep7="1" ##grep
+	dep8="1" ##zenity
+	dep9="1" ##pdftotext
+	dep10="1" ##cewl
+	dep11="1" ##cupp
+	dep12="1" ##dictstat
+	dep13="1" ##maskgen
+	dep14="1" ##policygen
+	dep15="1" ##calibre
+	dep16="1" ##awk
+	dep17="1" ##wc
+	dep18="1" ##tr
+	dep19="1" ##rev
+	dep20="1" ##paste
+	dep21="1" ##gnome-terminal
+	dep22="1" ##nautilus
+	dep23="1" ##wget
+	dep24="1" ##file
+	dep25="1" ##xmlstarlet
+	dep26="1" ##script
+	f_echobreak
+	echo "Checking for and installing missing dependencies..."
+	sleep 2
+	##xmlstarlet##
+	if ! which script > /dev/null; then
+		echo $RED The package script is not installed
+		dep26="0"
+		else
+		echo $GREEN The package script is properly installed
+	fi
+	##xmlstarlet##
+	if ! which xmlstarlet > /dev/null; then
+		echo $RED The package xmlstarlet is not installed
+		dep25="0"
+		else
+		echo $GREEN The package xmlstarlet is properly installed
+	fi
+	##file##
+	if ! which file > /dev/null; then
+		echo $RED The package file is not installed
+		dep24="0"
+		else
+		echo $GREEN The package file is properly installed
+	fi
+	sleep 1
+	##wget##
+	if ! which wget > /dev/null; then
+		echo $RED The package wget is not installed
+		dep23="0"
+		else
+		echo $GREEN The package wget is properly installed
+	fi
+	sleep 1
+	##nautilus##
+	if ! which nautilus > /dev/null; then
+		echo $RED The package nautilus is not installed
+		dep22="0"
+		else
+		echo $GREEN The package nautilus is properly installed
+	fi
+	sleep 1
+	##gnome-terminal##
+	if ! which gnome-terminal > /dev/null; then
+		echo $RED The package gnome-terminal is not installed
+		dep21="0"
+		else
+		echo $GREEN The package gnome-terminal is properly installed
+	fi
+	sleep 1
+	##rev##
+	if ! which rev > /dev/null; then
+		echo $RED The package rev is not installed
+		dep19="0"
+		else
+		echo $GREEN The package rev is properly installed
+	fi
+	sleep 1
+	##paste##
+	if ! which paste > /dev/null; then
+		echo $RED The package paste is not installed
+		dep20="0"
+		else
+		echo $GREEN The package paste is properly installed
+	fi
+	sleep 1
+	##tr##
+	if ! which tr > /dev/null; then
+		echo $RED The package tr is not installed
+		dep18="0"
+		else
+		echo $GREEN The package tr is properly installed
+	fi
+	sleep 1
+	##wc##
+	if ! which wc > /dev/null; then
+		echo $RED The package wc is not installed
+		dep17="0"
+		else
+		echo $GREEN The package wc is properly installed
+	fi
+	sleep 1
+	##unzip##
+	if ! which unzip > /dev/null; then
+		echo $RED The package unzip is not installed
+		dep0="0"
+		else
+		echo $GREEN The package unzip is properly installed
+	fi
+	sleep 1
+	##awk##
+	if ! which awk > /dev/null; then
+		echo $RED The package awk is not installed
+		dep16="0"
+		else
+		echo $GREEN The package awk is properly installed
+	fi
+	sleep 1
+	##nano##
+	if ! which nano > /dev/null; then
+		echo $RED The package nano is not installed
+		dep1="0"
+		else
+		echo $GREEN The package nano is properly installed
+	fi
+	sleep 1
+	##pyrit##
+	if ! which pyrit > /dev/null; then
+		echo $RED The package pyrit is not installed
+		dep2="0"
+		else
+		echo $GREEN The package pyrit is properly installed
+	fi
+	sleep 1
+	##aircrack##
+	if ! which aircrack-ng > /dev/null; then
+		echo $RED The package aircrack-ng is not installed
+		dep3="0"
+		else
+		echo $GREEN The package aircrack-ng is properly installed
+	fi
+	sleep 1
+	##find##
+	if ! which find > /dev/null; then
+		echo $RED The package find is not installed
+		dep4="0"
+		else
+		echo $GREEN The package find is properly installed
+	fi
+	sleep 1
+	##cat##
+	if ! which cat > /dev/null; then
+		echo $RED The package cat is not installed
+		dep5="0"
+		else
+		echo $GREEN The package cat is properly installed
+	fi
+	sleep 1
+	##sed##
+	if ! which sed > /dev/null; then
+		echo $RED The package sed is not installed
+		dep6="0"
+		else
+		echo $GREEN The package sed is properly installed
+	fi
+	sleep 1
+	##grep##
+	if ! which grep > /dev/null; then
+		echo $RED The package grep is not installed
+		dep7="0"
+		else
+		echo $GREEN The package grep is properly installed
+	fi
+	sleep 1
+	##zenity##
+	if ! which zenity > /dev/null; then
+		echo $RED The package zenity is not installed
+		dep8="0"
+		else
+		echo $GREEN The package zenity is properly installed
+	fi
+	sleep 1
+	##pdftotext##
+	if ! which pdftotext > /dev/null; then
+		echo $RED The package pdftotext is not installed
+		dep9="0"
+		else
+		echo $GREEN The package pdftotext is properly installed
+	fi
+	sleep 1
+	##calibre##
+	if ! which calibre > /dev/null; then
+		echo $RED The package calibre is not installed
+		dep15="0"
+		else
+		echo $GREEN The package calibre is properly installed
+	fi
+	sleep 1
+	##cewl##
+	if [ -e "/usr/share/cewl/cewl.rb" ]; then
+			dep10="1"
+			echo $GREEN The application cewl.rb is properly installed in the right directory
+		else
+			echo $RED The application cewl is not installed in the right directory
+			dep10="0"
+		fi
+	sleep 1
+	##cupp##
+	if [ -e "/usr/bin/cupp" ]; then
+			dep11="1"
+			echo $GREEN The application cupp.py is properly installed in the right directory
+		else
+			echo $RED The application cupp is not installed in the right directory
+			dep11="0"
+		fi
+	sleep 1
+	##dictstat##
+	if [ -e "/usr/bin/dictstat" ]; then
+			dep12="1"
+			echo $GREEN The application dictstat.py is properly installed in the right directory
+		else
+			echo $RED The application dictstat.py is not installed in the right directory
+			dep12="0"
+		fi
+	sleep 1
+	##maskgen##
+	if [ -e "/usr/bin/maskgen" ]; then
+			dep13="1"
+			echo $GREEN The application maskgen.py is properly installed in the right directory
+		else
+			echo $RED The application maskgen.py is not installed in the right directory
+			dep13="0"
+		fi
+	sleep 1
+	##policygen##
+	if [ -e "/usr/bin/policygen" ]; then
+			dep14="1"
+			echo $GREEN The application policygen.py is properly installed in the right directory
+		else
+			echo $RED The application policygen.py is not installed in the right directory
+			dep14="0"
+		fi
+	echo $ECHOCOLOR""
+	sleep 8
+	if [ "$dep0" = "0" ] || [ "$dep1" = "0" ] || [ "$dep2" = "0" ] || [ "$dep3" = "0" ] || [ "$dep4" = "0" ] || [ "$dep5" = "0" ] || [ "$dep6" = "0" ] || [ "$dep7" = "0" ] || [ "$dep8" = "0" ] || [ "$dep9" = "10" ] || [ "$dep10" = "0" ] || [ "$dep11" = "0" ] || [ "$dep12" = "0" ] || [ "$dep13" = "0" ] || [ "$dep14" = "0" ] || [ "$dep15" = "0" ] || [ "$dep16" = "0" ] || [ "$dep17" = "0" ] || [ "$dep18" = "0" ] || [ "$dep19" = "0" ] || [ "$dep20" = "0" ] || [ "$dep21" = "0" ] || [ "$dep22" = "0" ] || [ "$dep23" = "0" ] || [ "$dep24" = "0" ] || [ "$dep25" = "0" ] || [ "$dep26" = "0" ]; then
+	echo "Would you like to install/update the missing dependencies? (y/n)"
+	echo
+	read depend
+	if [ "$depend" = "y" ]; then
+		echo
+		echo "Checking for internet conectivity..."
+		echo
+		sleep 2
+		wget -q --tries=10 --timeout=15 http://www.google.com -O /tmp/index.google &> /dev/null
+		if [ ! -s /tmp/index.google ]; then
+			echo "The internet is currently unavailable."
+			echo
+			sleep 1
+			echo "Please try again later."
+			echo
+			sleep 1
+			echo "Returning to the main menu..."
+			echo
+			sleep 4
+			rm /tmp/index.google
+			f_menu
+		else
+			echo "Successfully connected to the internet."
+			echo
+			sleep 2
+			rm /tmp/index.google
+			sleep 1
+			f_crunchupdate
+			echo
+			f_dependinstall
+		fi
+	else
+		echo
+		echo "You chose not to install any dependencies at this time."
+		echo
+		sleep 2
+		echo "Some functions might not work properly until they are installed."
+		echo
+		sleep 2
+		echo "Reverting to the main menu..."
+		echo
+		sleep 2
+	fi
+	else
+		echo
+		echo "No dependencies to update, you are up to date!"
+		echo
+		sleep 2
+		echo "Returning to the main menu..."
+		echo
+		sleep 3
+		f_menu
+	fi
+}

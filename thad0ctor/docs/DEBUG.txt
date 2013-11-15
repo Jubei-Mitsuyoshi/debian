@@ -1,0 +1,59 @@
+-------------------|thad0ctor's backtrack 5 toolkit info|---------------------
+|                             by: thad0ctor                                  |
+------------------------------------------------------------------------------
+
+Script Path: /root/Desktop/MY SCRIPTS/GIT/thad0ctorstools-code/LAUNCH_TOOLKIT.sh
+Last Modified: 2012-08-04 at 20:22:44
+
+Process ID: 9358
+Script MD5SUM: 700d4ff26caa70b38377761488ab36b1
+Script Size: 71 kb
+
+---Script Files Debug---
+ (All sizes are in kb.)
+
+Main Folder:
+total 88
+ 4 3rdparty
+ 4 depend
+ 4 docs
+72 LAUNCH_TOOLKIT.sh
+ 4 LAUNCH_TOOLKIT_WITH_LOGGING.sh
+
+Main Folder Size: 88 kb
+
+Dependencies:
+total 736
+ 12 1337ify.sh
+ 16 analyze.sh
+  8 banner.sh
+ 44 combination.sh
+ 88 creation.sh
+  4 cruncher.sh
+ 16 dependency.sh
+  4 install
+152 manipulation.sh
+ 32 phone_both.sh
+ 32 phone_dash.sh
+ 32 phone_peren.sh
+ 32 phone_simple .sh
+ 12 region.sh
+ 44 router.sh
+  4 tempsettings.sh
+  4 UPDATER.sh
+112 vzwmifi.sh
+  8 wifi.sh
+ 80 wordify.sh
+
+Dependencies Size: 736 kb
+
+3rd Party Tools:
+total 144
+ 4 cupp.cfg
+24 datelist
+24 SWMT.py
+92 wlm
+
+3rd Party Size: 144 kb
+
+Total Toolkit Size: 968 kb

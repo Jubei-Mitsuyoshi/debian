@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=thad0ctor's BT5 toolkit
+Encoding=UTF-8
+Icon=/usr/share/icons/thad0ctorstoolkiticon.png
+StartupNotify=false
+Terminal=false
+Type=Application
+Categories=
+Name[C]=thad0ctor's BT5 toolkit
+Exec=gnome-terminal -x bash -c "cd '/usr/share/thad0ctor'; bash LAUNCH_TOOLKIT.sh"

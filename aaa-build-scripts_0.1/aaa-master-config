@@ -97,9 +97,6 @@ aaa_debian_distro="unstable"
 #signing NOT OPTIONAL !!!
 aaa_maintainer="Jubei-Mitsuyoshi <jubei.house.of.five.masters@gmail.com>"
 
-aaa_full_name="Jubei-Mitsuyoshi"
-aaa_tag_name=""
-aaa_maintainers_email="jubei.house.of.five.masters@gmail.com"
 ########################################################################
 
 ####################################
@@ -225,7 +222,7 @@ aaa_compiz_cache_dir="$HOME/git/github/debian-public-packages/compiz"
 
 
 
-############################## sort out final vars to pass ##################################
+############################## sort out final vars to pass --do not mod this unless you know what your doing--##################################
 
 #add default work repo for pbuilder
 aaa_extra_repos="$aaa_extra_repos $aaa_work_repo"
@@ -301,6 +298,8 @@ done
 aaa_bindmounts=("$aaa_localrepo_dir""$aaa_tmp")
 #possible extra debootstrapopt
 # -m$aaa_maintainer
+
+export DEBEMAIL="$aaa_maintainer"
 
 aaa_apt_cache_dir="$aaa_apt_cache_base_dir/$aaa_debian_distro"
 
