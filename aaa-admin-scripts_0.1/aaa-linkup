@@ -1,0 +1,74 @@
+#!/bin/bash
+Usage() {
+  cat <<EOF
+usage: ${0##*/} [options]
+
+  -c remove all symlinks,restore
+  backups
+  
+  
+
+EOF
+}
+
+if [[ $1 = @(-h|--help) ]]; then
+  Usage
+  exit 1
+fi
+
+
+bin_path="/usr/bin"
+
+while getopts ':c' arg; do
+	case "$arg" in
+		c) clean=1 ;;
+	esac
+done
+
+
+if [[ ! clean -eq 1 ]]; then
+	for file in `find . -maxdepth 1 -mindepth 1 -type f -executable`; do 
+		ln -s -f "$(pwd)/${file#./}" "$bin_path/${file#./}"
+	done
+	cd ./conf
+	for file in `find . -type f`; do 
+		case ${file#./} in
+			10_linux|40_custom) ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "/etc/grub.d/${file#./}" ;;
+			nvidia-kernel-common.conf) ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "/etc/modprobe.d/${file#./}" ;;
+			aaa-fallback.session) ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "/usr/share/cinnamon-session/sessions/${file#./}" ;;
+			grub) ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "/etc/default/${file#./}" ;;
+			inittab) ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "/etc/${file#./}" ;;
+			xorg.conf) ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "/etc/X11/${file#./}" ;;
+			.bash_aliases|.bashrc) ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "$HOME/${file#./}" ;;
+		esac
+		
+	done
+else
+	for file in `find . -maxdepth 1 -mindepth 1 -type f -executable`; do 
+		rm -f "$bin_path/${file#./}"
+	done
+	
+	cd ./conf
+	for file in `find . -maxdepth 1 -mindepth 1 -type f`; do 
+	
+		case ${file#./} in
+			10_linux|40_custom) [[ -L "/etc/grub.d/${file#./}" ]] || rm -f "/etc/grub.d/${file#./}"
+								mv -f "/etc/grub.d/${file#./}.aaa-backup" "/etc/grub.d/${file#./}" >/dev/null 2>&1 ;;
+			nvidia-kernel-common.conf) [[ -L "/etc/modprobe.d/${file#./}" ]] || rm -f "/etc/modprobe.d/${file#./}"
+									mv -f "/etc/modprobe.d/${file#./}.aaa-backup" "/etc/modprobe.d/${file#./}" >/dev/null 2>&1;;
+			aaa-fallback.session)  [[ -L "/usr/share/cinnamon-session/sessions/${file#./}" ]] || rm -f "/usr/share/cinnamon-session/sessions/${file#./}"
+									mv -f "/usr/share/cinnamon-session/sessions/${file#./}.aaa-backup" "/usr/share/cinnamon-session/sessions/${file#./}" >/dev/null 2>&1;;
+			grub) [[ -L "/etc/default/${file#./}" ]] || rm -f "/etc/default/${file#./}"
+					mv -f "/etc/default/${file#./}.aaa-backup" "/etc/default/${file#./}" >/dev/null 2>&1 ;;
+			inittab) [[ -L "/etc/${file#./}" ]] || rm -f "/etc/${file#./}"
+					mv -f "/etc/${file#./}.aaa-backup" "/etc/${file#./}" >/dev/null 2>&1 ;;
+			xorg.conf) [[ -L "/etc/X11/${file#./}" ]] || rm -f "/etc/X11/${file#./}"
+						mv -f "/etc/X11/${file#./}.aaa-backup" "/etc/X11/${file#./}" >/dev/null 2>&1 ;;
+			.bash_aliases|.bashrc) [[ -L "$HOME/${file#./}" ]] || rm -f "$HOME/${file#./}" 
+									mv -f "$HOME/${file#./}.aaa-backup" "$HOME/${file#./}" >/dev/null 2>&1 ;;
+		esac
+		
+	done
+
+
+fi
