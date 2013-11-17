@@ -204,13 +204,13 @@ aaa_pkg_tag_ubuntu="saucy"
 ############################## aaa-build-cinnamon-pbuilder ##################################
 
 ##########################################################
-#locatin for cinnamon git download and storage
-cinnamon_git_dir="$HOME/cinnamon-git"
+#locatin for cinnamon releases download and storage
+aaa_cinnamon_sources_release="$HOME/cinnamon-releases"
 ##########################################################
 
 ##########################################################
 #locatin for cinnamon releases download and storage
-cinnamon_release_dir="$HOME/cinnamon-releases"
+aaa_cinnamon_sources_git="$HOME/cinnamon-git"
 ##########################################################
 
 ##########################################################
@@ -219,11 +219,21 @@ aaa_cinnamon_cache_dir="$HOME/git/github/debian-public-packages/cinnamon"
 ##########################################################
 
 ##########################################################
-#list of cinnamon git repos, order is very important and must be preserved
+#list of cinnamon packages that must be built from git since
+#there are no git releases, or you can chose to build a git
+#package instead of a relese version in which case you would
+#MOVE the package name from release list to git list
+#as usual order is important
+aaa_cinnamon_git_list="cinnamon-themes nemo-extensions"
+##########################################################
+
+##########################################################
+#list of cinnamon release packages, order is very important and must be preserved
 #note cinnamon is listed in lowere case wheras the actual git name is Cinnamon
 #this is deliberate !
-aaa_cinnamon_git_list="cinnamon-translations cinnamon-desktop cjs nemo cinnamon-settings-daemon cinnamon-session muffin cinnamon-control-center Cinnamon cinnamon-bluetooth cinnamon-screensaver cinnamon-themes nemo-extensions"
+aaa_cinnamon_release_list="cinnamon-translations cinnamon-desktop cjs nemo cinnamon-settings-daemon cinnamon-session muffin cinnamon-control-center Cinnamon cinnamon-bluetooth cinnamon-screensaver"
 ##########################################################
+
 
 
 

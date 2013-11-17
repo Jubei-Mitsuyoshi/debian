@@ -61,8 +61,7 @@ readonly txtrst txtbld bldblu bldgrn bldred bldylw txtred txtgrn txtylw txtblu t
 function Info()
 {
 
-	local mesg=$1; shift
-	printf "${bldgrn}info-->${bldwht}${mesg}${txtrst}\n" "${bldwht}$@${txtrst}" >&2
+	echo -e "${bldgrn}info-->${bldwht}$@${txtrst}"
 }
 
 
@@ -74,8 +73,7 @@ function Info()
 		
 function Fuck()
 {
-		local mesg=$1; shift
-		printf "${bldred}ERROR!!!!!!-->${bldwht}${mesg}${txtrst}\n" >&2
+		echo -e "${bldred}ERROR!!!!!!-->${bldwht}$@${txtrst}"
 		exit 2
 }
 
@@ -83,22 +81,19 @@ function Fuck()
 function Block()
 {
 
-		local mesg=$1; shift
-		printf "${bldblu}block-->${bldwht}${mesg}${txtrst}\n" >&2
+		echo -e "${bldblu}block-->${bldwht}$@${txtrst}"
 }
 
 function Warn()
 {
 
-		local mesg=$1; shift
-		printf "${bldylw}WARNING-->${bldwht}${mesg}${txtrst}\n" >&2
+		echo -e "${bldylw}WARNING-->${bldwht}$@${txtrst}"
 }
 
 function Debug()
 {
 
-		local mesg=$1; shift
-		printf "${bldpur}debug-->${bldwht}${mesg}${txtrst}\n" >&2
+		echo -e "${bldpur}debug-->${bldwht}$@${txtrst}"
 		AnyKey
 }
 
@@ -125,7 +120,7 @@ function MenuActive()
 function Test()
 {
 	
-        "$@" || Fuck "<$@> failed"
+        "$@" || Fuck "$@ failed"
   
 }
 
@@ -142,7 +137,7 @@ for _checks in $1; do
 	if [[ ! $? -eq 0 ]]; then
 		Warn"----$1------ is a dependency for this script, want me to install it?"
 		MenuActive "q" "to quit and install $1 yourself"
-		MenuActive "any other key" "to apt-get install $1"
+		MenuActive "i" "to apt-get install $1"
 		read -s -n1 aaa_tmpchr
 		if [[ ! $aaa_tmpchr == q ]]; then
 			apt-get install "$1*"
@@ -284,37 +279,31 @@ function UpdateBase()
 {
 
 Block "creating/updating base pbuilder image"
-
-if [[ $aaa_build_env_setup_complete_yes_no == "yes" ]]; then
-
-	aaa_escape=0
-	if [[ -e "$aaa_base_gz_dir/$aaa_base_gz" ]]; then
-		while [[ $aaa_escape -eq 0 ]]; do
-			pbuilder --update
-			if [[ ! $? -eq 0 ]]; then
-				Warn "pbuilder --update bugged out, mostly due to failed downloads"
-				Warn "hence going to try again, if thats not good for you ${aaa_ctrl_c} to quit"
-				AnyKey
-			else
-				aaa_escape=1
-			fi
-		done
-	else
-		while [[ $aaa_escape -eq 0 ]]; do
-			pbuilder --create
-			if [[ ! $? -eq 0 ]]; then
-				Warn "pbuilder --update bugged out, mostly due to failed downloads"
-				Warn "hence going to try again, if thats not good for you ${aaa_ctrl_c} to quit"
-				AnyKey
-			else
-				aaa_escape=1
-			fi
-		done
-	fi
-
+aaa_escape=0
+if [[ -e "$aaa_base_gz_dir/$aaa_base_gz" ]]; then
+	while [[ $aaa_escape -eq 0 ]]; do
+		pbuilder --update
+		if [[ ! $? -eq 0 ]]; then
+			Warn "pbuilder --update bugged out, mostly due to failed downloads"
+			Warn "hence going to try again, if thats not good for you ${aaa_ctrl_c} to quit"
+			AnyKey
+		else
+			aaa_escape=1
+		fi
+	done
 else
-	Fuck "updating or creating requires $HOME/.pbuilderrc and aaa-setup-build-env to have been run"
+	while [[ $aaa_escape -eq 0 ]]; do
+		pbuilder --create
+		if [[ ! $? -eq 0 ]]; then
+			Warn "pbuilder --update bugged out, mostly due to failed downloads"
+			Warn "hence going to try again, if thats not good for you ${aaa_ctrl_c} to quit"
+			AnyKey
+		else
+			aaa_escape=1
+		fi
+	done
 fi
+
 
 }
 

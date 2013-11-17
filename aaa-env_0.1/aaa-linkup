@@ -43,7 +43,7 @@ conf_path="/usr/share/aaa"
 
 binlinks="aaa-common-functions \
 aaa-setup-build-env \
-aaa-setup-tmpfs"
+aaa-setup-build-base"
 	
 hooklinks="D05deps"
 
