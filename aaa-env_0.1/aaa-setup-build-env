@@ -46,12 +46,6 @@ else
 	exit 1
 fi
 
-
-#check script dependencies
-CheckMyDeps "pbuilder reprepro"
-
-
-
 #source settings
 if [[ -e $HOME/.aaa_settings ]]; then
   Info "found a settings file.. reading it"
@@ -70,30 +64,10 @@ else
 	Fuck "Failed to find master config file quitting"
 fi
 
-
+#check script dependencies
+CheckMyDeps "pbuilder reprepro"
 #final check on build env
-
-
-if [[ $enable_tmpfs == yes ]]; then
-	if [[ $aaa_tmpfs_exists_yes_no == yes ]]; then
-		Info "my settings say aaa-tmpfs already set up"
-		[[ -d "$aaa_tmpfs_location" ]] || Fuck "critical error $aaa_tmpfs_location does not exist,, this conflicts with my settings file"
-	else
-		Info "master config say tmpfs is desired"
-		Info "local settings say tmpfs has not been set up yet"
-		Info "please run aaa-setup-tmpfs before proceeding"
-		exit 0
-	fi
-else
-	Warn "master settings say tmpfs not desired"
-	Warn "using $aaa_hdd_build_location as build directory"
-	Warn "this is not great unless you have a SSD, building"
-	Warn "in ram is much more desireable"
-	AnyKey
-fi
-
-
-
+[[ $aaa_setup_build_base_complete == yes ]] || Fuck "this script needs the base build environment setup, run aaa_setup-build-base"
 
 # clean up after any other runs
 MakeADir "$aaa_localrepo_dir/conf"
@@ -244,7 +218,7 @@ else
 fi
 
 
-SaveSettings "aaa_build_env_setup_complete_yes_no" "yes"
+SaveSettings "aaa_setup_build_env_complete" "yes"
 
 
 

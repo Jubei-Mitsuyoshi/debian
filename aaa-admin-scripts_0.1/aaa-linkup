@@ -28,7 +28,7 @@ done
 
 if [[ ! clean -eq 1 ]]; then
 	for file in `find . -maxdepth 1 -mindepth 1 -type f -executable`; do 
-		ln -s -f "$(pwd)/${file#./}" "$bin_path/${file#./}"
+		[[ ${file#./} == "aaa-linkup" ]] || ln -s -f "$(pwd)/${file#./}" "$bin_path/${file#./}"
 	done
 	cd ./conf
 	for file in `find . -type f`; do 
@@ -45,7 +45,7 @@ if [[ ! clean -eq 1 ]]; then
 	done
 else
 	for file in `find . -maxdepth 1 -mindepth 1 -type f -executable`; do 
-		rm -f "$bin_path/${file#./}"
+		rm -f "$bin_path/${file#./}" >/dev/null 2>&1
 	done
 	
 	cd ./conf

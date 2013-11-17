@@ -9,23 +9,31 @@
 
 ############################## tmpfs environment #######################
 #!!!!!!changing these values requires running !!!!!!!!!!!!!!!!!!!!!!!!!!
-#!!!!!!!!!!!!!!!!!!!!aaa-setup-tmpfs AND!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#!!!!!!!!!!!!!!!!!!!!aaa-setup-build-base AND!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #!!!!!!!!!!!!!!!!!!!!aaa-setup-build-env!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 #########################################
 #build in custom ramdisk or build on hdd
+#if you change this after running aaa-setup-build-base
+#you need to run aaa-setup-build-base again
 enable_tmpfs=yes
 #enable_tmpfs=no
 #########################################
 
 ###########################################
 #location of tmpfs dir MUST START WITH aaa
+#if you change this after running aaa-setup-build-base
+#you need to run aaa-setup-build-base again
 aaa_tmpfs_location="/aaa-tmpfs"
 ###########################################
 
 ##########################################################
 #max size of aaa tmpfs dir usually ram+swap, in gigs ie g
+#do not worry if the value is above you physical ram, if short of ram
+#tmpfs will use the swap disk instead
+#if you change this after running aaa-setup-build-base
+#you need to run aaa-setup-build-base again
 aaa_tmpfs_size=10g
 ##########################################################
 
@@ -34,16 +42,22 @@ aaa_tmpfs_size=10g
 
 ##########################################################
 #location of build results hdd
+#if you change this after running aaa-setup-build-base
+#you need to run aaa-setup-build-base again
 aaa_build_result_hdd="/var/cache/aaa/result"
 #########################################################
 
 ##########################################################
 #aaa_hdd_build_location hdd
+#if you change this after running aaa-setup-build-base
+#you need to run aaa-setup-build-base again
 aaa_hdd_build_location="/var/cache/aaa/build"
 ##########################################################
 
 ##########################################################
-#location of my work dir - hdd 
+#location of my work dir - hdd
+#if you change this after running aaa-setup-build-base
+#you need to run aaa-setup-build-base again
 aaa_work_dir_hdd="/var/cache/aaa/aaa-work-dir"
 ##########################################################
 
@@ -218,6 +232,14 @@ aaa_cinnamon_git_list="cinnamon-translations cinnamon-desktop cjs nemo cinnamon-
 ##########################################################
 #locatin for built package cache
 aaa_compiz_cache_dir="$HOME/git/github/debian-public-packages/compiz"
+##########################################################
+
+
+############################## aaa-build-pupvm ##################################
+
+##########################################################
+#locatin for built package cache
+aaa_pupvm_cache_dir="$HOME/git/github/debian-public-packages/pupvm"
 ##########################################################
 
 

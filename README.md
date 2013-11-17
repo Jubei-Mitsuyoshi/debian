@@ -1,4 +1,9 @@
-debian related packages source and scripts
+aaa..........debian related packages source and scripts
+
+intro................this is turning into o big git with lots of related
+scripts and debian packages
+
+
 
 Package list ( sources mainly packaged and repackaged by me )
 
