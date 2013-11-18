@@ -7,10 +7,18 @@ Usage() {
   cat <<EOF
 usage: ${0##*/} [options] distro dir
 
-  Currently this script takes one option
-  and 2 arguments
+  Currently this script takes three options
+  and 1 argument
   -d < distro >
   -d <kali|stable|unstable|testing|ubuntu>
+  
+  -n <no modding> do not mod the pakage just
+  build
+  
+  -i < include the built packages into your
+  custom repo>
+  
+  -g < building from git sources >
   
   This script uses pbuilder and reprepro
   to build the package in the current dir
@@ -56,7 +64,7 @@ export AAA_SUPRESS_LOCAL_PBUILDERRC="yes"
 #if no command arguments /etc/pbuilderrc is used instead which is  fallback
 rm -rf $HOME/.pbuilderrc
 
-while getopts ":d:" opt; do
+while getopts ":d:nig" opt; do
   case $opt in
     d) Info "-d $OPTARG" 
 		case $OPTARG in
@@ -64,8 +72,13 @@ while getopts ":d:" opt; do
 										export AAA_DEBIAN_DISTRO="$OPTARG"
 										export AAA_SUPRESS_LOCAL_PBUILDERRC="no" ;;
 									  *) Fuck "<-d $OPTARG> is not valid, needs to be <-d kali,stable,unstable,testing or ubuntu>"  ;;
- 
 		esac ;;
+	n) no_mod=1 
+		Info "-n passed, will not mod changes file" ;;
+	i) include_deb=1 
+		Info "-i passed, will include result dsc in custom repo" ;;
+	g) git_build=yes
+		Info "-i passed, will include result dsc in custom repo" ;;
    \?) Fuck "Invalid option: -$OPTARG" ;;
     :) Fuck "Option -$OPTARG requires a distro name, kali,stable,unstable,testing or ubuntu" ;;
   esac
@@ -95,9 +108,25 @@ function ModDEbFiles()
 	
 	local version=$(dpkg-parsechangelog --show-field Version)
 	local name=$(dpkg-parsechangelog --show-field Source)
-	dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
-with possible modifications"
-
+	[[ $git_build == yes ]] && aaa_pkg_tag="$aaa_pkg_tag""-git$bdate"
+	case "$name" in
+		nemo) dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
+patch (remove_elevated_privelages_banner.patch) applied
+to remove annoying red banner when running under root" ;;
+	libgnome2-0|gnome-applets) dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
+only change being gvfs is now gvfs | pup-volume-monitor
+in the dependencies" ;;
+			compiz) dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
+many changes applied from the original ubuntu
+package, all unity references removed, gconf schems
+modified, other various changes" ;;
+			emerald) dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
+no patches from upstream code" ;;
+			gdebi) dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
+all references of gksu removed and likewise
+for the dependencies" ;;
+			*) dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me" ;;	
+	esac
 # set package type
 #MakeADir "./debian/source"
 #echo "3.0 (quilt)" > "./debian/source/format"
@@ -108,7 +137,8 @@ rm -f ./debian/source/format
 
 #check script dependencies
 CheckMyDeps "reprepro pbuilder dpkg-source"
-[[ $aaa_build_env_setup_complete_yes_no == "yes" ]] || Fuck "this script need the build environment setup, run aaa-setup-build-env"
+[[ $aaa_setup_build_base_complete == yes ]] || Fuck "this script needs the base build environment setup, run aaa_setup-build-base"
+[[ $aaa_setup_build_env_complete == "yes" ]] || Fuck "this script needs the build environment setup, run aaa-setup-build-env"
 
 #setup working dirs
 CleanMyBuildArea
@@ -118,7 +148,7 @@ UpdateBase
 
 cp -R -p "$1" $aaa_work_dir
 cd "$aaa_work_dir/$1"
-ModDEbFiles
+[[ $no_mod -eq 1 ]] || ModDEbFiles
 cd ..
 # build modified source package
 dpkg-source --format=1.0 -b $(ls -d */)
@@ -128,5 +158,6 @@ Test pbuilder --build *.dsc
 
 cd "$aaa_build_result"
 dir
+[[ $include_deb -eq 1 ]] && Test reprepro -b "$aaa_localrepo_dir" include $aaa_debian_distro *.changes
 
 

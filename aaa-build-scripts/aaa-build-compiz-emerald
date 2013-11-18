@@ -90,40 +90,34 @@ fi
 
 
 function ModDEbFiles()
-{
+{	
 	
-  local aaa_old_maintainer=""
-
-vername=$(sed -n 1p "./debian/changelog" | sed 's/-.*//')
-
-sed -i '1s/^/'"$vername-$aaa_pkg_tag) $aaa_debian_distro"'; urgency=medium \
-\
-  * recompiled for '"$aaa_pkg_tag by me"' \
-\
-  * most ubuntu patches removed \
-\
-  * patched to remove all unity references, session migration etc \
-\
-  * further patched to remove bug while compiling for kali \
-\
- -- '"$aaa_maintainer  $(date +"%a, %d %b %Y %H:%M:%S %z   ")\n\n/" "./debian/changelog"
- 
-aaa_old_maintainer=$(grep -F -m 1 "Maintainer" "./debian/control" | sed 's/Maintainer: //')
-
-sed -i "s/$aaa_old_maintainer/$aaa_maintainer/" "./debian/control"
+	#ugly hack
+	rm -f ./debian/source/format
+  	local version=$(dpkg-parsechangelog --show-field Version)
+	local name=$(dpkg-parsechangelog --show-field Source)
+	case "$name" in
+			compiz) dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
+many changes applied from the original ubuntu
+package, all unity references removed, gconf schems
+modified, other various changes" ;;
+			emerald) dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
+no patches from upstream code" ;;
+	esac
 
 # set package type
 #MakeADir "./debian/source"
 #echo "3.0 (quilt)" > "./debian/source/format"
-#ugly hack
-rm -f ./debian/source/format
+
+
 
 }
 
 
 #check script dependencies
 CheckMyDeps "reprepro pbuilder sed dpkg-source"
-[[ $aaa_build_env_setup_complete_yes_no == "yes" ]] || Fuck "this script need the build environment setup, run aaa-setup-build-env"
+[[ $aaa_setup_build_base_complete == yes ]] || Fuck "this script needs the base build environment setup, run aaa_setup-build-base"
+[[ $aaa_setup_build_env_complete == "yes" ]] || Fuck "this script needs the build environment setup, run aaa-setup-build-env"
 
 #setup working dirs
 CleanMyBuildArea

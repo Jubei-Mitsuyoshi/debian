@@ -193,10 +193,10 @@ aaa_localrepo_dir="/aaa-repo"
 
 ###############################
 #new tag to identify packages
-aaa_pkg_tag_testing="jessie"
-aaa_pkg_tag_unstable="sid"
-aaa_pkg_tag_kali="kali"
-aaa_pkg_tag_ubuntu="saucy"
+aaa_pkg_tag_testing="jessie-aaa"
+aaa_pkg_tag_unstable="sid-aaa"
+aaa_pkg_tag_kali="kali-aaa"
+aaa_pkg_tag_ubuntu="saucy-aaa"
 ###############################
 
 

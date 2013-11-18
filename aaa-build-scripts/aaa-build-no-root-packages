@@ -113,5 +113,8 @@ gdebi -o="--no-upgrade --no-install-recommends" -n *.deb
 
 
 
+####################### build all the no root git packages and install em
+
+
 
 
