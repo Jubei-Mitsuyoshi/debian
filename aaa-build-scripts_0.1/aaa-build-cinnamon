@@ -348,7 +348,7 @@ for _package in $aaa_cinnamon_git_list; do
 		esac
 	else
 		cd "$aaa_cinnamon_sources_git"
-		CloneIt "$_package" && BuildIt g "$_package" 
+		CloneIt "$_package" && BuildIt "$_package" g
 	fi
 done
 
