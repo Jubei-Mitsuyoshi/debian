@@ -34,9 +34,9 @@ if [[ $clean_up == yes ]]; then
 	cd aaa-build-scripts_*
 	./aaa-linkup -c
 	cd ..
-	cd aaa-admin-scripts_*
-	./aaa-linkup -c
-	cd ..
+#	cd aaa-admin-scripts_*
+#	./aaa-linkup -c
+#	cd ..
 else
 	cd aaa-env_*
 	./aaa-linkup
@@ -44,7 +44,7 @@ else
 	cd aaa-build-scripts_*
 	./aaa-linkup
 	cd ..
-	cd aaa-admin-scripts_*
-	./aaa-linkup
-	cd ..
+#	cd aaa-admin-scripts_*
+#	./aaa-linkup
+#	cd ..
 fi

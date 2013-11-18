@@ -145,10 +145,6 @@ usage: ./aaa-linkup < -c >
 list not available package in flux
 
 
-----------------------fontconfig-infinality----------------------------
-
-the latest sources for fontconfig-infinality for debian
-
 
 
 ----------------------pup-volume-monitor------------------------------
