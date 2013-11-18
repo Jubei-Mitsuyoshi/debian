@@ -1,0 +1,53 @@
+#!/bin/sh
+exec tail -n +3 $0
+# This file provides an easy way to add custom menu entries.  Simply type the
+# menu entries you want to add after this comment.  Be careful not to change
+# the 'exec tail' line above.
+menuentry "Windows 7 EDA EMBEDDED CODE (on /dev/sda1)" --class windows --class os {
+	savedefault
+	insmod part_msdos
+	insmod ntfs
+	parttool (hd0,1) hidden-
+	parttool (hd0,3) hidden+
+	parttool (hd1,1) hidden+
+	parttool (hd1,2) hidden+
+	set root='(hd0,msdos1)'
+	chainloader +1
+	parttool (hd0,1) boot+
+}
+menuentry "Windows 7 GAMES/3D DESIGN/2D DESIGN (on /dev/sda3)" --class windows --class os {
+	savedefault
+	insmod part_msdos
+	insmod ntfs
+	parttool (hd0,1) hidden+
+	parttool (hd0,3) hidden-
+	parttool (hd1,1) hidden+
+	parttool (hd1,2) hidden+
+	set root='(hd0,msdos3)'
+	chainloader +1
+	parttool (hd0,3) boot+
+}
+menuentry "Windows 7 CODE/OFFICE (on /dev/sdb1)" --class windows --class os {
+	savedefault
+	insmod part_msdos
+	insmod ntfs
+	parttool (hd0,1) hidden+
+	parttool (hd0,3) hidden+
+	parttool (hd1,1) hidden-
+	parttool (hd1,2) hidden+
+	set root='(hd1,msdos1)'
+	chainloader +1
+	parttool (hd1,1) boot+
+}
+menuentry "Windows 7 PLC/INDUSTRIAL PROGRAMMING (on /dev/sdb2)" --class windows --class os {
+	savedefault
+	insmod part_msdos
+	insmod ntfs
+	parttool (hd0,1) hidden+
+	parttool (hd0,3) hidden+
+	parttool (hd1,1) hidden+
+	parttool (hd1,2) hidden-
+	set root='(hd1,msdos2)'
+	chainloader +1
+	parttool (hd1,2) boot+
+}

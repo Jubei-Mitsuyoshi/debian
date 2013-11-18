@@ -1,0 +1,24 @@
+#!/bin/bash
+
+##### Install zsh
+apt-get -y install zsh git
+#--- Setup oh-my-zsh
+curl -s -L https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh | sh
+#--- Configure zsh
+file=/root/.zshrc; [ -e $file ] && cp -n $file{,.bkup}   #/etc/zsh/zshrc
+grep -q interactivecomments /root/.zshrc || echo "setopt interactivecomments" >> /root/.zshrc
+grep -q ignoreeof /root/.zshrc || echo "setopt ignoreeof" >> /root/.zshrc
+grep -q correctall /root/.zshrc || echo "setopt correctall" >> /root/.zshrcsudo
+grep -q globdots /root/.zshrc || echo "setopt globdots" >> /root/.zshrc
+grep -q bash_aliases /root/.zshrc || echo -e 'source $HOME/.bash_aliases' >> /root/.zshrc   #grep -q bashrc /root/.zshrc || echo -e 'source $HOME/.bashrc' >> /root/.zshrc
+#--- Configure zsh (themes) ~ https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
+sed -i 's/ZSH_THEME=.*/ZSH_THEME="alanpeabody"/' /root/.zshrc   # alanpeabody jreese   mh   candy   terminalparty kardan   nicoulaj sunaku    (Other themes I liked)
+#--- Configure oh-my-zsh
+sed -i 's/.*DISABLE_AUTO_UPDATE="true"/DISABLE_AUTO_UPDATE="true"/' /root/.zshrc
+sed -i 's/plugins=(.*)/plugins=(git screen tmux last-working-dir)/' /root/.zshrc
+#--- Set zsh as default
+chsh -s `which zsh`
+#--- Use zsh
+#/usr/bin/env zsh
+#source /root/.zshrc
+

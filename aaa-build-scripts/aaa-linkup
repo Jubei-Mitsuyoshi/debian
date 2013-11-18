@@ -1,0 +1,72 @@
+#!/bin/bash
+
+Usage() {
+  cat <<EOF
+usage: ${0##*/} [options]
+
+  -c | --clean remove all symlinks,restore
+  backups
+  
+  
+
+EOF
+}
+
+if [[ $1 = @(-h|--help) ]]; then
+  Usage
+  exit 1
+fi
+
+while getopts 'c' arg; do
+	case "$arg" in
+		c|--clean) clean_up=1 ;;
+	esac
+done
+
+
+function MakeADir()
+{
+	
+	
+	if [[ ! -d "$1" ]]; then
+			mkdir -p "$1" || exit 2
+	fi
+	
+	
+}
+
+#hook_path="/usr/share/aaa/pbuilder/hooks"
+#patch_path="/usr/share/aaa/patches"
+bin_path="/usr/bin"
+#conf_path="/usr/share/aaa"
+
+	
+#hooklinks="D05deps"
+
+#conflinks="aaa-master-config"
+
+for file in `find . -maxdepth 1 -mindepth 1 -type f -executable`; do
+	if [[ ! ${file#./} == "aaa-linkup" ]]; then
+		[[ $clean_up ]] && rm -f "$bin_path/${file#./}"
+		[[ $clean_up ]] || ln -s -f "$(pwd)/${file#./}" "$bin_path/${file#./}"
+	fi
+ done
+
+#MakeADir /usr/share/aaa/patches
+#MakeADir /usr/share/aaa/pbuilder/hooks
+#	
+#for file in `find . -maxdepth 1 -mindepth 1 -type f -name "*.patch"`; do 
+#	[[ $clean_up ]] && rm -f "$patch_path/${file#./}"
+#	[[ $clean_up ]] || ln -s -f "$(pwd)/${file#./}" "$patch_path/${file#./}"
+#done	
+# 
+#for f in $hooklinks; do 
+#	[[ $clean_up ]] && rm -f "$hook_path/$f"
+#	[[ $clean_up ]] || ln -s -f "$(pwd)/$f" "$hook_path/$f"
+#done
+#
+#for f in $conflinks; do 
+#	[[ $clean_up ]] && ln -s -f "$(pwd)/$f" "$conf_path/$f"
+#	[[ $clean_up ]] || ln -s -f "$(pwd)/$f" "$conf_path/$f"
+#done
+

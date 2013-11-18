@@ -1,0 +1,361 @@
+#!/bin/bash
+
+
+################ common header identical except for usage, getopts etc #########################################################################################################
+shopt -s extglob
+
+cd "$HOME"
+bdate=$(date +%Y%m%d-%H%M%S)
+
+Usage() {
+  cat <<EOF
+usage: ${0##*/} [options] distro
+
+   Currently this script takes two options
+  and one argument
+  -d < distro >
+  -d <kali|stable|unstable|testing|ubuntu>
+  -g [build from git sources]
+  
+  This script uses pbuilder and reprepro
+  to build cinnamon git or releases
+   for the desired distro
+  (including kali)
+  all packaging follows debian guidelines
+
+EOF
+}
+
+if [[ $1 = @(-h|--help) ]]; then
+  Usage
+  exit 1
+fi
+
+#source common functions
+if [[ -r /usr/bin/aaa-common-functions ]]; then
+	. /usr/bin/aaa-common-functions
+	if [[ ! $? -eq 0 ]]; then
+		echo " failed to source common functions at /usr/bin/aaa-common-functions"
+		echo "quitting !! "
+		exit 1
+	fi
+else
+	echo " failed to find common functions at /usr/bin/aaa-common-functions"
+	echo "quitting !! "
+	exit 1
+fi
+
+#source settings
+if [ -r $HOME/.aaa_settings ]; then
+  Info "found a settings file.. reading it"
+  . $HOME/.aaa_settings
+fi
+
+# get options and arguments, if none fallback to testing
+export AAA_DEBIAN_DISTRO=""
+export AAA_SUPRESS_LOCAL_PBUILDERRC="yes"
+#remove previous run config if any, will be rewritten when aaa-master-config is sourced
+#if no command arguments /etc/pbuilderrc is used instead which is testing fallback
+rm -rf $HOME/.pbuilderrc
+
+while getopts ":d:" opt; do
+  case $opt in
+    d) Info "-d $OPTARG" 
+		case $OPTARG in
+	kali|testing|unstable|stable|ubuntu) Info "-d $OPTARG is valid, building for $OPTARG"
+										export AAA_DEBIAN_DISTRO="$OPTARG"
+										export AAA_SUPRESS_LOCAL_PBUILDERRC="no" ;;
+									  *) Fuck "<-d $OPTARG> is not valid, needs to be <-d kali,stable,unstable,testing or ubuntu>"  ;;
+ 
+		esac ;;
+	g) Info "-g recieved all builds will be from git, that ok with you ?"
+		AnyKey
+		aaa_cinnamon_git_list="$aaa_cinnamon_release_list $aaa_cinnamon_git_list"
+		aaa_cinnamon_release_list="" ;;
+   \?) Fuck "Invalid option: -$OPTARG" ;;
+    :) Fuck "Option -$OPTARG requires a distro name, kali,stable,unstable,testing or ubuntu" ;;
+  esac
+done
+
+#source config
+if [ -r /usr/share/aaa/aaa-master-config ]; then
+  Info "found my master config file.. reading it"
+  . /usr/share/aaa/aaa-master-config
+	if [ -r $HOME/.aaa-local-config ]; then
+		Info "found a local settings file.. reading it"
+		. $HOME/.aaa-local-config
+	fi
+else
+	Fuck "Failed to find master settings file quitting"
+	exit 1
+fi
+
+
+########## end of common header #############################################################################################################################################
+#check script dependencies
+
+CheckMyDeps "reprepro pbuilder sed cat find grep dpkg-source lynx"
+[[ $aaa_setup_build_base_complete == yes ]] || Fuck "this script needs the base build environment setup, run aaa_setup-build-base"
+[[ $aaa_setup_build_env_complete == "yes" ]] || Fuck "this script needs the build environment setup, run aaa-setup-build-env"
+
+
+function FailOkFilter()
+{
+	#argument
+	#name of package
+	case "$1" in
+		cinnamon-bluetooth|cinnamon-screensaver|cinnamon-themes|nemo-python|nemo-compare|nemo-dropbox|nemo-fileroller|nemo-gtkhash|nemo-media-columns|nemo-pastebin|nemo-preview|nemo-rabbitvcs|nemo-seahorse|nemo-share) Warn "$1 failed to build, this is not a critical component"
+			Warn "so can continue with the other components, that ok swith you?"
+			Warn "ctrl-c to quit"
+			AnyKey ;;
+		*) Fuck "$1 failed to build and is a critical component of cinnamon, quitting !" ;;
+	
+	esac
+
+
+}
+
+
+function GetRelease()
+{
+		
+aaa_escape=0
+while [[ $aaa_escape -eq 0 ]]; do
+	wget $(lynx -dump -listonly https://github.com/linuxmint/$1/releases | sed '/master.zip/d' | grep -m 1 '.tar.gz' | sed -r 's/^.{6}//')
+	if [[ ! $? -eq 0 ]]; then
+		case "$1" in
+		cinnamon-bluetooth|cinnamon-screensaver|cinnamon-themes|nemo-extensions) Warn "$1 failed to download, lynx often has a breakdown.
+this is not a critical component
+so can continue with the other components, or try to download
+again, i would advise you try again a few times"
+		Info "Any other key will download again"
+		MenuActive "q" "to pass onto the next package"
+		read -s -n1 aaa_tmpchr
+		[[ $aaa_tmpchr == q ]] && return 1 ;;
+						*) Warn "$1 failed to download and is a critical component of cinnamon, you must try again" 
+							AnyKey ;;
+	
+		esac
+	else
+		tar -xzf *.tar.gz
+		rm -f *.tar.gz
+		aaa_escape=1
+	fi
+done
+
+return 0
+
+}
+
+function CloneIt()
+{
+aaa_escape=0
+while [[ $aaa_escape -eq 0 ]]; do
+	Info "downloading git://github.com/linuxmint/$1.git"
+	git clone "git://github.com/linuxmint/$1.git"
+	if [[ ! $? -eq 0 ]]; then
+		Warn "git clone $1,, bugged out, mostly due to bad internet"
+		Warn "since with this build i cant miss a package i need to try again"
+		Warn "if thats not good for you ${aaa_ctrl_c} to quit"
+		AnyKey
+	else
+		aaa_escape=1
+	fi
+done
+}
+
+
+
+
+function BuildOne()
+{
+	
+	local version=$(dpkg-parsechangelog --show-field Version)
+	local name=$(dpkg-parsechangelog --show-field Source)
+	dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
+with possible modifications"
+	
+
+#	echo '3.0 (quilt)' > ./debian/source/format
+	rm -f ./debian/source/format
+	cd ..
+	
+
+	# build modified source package
+	dpkg-source --format=1.0 -b $(ls -d */)
+	
+	# build a binary and source
+	pbuilder --build *.dsc
+	if [[ $? -eq 0 ]]; then
+		#add package to result repo and working repo
+		cd "$aaa_build_result"
+#		for remove_targt in $(find . -maxdepth 1 -mindepth 1 -type f -name *.deb); do
+#			reprepro -Vb "$aaa_localrepo_dir" removematched $aaa_work_repo "*${${remove_targt#./}%.deb}*"  > /dev/null 2>&1
+#			reprepro -Vb "$aaa_localrepo_dir" removematched $aaa_debian_distro "*${${remove_targt#./}%.deb}*"  > /dev/null 2>&1
+#		done
+		Test reprepro -b "$aaa_localrepo_dir" includedeb $aaa_work_repo *.deb
+		Test reprepro -b "$aaa_localrepo_dir" include $aaa_debian_distro *.changes
+	
+		#clean up
+		[[ $1 == g ]] && find . -maxdepth 1 -mindepth 1 -type f -exec mv -f '{}' "$aaa_cinnamon_cache_dir/git-builds/$aaa_debian_distro/$bdate" \;
+		[[ $1 == g ]] || find . -maxdepth 1 -mindepth 1 -type f -exec mv -f '{}' "$aaa_cinnamon_cache_dir/release-builds/$aaa_debian_distro/$bdate" \;
+	else
+		FailOkFilter "$name"
+	fi
+	cd $HOME
+	rm -rf "$aaa_work_dir"
+	rm -rf "$aaa_build_result"
+	MakeADir "$aaa_work_dir"
+	MakeADir "$aaa_build_result"
+	
+}
+
+
+function BuildIt()
+{
+	#one argument, git repo name -- is extensions ?
+	#second argument is it a git build?
+if [[ $1 == "nemo-extensions" ]]; then
+	here=$(pwd)
+	cd "$here/nemo-extensions"
+	for _extension in $(ls -d */); do
+		Block "building $_extension "
+		if [[ ${_extension%%/} = "git" ]]; then
+			continue
+		fi
+		cp -R -p ${_extension%%/} $aaa_work_dir
+		cd $aaa_work_dir/${_extension%%/}
+		PatchEm ${_extension%%/}
+		BuildOne ${_extension%%/}
+		cd "$here/nemo-extensions"
+	done
+else
+	cp -R -p "$1"* $aaa_work_dir
+	cd $aaa_work_dir/$1*
+	PatchEm "$1"
+	BuildOne "$1" "$2"
+fi
+
+}
+
+
+#setup working dir
+
+CleanMyBuildArea
+MakeADir "$aaa_cinnamon_cache_dir/release-builds/$aaa_debian_distro/$bdate"
+MakeADir "$aaa_cinnamon_cache_dir/git-builds/$aaa_debian_distro/$bdate"
+
+#update / create base immage
+UpdateBase
+
+
+# clean out old repo of cinnamon packages if update
+
+CleanMyRepo $aaa_debian_distro "cinnamon muffin nemo cjs"
+CleanMyRepo  $aaa_work_repo "cinnamon muffin nemo cjs"
+
+
+#check for previous working copy
+if [[ -d "$aaa_cinnamon_sources_release" ]]; then
+	 Info "$aaa_cinnamon_sources_release already exists"
+	MenuActive "k" "to keep all sources"
+	MenuActive "s" "to to decide weather to keep individual sources"
+	MenuActive "q" "to quit with a return of 1"
+	MenuActive "any other key" "delete old directory"
+	read -s -n1 aaa_tmpchr
+	case "$aaa_tmpchr" in
+		q) exit 1 ;;
+		k) decide="keep" ;;
+		s) decide="choose" ;;
+		*) rm -fr "$aaa_cinnamon_sources_release"
+			MakeADir "$aaa_cinnamon_sources_release" ;;
+	esac
+else
+	MakeADir "$aaa_cinnamon_sources_release" 
+fi
+
+for _package in $aaa_cinnamon_release_list; do
+	if [ -d "$aaa_cinnamon_sources_release/$_package"* ]; then
+		Info "$aaa_cinnamon_sources_release/$_package already exists"
+		case $decide in
+			keep) Info "keep all sources is on! keeping source $aaa_cinnamon_sources_release/$_package and building from it"
+					cd "$aaa_cinnamon_sources_release"
+					BuildIt "$_package" ;;
+		choose) Info "choose is on! you get a choice with each package its Christmas!"
+					MenuActive "k" "to keep these sources and build from them"
+					MenuActive "d" "to delete old directory and fetch fresh from git"
+					MenuActive "any other key" "to skip fetching and or building"
+					read -s -n1 aaa_tmpchr
+					case $aaa_tmpchr in
+						k) Info "keeping source $aaa_cinnamon_sources_release/$_package building from it"
+							cd "$aaa_cinnamon_sources_release"
+							BuildIt "$_package" ;;
+						d) rm -fr "$aaa_cinnamon_sources_release/$_package"*
+							cd "$aaa_cinnamon_sources_release"
+							GetRelease "$_package" && BuildIt "$_package" ;;
+						*) Info "skipping building $aaa_cinnamon_sources_release/$_package" ;;
+					esac ;;
+			*) Fuck "Internal error" ;;
+		esac
+	else
+		cd "$aaa_cinnamon_sources_release"
+		GetRelease "$_package" && BuildIt "$_package" 
+	fi
+done
+
+#check for previous working copy
+if [[ -d "$aaa_cinnamon_sources_git" ]]; then
+	 Info "$aaa_cinnamon_sources_git already exists"
+	MenuActive "k" "to keep all git sources"
+	MenuActive "s" "to to decide weather to keep individual sources"
+	MenuActive "q" "to quit with a return of 1"
+	MenuActive "any other key" "delete old directory"
+	read -s -n1 aaa_tmpchr
+	case "$aaa_tmpchr" in
+		q) exit 1 ;;
+		k) decide="keep" ;;
+		s) decide="choose" ;;
+		*) rm -fr "$aaa_cinnamon_sources_git"
+			MakeADir "$aaa_cinnamon_sources_git" ;;
+	esac
+else
+	MakeADir "$aaa_cinnamon_sources_git" 
+fi
+
+cd "$aaa_cinnamon_sources_git"
+for _package in $aaa_cinnamon_git_list; do
+	if [ -d "$aaa_cinnamon_sources_git/$_package" ]; then
+		Info "$aaa_cinnamon_sources_git/$_package already exists"
+		case $decide in
+			keep) Info "keep all sources is on! keeping source $aaa_cinnamon_sources_git/$_package and building from it"
+				cd "$aaa_cinnamon_sources_git"
+				BuildIt "$_package" ;;
+		  choose) Info "choose is on! you get a choice with each package its Christmas!"
+					MenuActive "k" "to keep these sources and build from them"
+					MenuActive "d" "to delete old directory and fetch fresh from git"
+					MenuActive "any other key" "to skip fetching and building"
+					read -s -n1 aaa_tmpchr
+					case $aaa_tmpchr in
+						k) Info "keeping source $aaa_cinnamon_sources_git/$_package and building from it"
+							cd "$aaa_cinnamon_sources_git"
+							BuildIt "$_package" g ;;
+						d) rm -fr "$aaa_cinnamon_sources_git/$_package"
+							cd "$aaa_cinnamon_sources_git"
+							CloneIt "$_package" && BuildIt "$_package" g ;;
+						*) Info "skipping building $aaa_cinnamon_sources_git/$_package" ;;
+					esac ;;
+			  *) Fuck "Internal error" ;;
+		esac
+	else
+		cd "$aaa_cinnamon_sources_git"
+		CloneIt "$_package" && BuildIt "$_package" g
+	fi
+done
+
+
+
+#cd $HOME
+#apt-get update
+#apt-get --no-upgrade --no-install-recommends install --reinstall "cinnamon*" "muffin*" "cjs*" "nemo*"
+
+

@@ -1,0 +1,40 @@
+#!/bin/bash
+
+##### Install tftp
+#--- Client
+apt-get -y install tftp
+#--- Server
+apt-get -y install atftpd
+
+
+##### Install lynx
+apt-get -y install lynx
+
+
+##### Install p7zip
+apt-get -y install p7zip
+
+
+##### Install zip
+apt-get -y install zip
+
+
+##### Install pptp vpn support
+apt-get -y install network-manager-pptp-gnome network-manager-pptp
+
+
+
+##### Install the backdoor factory
+apt-get -y install backdoor-factory
+
+
+##### Install bully
+apt-get -y install bully
+
+
+##### Install seclist ~ http://bugs.kali.org/view.php?id=648
+apt-get -y install seclists
+
+
+##### Install unicornscan ~ http://bugs.kali.org/view.php?id=388
+apt-get -y install unicornscan

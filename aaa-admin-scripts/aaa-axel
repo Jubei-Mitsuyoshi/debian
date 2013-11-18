@@ -1,0 +1,8 @@
+#!/bin/bash
+
+
+##### Install axel
+apt-get -y install axel
+#--- Setup alias
+grep -q 'alias axel="axel -a"' /root/.bash_aliases || echo 'alias axel="axel -a"' >> /root/.bash_aliases
+#source /root/.bashrc

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+
+##### Install nessus
+#--- Get download link
+xdg-open http://www.tenable.com/products/nessus/select-your-operating-system    #wget "http://downloads.nessus.org/<file>" -O /tmp/nessus.deb   # ***!!! Hardcoded version value
+dpkg -i /usr/local/src/Nessus-*-debian6_i386.deb
+#rm -f /tmp/nessus.deb
+/opt/nessus/sbin/nessus-adduser   #<--- Doesn't automate
+xdg-open http://www.tenable.com/products/nessus/nessus-plugins/register-a-homefeed
+#--- Check email
+ /opt/nessus/bin/nessus-fetch --register <key>   #<--- Doesn't automate
+service nessusd start
+

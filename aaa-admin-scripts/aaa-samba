@@ -1,0 +1,20 @@
+#!/bin/bash
+
+
+##### Configure samba
+#--- Create samba user
+useradd -M  -d /nonexistent -s /bin/false samba
+#--- Use samba user
+grep -q 'guest account =' /etc/samba/smb.conf
+if [ $? -eq 0 ]; then sed -i 's/guest account = .*/guest account = samba/' /etc/samba/smb.conf; else sed -i 's/\[global\]/\[global\]\n   guest account = samba/' /etc/samba/smb.conf; fi
+#--- Create samba path and configure it
+mkdir -p /var/samba/
+chown -R samba:samba /var/samba/
+chmod -R 0770 /var/samba/
+#--- Setup samba paths
+grep -q '\[shared\]' /etc/samba/smb.conf || echo -e '\n[shared]\n   comment = Shared\n   path = /var/samba/\n   browseable = yes\n   read only = no\n   guest ok = yes' >> /etc/samba/smb.conf
+#grep -q '\[www\]' /etc/samba/smb.conf || echo -e '\n[www]\n   comment = WWW\n   path = /var/www/\n   browseable = yes\n   read only = yes\n   guest ok = yes' >> /etc/samba/smb.conf
+#--- Check result
+#service samba restart
+#smbclient -L \\127.0.0.1 -N
+#service samba stop

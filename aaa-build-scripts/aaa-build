@@ -1,0 +1,132 @@
+#!/bin/bash
+
+################ common header identical except for usage, getopts etc #########################################################################################################
+shopt -s extglob
+
+Usage() {
+  cat <<EOF
+usage: ${0##*/} [options] distro dir
+
+  Currently this script takes one option
+  and 2 arguments
+  -d < distro >
+  -d <kali|stable|unstable|testing|ubuntu>
+  
+  This script uses pbuilder and reprepro
+  to build the package in the current dir
+  result is found at the location
+  specified in aaa-master-configure
+  as aaa_build_result
+  
+
+EOF
+}
+
+
+
+if [[ $1 = @(-h|--help) ]]; then
+  Usage
+  exit 1
+fi
+
+#source common functions
+if [[ -r /usr/bin/aaa-common-functions ]]; then
+	. /usr/bin/aaa-common-functions
+	if [[ ! $? -eq 0 ]]; then
+		echo " failed to source common functions at /usr/bin/aaa-common-functions"
+		echo "quitting !! "
+		exit 1
+	fi
+else
+	echo " failed to find common functions at /usr/bin/aaa-common-functions"
+	echo "quitting !! "
+	exit 1
+fi
+
+#source settings
+if [ -r $HOME/.aaa_settings ]; then
+  Info "found a settings file.. reading it"
+  . $HOME/.aaa_settings
+fi
+
+# get options and arguments http://wiki.bash-hackers.org/howto/getopts_tutorial
+export AAA_DEBIAN_DISTRO=""
+export AAA_SUPRESS_LOCAL_PBUILDERRC="yes"
+#remove previous run config if any, will be rewritten when aaa-master-config is sourced
+#if no command arguments /etc/pbuilderrc is used instead which is  fallback
+rm -rf $HOME/.pbuilderrc
+
+while getopts ":d:" opt; do
+  case $opt in
+    d) Info "-d $OPTARG" 
+		case $OPTARG in
+	kali|testing|unstable|stable|ubuntu) Info "-d $OPTARG is valid, building for $OPTARG"
+										export AAA_DEBIAN_DISTRO="$OPTARG"
+										export AAA_SUPRESS_LOCAL_PBUILDERRC="no" ;;
+									  *) Fuck "<-d $OPTARG> is not valid, needs to be <-d kali,stable,unstable,testing or ubuntu>"  ;;
+ 
+		esac ;;
+   \?) Fuck "Invalid option: -$OPTARG" ;;
+    :) Fuck "Option -$OPTARG requires a distro name, kali,stable,unstable,testing or ubuntu" ;;
+  esac
+done
+#shift the -d and argument out the way http://wiki.bash-hackers.org/howto/getopts_tutorial
+shift $((OPTIND-1))
+#and lets parse it
+[[ -z $1 ]] && Fuck "need a directory target"
+
+#source config
+if [ -r /usr/share/aaa/aaa-master-config ]; then
+  Info "found my master config file.. reading it"
+  . /usr/share/aaa/aaa-master-config
+	if [ -r $HOME/.aaa-local-config ]; then
+		Info "found a local settings file.. reading it"
+		. $HOME/.aaa-local-config
+	fi
+else
+	Fuck "Failed to find master settings file quitting"
+	exit 1
+fi
+
+########## end of common header #############################################################################################################################################
+
+function ModDEbFiles()
+{
+	
+	local version=$(dpkg-parsechangelog --show-field Version)
+	local name=$(dpkg-parsechangelog --show-field Source)
+	dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
+with possible modifications"
+
+# set package type
+#MakeADir "./debian/source"
+#echo "3.0 (quilt)" > "./debian/source/format"
+#ugly hack
+rm -f ./debian/source/format
+
+}
+
+#check script dependencies
+CheckMyDeps "reprepro pbuilder dpkg-source"
+[[ $aaa_build_env_setup_complete_yes_no == "yes" ]] || Fuck "this script need the build environment setup, run aaa-setup-build-env"
+
+#setup working dirs
+CleanMyBuildArea
+
+#update / create base immage
+UpdateBase
+
+cp -R -p "$1" $aaa_work_dir
+cd "$aaa_work_dir/$1"
+ModDEbFiles
+cd ..
+# build modified source package
+dpkg-source --format=1.0 -b $(ls -d */)
+
+
+Test pbuilder --build *.dsc
+
+cd "$aaa_build_result"
+dir
+
+
