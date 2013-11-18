@@ -3,7 +3,7 @@ aaa..........debian related packages source and scripts
 intro................this is turning into o big git with lots of related
 scripts and debian packages
 
-----------------------aaa-env_0.1------------------------------------
+----------------------aaa-env------------------------------------
 
 aaa-common-functions
 ---- Bash script
@@ -23,7 +23,7 @@ usage: none
 
 aaa-setup-build-base
 ---- Bash script
-usage: aaa-setup-tmpfs
+usage: aaa-setup-build-base
 
   Currently this script takes no
   options or arguments, when called it
@@ -60,8 +60,39 @@ usage: ./aaa-linkup < -c >
 	like make but with links
 
 
+Install...............
 
-----------------------aaa-build-scripts_0.1----------------------------
+there are 3 methods of installing these scripts.
+1) run ./aaa-linkup in the aaa-env dir
+( recomended if youare doing your own hacking
+on these scripts since changes are echoed to
+your git location)
+2) run make install in the aaa-env dir
+3) run aaa-install-all from the root git dir
+
+Run------------------( PLEASE ADD SUDO IF YOU USE PRIVALAGES )
+
+
+Default settings--------------
+Distro = unstable
+Build in tmps = yes
+Mirror location = denmark
+
+These and other settings are exposed in aaa-master-config,
+change as desired, read comments included in file
+
+cd to home directory
+
+run aaa-setup-build-base
+follow prompts, and read onscreen messages, which are extensive
+
+run aaa-setup-build-env
+follow prompts, and read onscreen messages, which are extensive
+
+
+
+
+----------------------aaa-build-scripts----------------------------
 
 aaa-build-compiz-emerald
 ---- Bash script
@@ -124,6 +155,21 @@ usage: aaa-build < -d distro >
   result is found at the location
   specified in aaa-master-configure
   as aaa_build_result
+  
+aaa-build-pupvm
+---- Bash script
+usage: aaa-build-pupvm < -d distro >
+
+  Currently this script takes one option
+  and argument
+  -d < distro >
+  -d <kali|stable|unstable|testing|ubuntu>
+  
+    This script uses pbuilder and reprepro
+  to build pup vm from git, it also creates
+  modified packages to allow pup-vm to work
+  in a native fassion on the given debian
+  distro
 
 
 aaa-linkup
@@ -138,96 +184,51 @@ usage: ./aaa-linkup < -c >
 	current dir to the correct locations
 	like make but with links
 
+-----------IMPORTANT NOTES-----------------------
+these build scripts depend on having installed and run the
+scripts in aaa-env, plese see relevent section for install
+and run info
+
+----------------------------------------------------------
 
 
-----------------------aaa-admin-scripts_0.1----------------------------
-
-list not available package in flux
-
-
-
-
-----------------------pup-volume-monitor------------------------------
-
-the latest sources for pup-volume-monitor packaged by me for debian
-
-pup-volume-monitor is to be a total and lightweigt replacement for
-
-udisks/udisks2 and gvfs, to use extra debian core packages need their
-deps modifying to include pup-vm, a script to do the modifications is
-available
+Install...............
+there are 3 methods of installing these scripts.
+1) run ./aaa-linkup in the aaa-env dir
+( recomended if youare doing your own hacking
+on these scripts since changes are echoed to
+your git location)
+2) run make install in the aaa-env dir
+3) run aaa-install-all from the root git dir
 
 
+----------------------aaa-admin-scripts----------------------------
+
+list not available-- package in flux
+
+-----------IMPORTANT NOTES-----------------------
+these admin scripts depend on having installed and run the
+scripts in aaa-env, plese see relevent section for install
+and run info
+
+----------------------------------------------------------
 
 
+Install...............
+there are 3 methods of installing these scripts.
+1) run ./aaa-linkup in the aaa-env dir
+( recomended if youare doing your own hacking
+on these scripts since changes are echoed to
+your git location)
+2) run make install in the aaa-env dir
+3) run aaa-install-all from the root git dir
 
 
+----------------------Kali---------------------------------------------
+
+various packages and various kali fixes, issues and package conflicts
 
 
-
-
-
-
-
-----------------------freetype-infinality------------------------------
-
-
-----------------------freetype-infinality------------------------------
-
-
-----------------------freetype-infinality------------------------------
-
-
-----------------------freetype-infinality------------------------------
-
-
-
-----------------------freetype-infinality------------------------------
-
-
-
-Package list ( sources mainly packaged and repackaged by me )
-
-pup-volume-monitor
-hopefully a complete replacement for udisks/2 and gvfs
-
-
-winexe and cuda-toolkit
-repackaged to fix a file confilict in kali
-
-
-
-Scripts list...... note this readme is not updated often :)
-note... i run a root only system, if you cnt su into your linux
-box dont even attemt running these scripts, sudo nshould also work
-
-
-KALI-JESSIE ( and possibly others )
-
-
-aaa-build-scripts_0.1
-new......................................................
-a make file is now available and all the debian distros
-are now supported ( kali jessie sid wheezy )
-fixed compiz build script
-
-
-.........................................................
-
-Scripts and related configs for kali-jessie linux
-AAA-Build-And-Associated-Scripts
-
-Platform.... Debian ( wheezy,jessie,kali,sid)
-Purpose..... Build forign debian packages and backport
-for kali
-
-
-
-Run in order
-
-
-
-Run as desired
 
 
   

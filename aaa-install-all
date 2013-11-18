@@ -28,20 +28,20 @@ while getopts 'c' arg; do
 done
 
 if [[ $clean_up == yes ]]; then
-	cd aaa-env_*
+	cd aaa-env
 	./aaa-linkup -c
 	cd ..
-	cd aaa-build-scripts_*
+	cd aaa-build-scripts
 	./aaa-linkup -c
 	cd ..
 #	cd aaa-admin-scripts_*
 #	./aaa-linkup -c
 #	cd ..
 else
-	cd aaa-env_*
+	cd aaa-env
 	./aaa-linkup
 	cd ..
-	cd aaa-build-scripts_*
+	cd aaa-build-scripts
 	./aaa-linkup
 	cd ..
 #	cd aaa-admin-scripts_*
