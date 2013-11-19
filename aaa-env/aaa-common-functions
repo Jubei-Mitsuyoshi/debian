@@ -135,14 +135,14 @@ function CheckMyDeps()
 for _checks in $1; do
 	command -v $_checks >/dev/null 2>&1
 	if [[ ! $? -eq 0 ]]; then
-		Warn"----$1------ is a dependency for this script, want me to install it?"
-		MenuActive "q" "to quit and install $1 yourself"
-		MenuActive "i" "to apt-get install $1"
+		Warn "----$_checks------ is a dependency for this script, want me to install it?"
+		MenuActive "q" "to quit and install $_checks yourself"
+		MenuActive "i" "to apt-get install $_checks"
 		read -s -n1 aaa_tmpchr
 		if [[ ! $aaa_tmpchr == q ]]; then
-			apt-get install "$1*"
+			apt-get install "$_checks*"
 		else
-			Fuck "----$1------ is a dependency for this script,... quitting untill its met"
+			Fuck "----$_checks------ is a dependency for this script,... quitting untill its met"
 		fi
 	else
 		aaa_escape=1
