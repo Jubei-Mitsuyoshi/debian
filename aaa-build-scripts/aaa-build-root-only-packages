@@ -10,11 +10,16 @@ bdate=$(date +%Y%m%d-%H%M%S)
 Usage() {
   cat <<EOF
 usage: ${0##*/}
+
+	Currently this script takes one option
+  and one argument
+  -d < distro >
+  -d <kali|stable|unstable|testing|ubuntu>
+  
     This script uses pbuilder and reprepro
-  to build pup vm from git, it also creates
-  modified packages to allow pup-vm to work
-  in a native fassion on the given debian
-  distro
+  to build a set of packages, the common
+  theme of which is to remove access rights
+  checks thus speeding up the packages
 
 EOF
 }
@@ -57,7 +62,7 @@ CheckMyDeps "reprepro pbuilder dpkg"
 
 
 
-mod_file_list="libgnome2-0 gnome-applets"
+root_only_file_list="gdebi timeshift"
 
 
 #setup working dir

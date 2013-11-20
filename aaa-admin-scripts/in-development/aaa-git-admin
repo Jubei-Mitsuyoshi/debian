@@ -1,0 +1,50 @@
+#!/bin/bash
+
+
+################ common header identical except for usage, getopts etc #########################################################################################################
+shopt -s extglob
+
+Usage() {
+  cat <<EOF
+usage: ${0##*/} [options]
+
+  -c | --clean remove all symlinks,restore
+  backups
+  
+  
+
+EOF
+}
+
+if [[ $1 = @(-h|--help) ]]; then
+  Usage
+  exit 1
+fi
+
+while getopts 'c' arg; do
+	case "$arg" in
+		c|--clean) clean_up="yes" ;;
+	esac
+done
+
+if [[ $clean_up == yes ]]; then
+	cd aaa-env
+	./aaa-linkup -c
+	cd ..
+	cd aaa-build-scripts
+	./aaa-linkup -c
+	cd ..
+#	cd aaa-admin-scripts_*
+#	./aaa-linkup -c
+#	cd ..
+else
+	cd aaa-env
+	./aaa-linkup
+	cd ..
+	cd aaa-build-scripts
+	./aaa-linkup
+	cd ..
+#	cd aaa-admin-scripts_*
+#	./aaa-linkup
+#	cd ..
+fi
