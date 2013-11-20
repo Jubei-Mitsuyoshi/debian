@@ -40,6 +40,7 @@ patch_path="/usr/share/aaa/patches"
 bin_path="/usr/bin"
 conf_path="/usr/share/aaa"
 
+patch_dirs=$(ls -d */)
 
 binlinks="aaa-common-functions \
 aaa-setup-build-env \
@@ -72,3 +73,14 @@ for f in $conflinks; do
 	[[ $clean_up ]] || ln -s -f "$(pwd)/$f" "$conf_path/$f"
 done
 
+for patch_dir in `ls -d */`; do 
+	MakeADir "$patch_path/${patch_dir%%/}"
+	[[ $clean_up ]] && rm -fr "$patch_path/${patch_dir%%/}"
+	if [[ ! $clean_up ]]; then
+		cd "${patch_dir%%/}"
+		for conf_file in `find . -maxdepth 1 -mindepth 1 -type f`; do
+			ln -s -f "$(pwd)/${conf_file#./}" "$patch_path/${patch_dir%%/}/${conf_file#./}"
+		done
+		cd ..
+	fi
+done
