@@ -1,0 +1,24 @@
+diff -rupN timeshift-1.2.7/debian/control timeshift-1.2.7_dev/debian/control
+--- timeshift-1.2.7/debian/control	2013-11-13 12:40:19.000000000 +0100
++++ timeshift-1.2.7_dev/debian/control	2013-11-20 11:41:26.975121677 +0100
+@@ -10,7 +10,7 @@ Homepage: http://teejeetech.blogspot.in/
+ 
+ Package: timeshift
+ Architecture: any
+-Depends: ${shlibs:Depends}, ${misc:Depends}, libgtk-3-0, libgee2, rsync, gksu, libblkid1
++Depends: ${shlibs:Depends}, ${misc:Depends}, libgtk-3-0, libgee2, rsync, libblkid1
+ #Recommends: 
+ Description: A system restore utility for Linux
+  TimeShift is a system restore utility which takes snapshots
+diff -rupN timeshift-1.2.7/src/TimeShift.desktop timeshift-1.2.7_dev/src/TimeShift.desktop
+--- timeshift-1.2.7/src/TimeShift.desktop	2013-11-13 12:40:19.000000000 +0100
++++ timeshift-1.2.7_dev/src/TimeShift.desktop	2013-11-20 11:40:46.711121535 +0100
+@@ -1,7 +1,7 @@
+ [Desktop Entry]
+ Name=TimeShift
+ MimeType=
+-Exec=gksu timeshift 
++Exec=timeshift 
+ Type=Application
+ GenericName=System Restore Utility
+ Terminal=false
