@@ -5,7 +5,8 @@
 shopt -s extglob
 
 cd "$HOME"
-bdate=$(date +%Y%m%d-%H%M%S)
+bdate=$(date +%#Y%#m%#d-%#H%#M%#S)
+git_bdate=$(date +%#Y%#m%#d)
 
 Usage() {
   cat <<EOF
@@ -171,14 +172,15 @@ function BuildOne()
 {
 	
 	local version=$(dpkg-parsechangelog --show-field Version)
-	local name=$(dpkg-parsechangelog --show-field Source)
+	local pkg_name=$(dpkg-parsechangelog --show-field Source)
+	local tag=$aaa_pkg_tag
 	
-	[[ $git_build == yes ]] && aaa_pkg_tag="$aaa_pkg_tag""-git$bdate"
-	case "$name" in
-		nemo) dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "compiled for $aaa_pkg_tag by me
+	[[ $git_build == yes ]] && tag="$aaa_pkg_tag""-git$git_bdate"
+	case "$pkg_name" in
+		nemo) dch -v "$version-$tag" --distribution "$aaa_debian_distro" "compiled for $aaa_debian_distro by me
 patch (remove_elevated_privelages_banner.patch) applied
 to remove annoying red banner when running under root" ;;
-			*) dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "compiled for $aaa_pkg_tag by me" ;;
+			*) dch -v "$version-$tag" --distribution "$aaa_debian_distro" "compiled for $aaa_debian_distro by me" ;;
 	esac
 	
 	
@@ -196,7 +198,7 @@ to remove annoying red banner when running under root" ;;
 	if [[ $? -eq 0 ]]; then
 		#add package to result repo and working repo
 		cd "$aaa_build_result"
-#		for remove_targt in $(find . -maxdepth 1 -mindepth 1 -type f -name *.deb); do
+#		for remove_targt in $(find . -maxdepth 1 -mindepth 1 -type f -pkg_name *.deb); do
 #			reprepro -Vb "$aaa_localrepo_dir" removematched $aaa_work_repo "*${${remove_targt#./}%.deb}*"  > /dev/null 2>&1
 #			reprepro -Vb "$aaa_localrepo_dir" removematched $aaa_debian_distro "*${${remove_targt#./}%.deb}*"  > /dev/null 2>&1
 #		done
@@ -207,7 +209,7 @@ to remove annoying red banner when running under root" ;;
 		[[ $git_build == yes ]] && find . -maxdepth 1 -mindepth 1 -type f -exec mv -f '{}' "$aaa_cinnamon_cache_dir/git-builds/$aaa_debian_distro/$bdate" \;
 		[[ $git_build == yes ]] || find . -maxdepth 1 -mindepth 1 -type f -exec mv -f '{}' "$aaa_cinnamon_cache_dir/release-builds/$aaa_debian_distro/$bdate" \;
 	else
-		FailOkFilter "$name"
+		FailOkFilter "$pkg_name"
 	fi
 	cd $HOME
 	rm -rf "$aaa_work_dir"
