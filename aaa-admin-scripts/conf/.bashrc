@@ -112,3 +112,5 @@ fi
 #custom paths and defs
 export CHROOT=$HOME/ArchDevChroot
 export ARCHDEV=$CHROOT/root
+
+export DEBEMAIL="Jubei Mitsuyoshi <jubei.house.of.five.masters@gmail.com>"

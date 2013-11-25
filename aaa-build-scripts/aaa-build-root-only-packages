@@ -89,6 +89,8 @@ cd $HOME
 DownLoad "http://ftp.dk.debian.org/debian/pool/main/g/gnome-disk-utility/gnome-disk-utility_3.0.2-3_amd64.deb"
 gdebi -o="--no-upgrade --no-install-recommends" -n gnome-disk-utility_3.0.2-3_amd64.deb
 
+cd "$aaa_work_dir"
+CloneIt "aaa-pup-volume-monitor" "git://github.com/Jubei-Mitsuyoshi"
 
 aaa_escape=0
 while [[ $aaa_escape -eq 0 ]]; do
@@ -105,10 +107,8 @@ while [[ $aaa_escape -eq 0 ]]; do
 done
 
 Test mv -f "aaa-pup-volume-monitor" "$aaa_work_dir"
-cd "$aaa_work_dir"
 
-# build modified source package
-dpkg-source --format=1.0 -b $(ls -d */)
+
 
 Test pbuilder --build *.dsc
 

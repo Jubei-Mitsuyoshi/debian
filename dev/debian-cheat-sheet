@@ -1,0 +1,18 @@
+import patch
+
+$ dpkg-source -x gentoo_0.9.12.dsc
+$ cd gentoo-0.9.12
+$ dquilt import ../foo.patch
+$ dquilt push
+$ dquilt refresh
+$ dquilt header -e
+... describe patch
+
+find make depends
+
+dpkg-depcheck -d ./configure
+
+
+make package
+
+dpkg-sourcegksu -b 

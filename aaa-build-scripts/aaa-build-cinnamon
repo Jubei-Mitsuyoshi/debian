@@ -52,9 +52,6 @@ if [ -r $HOME/.aaa_settings ]; then
   . $HOME/.aaa_settings
 fi
 
-# get options and arguments, if none fallback to testing
-export AAA_DEBIAN_DISTRO=""
-export AAA_SUPRESS_LOCAL_PBUILDERRC="yes"
 #remove previous run config if any, will be rewritten when aaa-master-config is sourced
 #if no command arguments /etc/pbuilderrc is used instead which is testing fallback
 rm -rf $HOME/.pbuilderrc
@@ -64,8 +61,7 @@ while getopts ":d:g" opt; do
     d) Info "-d $OPTARG" 
 		case $OPTARG in
 	kali|testing|unstable|stable|ubuntu) Info "-d $OPTARG is valid, building for $OPTARG"
-										export AAA_DEBIAN_DISTRO="$OPTARG"
-										export AAA_SUPRESS_LOCAL_PBUILDERRC="no" ;;
+										SwitchDistro "$OPTARG" ;;
 									  *) Fuck "<-d $OPTARG> is not valid, needs to be <-d kali,stable,unstable,testing or ubuntu>"  ;;
  
 		esac ;;
@@ -94,6 +90,8 @@ fi
 
 ########## end of common header #############################################################################################################################################
 #check script dependencies
+
+[[ "$(id -u)" != "0" ]] && Fuck "This script must be run as root"
 
 CheckMyDeps "reprepro pbuilder sed cat find grep dpkg-source lynx"
 [[ $aaa_setup_build_base_complete == yes ]] || Fuck "this script needs the base build environment setup, run aaa_setup-build-base"
@@ -148,25 +146,6 @@ return 0
 
 }
 
-function CloneIt()
-{
-aaa_escape=0
-while [[ $aaa_escape -eq 0 ]]; do
-	Info "downloading git://github.com/linuxmint/$1.git"
-	git clone "git://github.com/linuxmint/$1.git"
-	if [[ ! $? -eq 0 ]]; then
-		Warn "git clone $1,, bugged out, mostly due to bad internet"
-		Warn "since with this build i cant miss a package i need to try again"
-		Warn "if thats not good for you ${aaa_ctrl_c} to quit"
-		AnyKey
-	else
-		aaa_escape=1
-	fi
-done
-}
-
-
-
 
 function BuildOne()
 {
@@ -175,39 +154,31 @@ function BuildOne()
 	local pkg_name=$(dpkg-parsechangelog --show-field Source)
 	local tag=$aaa_pkg_tag
 	
-	[[ $git_build == yes ]] && tag="$aaa_pkg_tag""-git$git_bdate"
+	[[ $git_build == yes ]] && tag="git$git_bdate""$aaa_pkg_tag"
 	case "$pkg_name" in
-		nemo) dch -v "$version-$tag" --distribution "$aaa_debian_distro" "compiled for $aaa_debian_distro by me
+		nemo) dch -v "$version$tag" --distribution "$aaa_debian_distro" "compiled for $aaa_debian_distro by me
 patch (remove_elevated_privelages_banner.patch) applied
 to remove annoying red banner when running under root" ;;
-			*) dch -v "$version-$tag" --distribution "$aaa_debian_distro" "compiled for $aaa_debian_distro by me" ;;
+			*) dch -v "$version$tag" --distribution "$aaa_debian_distro" "compiled for $aaa_debian_distro by me" ;;
 	esac
 	
-	
-
-#	echo '3.0 (quilt)' > ./debian/source/format
-	rm -f ./debian/source/format
 	cd ..
 	
 
 	# build modified source package
-	dpkg-source --format=1.0 -b $(ls -d */)
+	dpkg-source -b $(ls -d */)
 	
 	# build a binary and source
 	pbuilder --build *.dsc
 	if [[ $? -eq 0 ]]; then
 		#add package to result repo and working repo
 		cd "$aaa_build_result"
-#		for remove_targt in $(find . -maxdepth 1 -mindepth 1 -type f -pkg_name *.deb); do
-#			reprepro -Vb "$aaa_localrepo_dir" removematched $aaa_work_repo "*${${remove_targt#./}%.deb}*"  > /dev/null 2>&1
-#			reprepro -Vb "$aaa_localrepo_dir" removematched $aaa_debian_distro "*${${remove_targt#./}%.deb}*"  > /dev/null 2>&1
-#		done
+		CleanMyRepo "$aaa_work_repo"
+		CleanMyRepo "$aaa_debian_distro"
 		Test reprepro -b "$aaa_localrepo_dir" includedeb $aaa_work_repo *.deb
 		Test reprepro -b "$aaa_localrepo_dir" include $aaa_debian_distro *.changes
+		[[ $aaa_git_repo_dir ]] && reprepro -b "$aaa_git_repo_dir" include $aaa_debian_distro *.changes  > /dev/null 2>&1
 	
-		#clean up
-		[[ $git_build == yes ]] && find . -maxdepth 1 -mindepth 1 -type f -exec mv -f '{}' "$aaa_cinnamon_cache_dir/git-builds/$aaa_debian_distro/$bdate" \;
-		[[ $git_build == yes ]] || find . -maxdepth 1 -mindepth 1 -type f -exec mv -f '{}' "$aaa_cinnamon_cache_dir/release-builds/$aaa_debian_distro/$bdate" \;
 	else
 		FailOkFilter "$pkg_name"
 	fi
@@ -251,8 +222,6 @@ fi
 #setup working dir
 
 CleanMyBuildArea
-MakeADir "$aaa_cinnamon_cache_dir/release-builds/$aaa_debian_distro/$bdate"
-MakeADir "$aaa_cinnamon_cache_dir/git-builds/$aaa_debian_distro/$bdate"
 
 #update / create base immage
 UpdateBase
@@ -260,8 +229,8 @@ UpdateBase
 
 # clean out old repo of cinnamon packages if update
 
-CleanMyRepo $aaa_debian_distro "cinnamon muffin nemo cjs"
-CleanMyRepo  $aaa_work_repo "cinnamon muffin nemo cjs"
+#PurgeMyRepo $aaa_debian_distro "cinnamon muffin nemo cjs"
+#PurgeMyRepo  $aaa_work_repo "cinnamon muffin nemo cjs"
 
 
 #check for previous working copy
@@ -313,12 +282,13 @@ for _package in $aaa_cinnamon_release_list; do
 done
 
 #check for previous working copy
+Block "Building chosen git sources"
 if [[ -d "$aaa_cinnamon_sources_git" ]]; then
 	 Info "$aaa_cinnamon_sources_git already exists"
-	MenuActive "k" "to keep all git sources"
-	MenuActive "s" "to to decide weather to keep individual sources"
+	MenuActive "k" "to keep all GIT sources"
+	MenuActive "s" "to to decide weather to keep individual GIT sources"
 	MenuActive "q" "to quit with a return of 1"
-	MenuActive "any other key" "delete old directory"
+	MenuActive "any other key" "delete old $aaa_cinnamon_sources_git directory"
 	read -s -n1 aaa_tmpchr
 	case "$aaa_tmpchr" in
 		q) exit 1 ;;
@@ -351,14 +321,14 @@ for _package in $aaa_cinnamon_git_list; do
 							BuildIt "$_package" g ;;
 						d) rm -fr "$aaa_cinnamon_sources_git/$_package"
 							cd "$aaa_cinnamon_sources_git"
-							CloneIt "$_package" && BuildIt "$_package" g ;;
+							CloneIt "$_package" "$aaa_mint_git_url" && BuildIt "$_package" g ;;
 						*) Info "skipping building $aaa_cinnamon_sources_git/$_package" ;;
 					esac ;;
 			  *) Fuck "Internal error" ;;
 		esac
 	else
 		cd "$aaa_cinnamon_sources_git"
-		CloneIt "$_package" && BuildIt "$_package" g
+		CloneIt "$_package" "$aaa_mint_git_url" && BuildIt "$_package" g
 	fi
 done
 

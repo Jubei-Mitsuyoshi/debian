@@ -40,7 +40,7 @@ if [[ ! clean -eq 1 ]]; then
 			grub) [[ -L "/etc/default/${file#./}" ]] || ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "/etc/default/${file#./}" ;;
 			inittab) [[ -L "/etc/${file#./}" ]] || ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "/etc/${file#./}" ;;
 			xorg.conf) [[ -L "/etc/X11/${file#./}" ]] || ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "/etc/X11/${file#./}" ;;
-			.bash_aliases|.bashrc) [[ -L "$HOME/${file#./}" ]] || ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "$HOME/${file#./}" ;;
+			.bash_aliases|.bashrc|.quiltrc) [[ -L "$HOME/${file#./}" ]] || ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "$HOME/${file#./}" ;;
 			sources.list) [[ -L "/etc/apt/${file#./}" ]] || ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "/etc/apt//${file#./}" ;;
 		esac
 		

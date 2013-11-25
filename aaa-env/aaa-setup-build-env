@@ -71,6 +71,7 @@ CheckMyDeps "pbuilder reprepro"
 
 # clean up after any other runs
 MakeADir "$aaa_localrepo_dir/conf"
+[[ $aaa_git_repo_dir ]] && MakeADir "$aaa_git_repo_dir/conf"
 CleanMyBuildArea
 [[ -e "$HOME/.pbuilderrc" ]] && rm -f "$HOME/.pbuilderrc"
 
@@ -156,7 +157,8 @@ $sign_with_marker
 $aaa_tmp")
 done
 
-echo "$aaa_tmp" >> "$aaa_localrepo_dir/conf/distributions" || Fuck "failed to append to existing $aaa_localrepo_dir/conf/distributions exiting "
+Test echo "$aaa_tmp" >> "$aaa_localrepo_dir/conf/distributions"
+[[ $aaa_git_repo_dir ]] && Test echo "$aaa_tmp" > "$aaa_git_repo_dir/conf/distributions"
 
 
 Block "writing $aaa_localrepo_dir/conf/options"
@@ -171,9 +173,10 @@ else
 	Info "writing new $aaa_localrepo_dir/conf/options"
 	echo "#config writen by aaa, feel free to modify but dont fuck anything ! " > "$aaa_localrepo_dir/conf/options"
 fi
-echo "verbose
+Test echo "verbose
 basedir $aaa_localrepo_dir
-$PassPhraseMarker" >> "$aaa_localrepo_dir/conf/options" || Fuck "failed to append to existing $aaa_localrepo_dir/conf/options exiting "
+$PassPhraseMarker" >> "$aaa_localrepo_dir/conf/options"
+[[ $aaa_git_repo_dir ]] && Test cat "$aaa_localrepo_dir/conf/options" > "$aaa_git_repo_dir/conf/options"
 
 
 #create repro dir struture by downloading , installing,  package
@@ -181,7 +184,7 @@ $PassPhraseMarker" >> "$aaa_localrepo_dir/conf/options" || Fuck "failed to appen
 if [[ ! -d "$aaa_localrepo_dir/dists" ]]; then
 	cd "$aaa_work_dir"
 	DownLoad "http://dk.archive.ubuntu.com/ubuntu/pool/main/u/ubuntu-keyring/ubuntu-keyring_2012.05.19_all.deb"
-	reprepro -b "$aaa_localrepo_dir" includedeb  $aaa_work_repo *.deb  || Fuck "failed to add sample package to reprepro exiting "
+	Test reprepro -b "$aaa_localrepo_dir" includedeb  $aaa_work_repo *.deb
 	rm -rf *.deb
 	cd $HOME
 fi
@@ -200,22 +203,7 @@ echo "deb [trusted=yes] file://$aaa_localrepo_dir $aaa_debian_distro main" > "/e
 
 Block "create pbuilder base immage"
 
-if [[ -e "$aaa_base_gz_dir/$aaa_base_gz" ]]; then
-	pbuilder --update --override-config
-else
-
-	aaa_escape=0
-	while [[ $aaa_escape -eq 0 ]]; do
-		pbuilder --create
-		if [[ ! $? -eq 0 ]]; then
-			Warn "pbuilder --create bugged out, mostly due to failed downloads"
-			Warn "hence going to try again, if thats not good for you ${aaa_ctrl_c} to quit"
-			AnyKey
-		else
-			aaa_escape=1
-		fi
-	done
-fi
+UpdateBase
 
 
 SaveSettings "aaa_setup_build_env_complete" "yes"

@@ -1,24 +1,26 @@
 #!/bin/bash
 
 ################ common header identical except for usage, getopts etc #########################################################################################################
-shopt -s extglob
+
 
 Usage() {
   cat <<EOF
-usage: ${0##*/} [options] distro dir
+usage: ${0##*/} [options] </path/to/pkg/dir>
 
-  Currently this script takes three options
-  and 1 argument
   -d < distro >
   -d <kali|stable|unstable|testing|ubuntu>
   
-  -n <no modding> do not mod the pakage just
-  build
+  -i <"local repo name local repo name ..">
+		space delimited list or single
+		element
+  -i < include built .changes to extra local 
+	repos work|testing|unstable|stable|saucy>
   
-  -i < include the built packages into your
-  custom repo>
+  -c
+  -c <clean repos before inclusion>
   
-  -g < building from git sources >
+  -g
+  -g <also include packages into git repo>
   
   This script uses pbuilder and reprepro
   to build the package in the current dir
@@ -51,6 +53,19 @@ else
 	exit 1
 fi
 
+#source config
+if [ -r /usr/share/aaa/aaa-master-config ]; then
+  Info "found my master config file.. reading it"
+  . /usr/share/aaa/aaa-master-config
+	if [ -r $HOME/.aaa-local-config ]; then
+		Info "found a local settings file.. reading it"
+		. $HOME/.aaa-local-config
+	fi
+else
+	Fuck "Failed to find master config file quitting"
+	exit 1
+fi
+
 #source settings
 if [ -r $HOME/.aaa_settings ]; then
   Info "found a settings file.. reading it"
@@ -64,76 +79,48 @@ export AAA_SUPRESS_LOCAL_PBUILDERRC="yes"
 #if no command arguments /etc/pbuilderrc is used instead which is  fallback
 rm -rf $HOME/.pbuilderrc
 
-while getopts ":d:nig" opt; do
+while getopts ":cgd:i:" opt; do
   case $opt in
-    d) Info "-d $OPTARG" 
+    d) Info "< -d $OPTARG > passed" 
 		case $OPTARG in
 	kali|testing|unstable|stable|ubuntu) Info "-d $OPTARG is valid, building for $OPTARG"
-										export AAA_DEBIAN_DISTRO="$OPTARG"
-										export AAA_SUPRESS_LOCAL_PBUILDERRC="no" ;;
-									  *) Fuck "<-d $OPTARG> is not valid, needs to be <-d kali,stable,unstable,testing or ubuntu>"  ;;
+										SwitchDistro "$OPTARG" ;;
+									  *) Fuck "<-d $OPTARG> is not valid, needs to be <-d kali,stable,unstable,testing or ubuntu>" ;;
 		esac ;;
-	n) no_mod=1 
-		Info "-n passed, will not mod changes file" ;;
-	i) include_deb=1 
-		Info "-i passed, will include result dsc in custom repo" ;;
-	g) git_build=yes
-		Info "-i passed, will include result dsc in custom repo" ;;
+	
+	i) Info "< -i $OPTARG > passed" 
+	
+		case $OPTARG in
+		$aaa_work_repo|testing|unstable|stable|saucy) Info "-i $OPTARG is valid, will include result .changes in repo name,s $OPTARG"
+									include_chng=1 
+									repo_name="$OPTARG" ;;
+									  *) Fuck "<-i $OPTARG> is not valid, needs to be -i<$aaa_work_repo,stable,unstable,testing or saucy>" ;;
+		esac ;;
+		
+	c) clean_repo=1 ;;
+	g) add_to_git_repo=1 ;;
    \?) Fuck "Invalid option: -$OPTARG" ;;
     :) Fuck "Option -$OPTARG requires a distro name, kali,stable,unstable,testing or ubuntu" ;;
   esac
 done
-#shift the -d and argument out the way http://wiki.bash-hackers.org/howto/getopts_tutorial
+#shift the options and args out the way http://wiki.bash-hackers.org/howto/getopts_tutorial
 shift $((OPTIND-1))
 #and lets parse it
-[[ -z $1 ]] && Fuck "need a directory target"
 
-#source config
-if [ -r /usr/share/aaa/aaa-master-config ]; then
-  Info "found my master config file.. reading it"
-  . /usr/share/aaa/aaa-master-config
-	if [ -r $HOME/.aaa-local-config ]; then
-		Info "found a local settings file.. reading it"
-		. $HOME/.aaa-local-config
-	fi
-else
-	Fuck "Failed to find master settings file quitting"
-	exit 1
+if [[ ! $repo_name ]] && [[ $clean_repo -eq 1 ]]; then
+	Fuck "if clean is requested -i <repo name> must be passed aswell"
 fi
+
+[[ -z $1 ]] && Fuck "need directory target"
+[[ -d $1/debian ]] || Fuck "target dir does not contain a debian subdir"
+
+
+
 
 ########## end of common header #############################################################################################################################################
 
-function ModDEbFiles()
-{
-	
-	local version=$(dpkg-parsechangelog --show-field Version)
-	local name=$(dpkg-parsechangelog --show-field Source)
-	[[ $git_build == yes ]] && aaa_pkg_tag="$aaa_pkg_tag""-git$bdate"
-	case "$name" in
-		nemo) dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
-patch (remove_elevated_privelages_banner.patch) applied
-to remove annoying red banner when running under root" ;;
-	libgnome2-0|gnome-applets) dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
-only change being gvfs is now gvfs | pup-volume-monitor
-in the dependencies" ;;
-			compiz) dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
-many changes applied from the original ubuntu
-package, all unity references removed, gconf schems
-modified, other various changes" ;;
-			emerald) dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
-no patches from upstream code" ;;
-			gdebi) dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
-all references of gksu removed and likewise
-for the dependencies" ;;
-			*) dch -v "$version-$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me" ;;	
-	esac
-# set package type
-#MakeADir "./debian/source"
-#echo "3.0 (quilt)" > "./debian/source/format"
-#ugly hack
-rm -f ./debian/source/format
+[[ "$(id -u)" != "0" ]] && Fuck "This script must be run as root"
 
-}
 
 #check script dependencies
 CheckMyDeps "reprepro pbuilder dpkg-source"
@@ -146,18 +133,18 @@ CleanMyBuildArea
 #update / create base immage
 UpdateBase
 
-cp -R -p "$1" $aaa_work_dir
-cd "$aaa_work_dir/$1"
-[[ $no_mod -eq 1 ]] || ModDEbFiles
-cd ..
-# build modified source package
-dpkg-source --format=1.0 -b $(ls -d */)
-
+# build  source package
+dpkg-source -b "$1"
 
 Test pbuilder --build *.dsc
 
 cd "$aaa_build_result"
-dir
-[[ $include_deb -eq 1 ]] && Test reprepro -b "$aaa_localrepo_dir" include $aaa_debian_distro *.changes
+
+[[ $clean_repo -eq 1 ]] && CleanMyRepo "$repo_name"
+
+for rname in $repo_name ; do 
+	Test reprepro -b "$aaa_localrepo_dir" include $rname *.changes
+	[[ $add_to_git_repo -eq 1 ]] && Test reprepro -b "$aaa_git_repo_dir" include $aaa_debian_distro *.changes
+done
 
 

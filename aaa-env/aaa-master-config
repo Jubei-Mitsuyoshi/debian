@@ -109,7 +109,7 @@ aaa_debian_distro="unstable"
 ########################################################################
 #maintainer string, must match local gpg key for
 #signing NOT OPTIONAL !!!
-aaa_maintainer="Jubei-Mitsuyoshi <jubei.house.of.five.masters@gmail.com>"
+aaa_maintainer="Jubei Mitsuyoshi <jubei.house.of.five.masters@gmail.com>"
 
 ########################################################################
 
@@ -192,11 +192,17 @@ aaa_localrepo_dir="/aaa-repo"
 ###############################
 
 ###############################
+#mirror repo dir, used if in kind mode
+#just leave unset to disable kind mode
+aaa_git_repo_dir="$HOME/git/github/aaa-debian-repo/aaa-debian-repo"
+##############################
+
+###############################
 #new tag to identify packages
-aaa_pkg_tag_testing="jessie-aaa"
-aaa_pkg_tag_unstable="sid-aaa"
-aaa_pkg_tag_kali="kali-aaa"
-aaa_pkg_tag_ubuntu="saucy-aaa"
+aaa_pkg_tag_testing="aaajessie"
+aaa_pkg_tag_unstable="aaasid"
+aaa_pkg_tag_kali="aaakali"
+aaa_pkg_tag_ubuntu="aaasaucy"
 ###############################
 
 
@@ -214,8 +220,8 @@ aaa_cinnamon_sources_git="$HOME/cinnamon-git"
 ##########################################################
 
 ##########################################################
-#locatin for built package cache
-aaa_cinnamon_cache_dir="$HOME/git/github/debian-public-packages/cinnamon"
+#mint git url
+aaa_mint_git_url="git://github.com/linuxmint"
 ##########################################################
 
 ##########################################################
@@ -239,18 +245,13 @@ aaa_cinnamon_release_list="cinnamon-translations cinnamon-desktop cjs nemo cinna
 
 ############################## aaa-build-compiz-emerald ##################################
 
-##########################################################
-#locatin for built package cache
-aaa_compiz_cache_dir="$HOME/git/github/debian-public-packages/compiz"
-##########################################################
 
+##########################################################
+#jubei git url
+aaa_jubei_git_url="git://github.com/Jubei-Mitsuyoshi"
+##########################################################
 
 ############################## aaa-build-pupvm ##################################
-
-##########################################################
-#locatin for built package cache
-aaa_pupvm_cache_dir="$HOME/git/github/debian-public-packages/pupvm"
-##########################################################
 
 
 
@@ -259,19 +260,6 @@ aaa_pupvm_cache_dir="$HOME/git/github/debian-public-packages/pupvm"
 #add default work repo for pbuilder
 aaa_extra_repos="$aaa_extra_repos $aaa_work_repo"
 
-#RESPOND TO ENVIROMENTAL VARS	
-case "$AAA_DEBIAN_DISTRO" in
-	kali) aaa_debian_distro="kali" 
-		echo "AAA_MASTER_CONFIG--->Responding to environmental variable AAA_DEBIAN_DISTRO=$AAA_DEBIAN_DISTRO" ;;
-	testing) aaa_debian_distro="testing"  
-		echo "AAA_MASTER_CONFIG--->Responding to environmental variable AAA_DEBIAN_DISTRO=$AAA_DEBIAN_DISTRO" ;;
-	 stable) aaa_debian_distro="stable" 
-		echo "AAA_MASTER_CONFIG--->Responding to environmental variable AAA_DEBIAN_DISTRO=$AAA_DEBIAN_DISTRO" ;;
-   unstable) aaa_debian_distro="unstable" 
-		echo "AAA_MASTER_CONFIG--->Responding to environmental variable AAA_DEBIAN_DISTRO=$AAA_DEBIAN_DISTRO" ;;
-	 ubuntu) aaa_debian_distro="ubuntu" 
-		echo "AAA_MASTER_CONFIG--->Responding to environmental variable AAA_DEBIAN_DISTRO=$AAA_DEBIAN_DISTRO" ;;
-esac
 
 case "$aaa_debian_distro" in
 
@@ -332,28 +320,6 @@ aaa_bindmounts=("$aaa_localrepo_dir""$aaa_tmp")
 # -m$aaa_maintainer
 
 export DEBEMAIL="$aaa_maintainer"
+export DEBFULLNAME="${aaa_maintainer% <*}"
 
 aaa_apt_cache_dir="$aaa_apt_cache_base_dir/$aaa_debian_distro"
-
-
-if [[ ! "$AAA_SUPRESS_LOCAL_PBUILDERRC" == "yes" ]]; then
-	echo "MIRRORSITE=\"$aaa_mirror\"
-OTHERMIRROR=\"deb [trusted=yes] file://$aaa_localrepo_dir $aaa_work_repo main\"
-BINDMOUNTS=\"$aaa_bindmounts\"
-HOOKDIR=\"$aaa_pbuilder_hookdir\"
-EXTRAPACKAGES=\"$aaa_extra_packages\"
-
-APTCACHE=\"$aaa_apt_cache_dir\"
-DEBEMAIL=\"$aaa_maintainer\"
-BUILDRESULT=\"$aaa_build_result\"
-COMPONENTS=\"$aaa_base_components\"
-DEBBUILDOPTS=\"$aaa_buildopts\"
-DEBOOTSTRAPOPTS=$aaa_debootstrap_opts
-BUILDUSERNAME=\"\"
-AUTO_DEBSIGN=no
-DISTRIBUTION=$aaa_debian_distro
-APTCACHEHARDLINK=$aaa_hardlink
-BASETGZ=\"$aaa_base_gz_dir/$aaa_base_gz\"
-BUILDPLACE=\"$aaa_build_location\"" > "$HOME/.pbuilderrc"
-
-fi

@@ -1,0 +1,276 @@
+aptitude
+nano /etc/apt/sources.list
+apt-get update
+aptitude
+dir
+cd debian-public-packages/
+dir
+cd cinnamon/
+dir
+cd release-builds/
+dir
+cd unstable/
+dir
+cd 20131118-002253/
+dir
+cd ..
+git clone git://github.com/Jubei-Mitsuyoshi/debian.git
+dir
+cd debian/
+./aaa-install-all 
+aaa-setup-build-base 
+apt-get wget pbuilder reprepro
+apt-get install wget pbuilder reprepro
+aaa-setup-build-base 
+./i7z_64bit 
+/sbin/modinfo /lib/modules/$(uname -r)/kernel/arch/*/kernel/cpu/cpufreq/* | grep "^[fd]"
+/sbin/modinfo /lib/modules/$(uname -r)/kernel/drivers/cpufreq/* | grep "^[fd]"
+aptitude
+./i7z_64bit 
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors 
+aaa-add-ppa saucy ppa:tualatrix/ppa
+apt-get update
+aptitude
+aptitude
+git clone git://github.com/Jubei-Mitsuyoshi/debian.git
+cd debian/
+./aaa-install-all 
+./aaa-install-all -c
+cd --
+aaa-add-ppa raring ppa:geany-dev/ppa
+apt-get update
+aptitude
+aptitude
+startx
+aptitude
+update-alternatives --config x-window-manager 
+update-alternatives --config x-session-manager 
+startx
+./aaa-install-all 
+aaa-setup-build-env 
+aaa-build-cinnamon
+aptitude
+cpufreq-info 
+startx
+update-alternatives --config x-window-manager 
+update-alternatives --config x-session-manager 
+startx
+update-alternatives --config x-session-manager 
+update-alternatives --config x-window-manager 
+startx
+update-alternatives --config x-window-manager 
+update-alternatives --config x-session-manager 
+startx
+aptitude
+aaa-add-ppa trusty ppa:teejee2008/ppa
+apt-get update
+aptitude
+apt-get update 
+cd work/ && apt-get source timeshift
+aptitude
+diff -rupN timeshift-1.2.7/ timeshift-1.2.7_dev/ > timeshift_no_gksu.patch
+cat postinst 
+cat postinst > test
+./aaa-l
+./aaa-linkup 
+ls -d */
+./aaa-linkup 
+aaa-git-admin 
+aaa-git-admin -c
+git clone https://bitbucket.org/smil3y/xarchiver.git
+git clone https://github.com/Jubei-Mitsuyoshi/aaa-xarchiver.git
+cd work/
+apt-get source xarchiver
+./configure --prefix=/usr
+autogen
+./autogen.sh
+aaa-mod-deps peazip_5.1.1.LINUX.GTK2-2_all.deb 
+aptitude
+lynx -dump -listonly https://github.com/Jubei-Mitsuyoshi?tab=repositories | sed '/master.zip/d' | grep -m 1 '.tar.gz' | sed -r 's/^.{6}//'
+lynx -dump -listonly https://github.com/Jubei-Mitsuyoshi?tab=repositories'
+lynx -dump -listonly https://github.com/Jubei-Mitsuyoshi?tab=repositories
+lynx -dump -listonly https://github.com/Jubei-Mitsuyoshi?tab=repositories | grep -m 1 'stargazers' | sed -r 's/^.{6}//
+lynx -dump -listonly https://github.com/Jubei-Mitsuyoshi?tab=repositories | grep -m 1 'stargazers' | sed -r 's/^.{6}//'
+lynx -dump -listonly https://github.com/Jubei-Mitsuyoshi?tab=repositories | grep 'stargazers' | sed -r 's/^.{6}//'
+lynx -dump -listonly https://github.com/Jubei-Mitsuyoshi?tab=repositories | grep 'stargazers' | sed -r 's/^.{6}//' | sed 's/\/stargazers//'
+aptitude
+apt-get install -f
+git clone https://github.com/Jubei-Mitsuyoshi/aaa-peazip.git
+https://dl.dropboxusercontent.com/u/4514366/customizepkg.tar.xz
+wget https://dl.dropboxusercontent.com/u/4514366/customizepkg.tar.xz
+dpkg-deb -x peazip_5.1.1.LINUX.GTK2-2_all.deb .
+dpkg-deb -x peazip_5.1.1.LINUX.GTK2-2_all.deb peazip
+dpkg-deb --control peazip_5.1.1.LINUX.GTK2-2_all.deb peazip
+dpkg -b peazip peazip_5.1.1_and64.deb
+peazi
+dpkg -b peazip peazip_5.1.1_and64.deb
+peazip 
+pealauncher 
+pea
+dpkg -b peazip peazip_5.1.1_and64.deb
+dpkg -b peazip peazip_5.1.1_and64.deb
+dpkg-source -x --skip-patches xarchiver_0.5.2+20130119+dfsg.dsc
+dpkg-source -x --skip-patches xarchiver_0.5.2+20130119+dfsg-3.dsc 
+apt-get source xarchiver
+ls >> series
+aaa-build xarchiver-0.5.2+20130119+dfsg/
+pbuilder --build xarchiver_0.5.2+20130119+dfsg-3.dsc 
+dpkg-source -x --skip-patches xarchiver_0.5.2+20130119+dfsg-3.dsc 
+aaa-build xarchiver-0.5.2+20130119+dfsg/
+dpkg-source -x xarchiver_0.5.2+20130119+dfsg-3.dsc 
+aaa-build xarchiver-0.5.2+20130119+dfsg/
+dpkg-source -b xarchiver-0.5.2+20130119+dfsg/
+dpkg-source -x --skip-patches xarchiver_0.5.2+20130119+dfsg-3.dsc 
+patch -Np1 -i "/root/git/github/aaa-xarchiver/xarchiver-0.5.2-rpm2cpio.patch"
+patch -Np1 -i "/root/git/bitbucket/stable/xarchiver-0.5.2-rpm2cpio.patch"
+patch -Np1 -i "/root/git/bitbucket/stable/xfce/xarchiver/xarchiver-0.5.2-rpm2cpio.patch"
+patch -Np1 -i /root/git/bitbucket/stable/xfce/xarchiver/xarchiver-0.5.2-segfault-open-with.patch
+patch -Np1 -i /root/git/bitbucket/stable/xfce/xarchiver/xarchiver-0.5.2-xz-extract.patch
+patch -Np1 -i /root/git/bitbucket/stable/xfce/xarchiver/xarchiver-0.5.2-add_xz_support.patch
+cd --
+dpkg-source -b xarchiver-0.5.2+20130119+dfsg/
+cd work/xarchiver/
+dpkg-source -b xarchiver-0.5.2+20130119+dfsg/
+dpkg-source --commit
+cd xarchiver-0.5.2+20130119+dfsg/
+dpkg-source --commit
+cd ..
+dpkg-source -b xarchiver-0.5.2+20130119+dfsg/
+pbuilder --build xarchiver_0.5.2+20130119+dfsg-3.dsc 
+dpkg-source -x --skip-patches xarchiver_0.5.2+20130119+dfsg-3.dsc 
+cd xarchiver-0.5.2+20130119+dfsg/
+patch -Np1 -i /root/git/bitbucket/stable/xfce/xarchiver/xarchiver-0.5.2-xz-extract.patch
+patch -Np1 -i /root/git/bitbucket/stable/xfce/xarchiver/xarchiver-0.5.2-add_xz_support.patch
+patch -Np1 -i /root/git/bitbucket/stable/xfce/xarchiver/xarchiver-0.5.2-rmp2cpio.patch
+patch -Np1 -i /root/git/bitbucket/stable/xfce/xarchiver/xarchiver-0.5.2-rpm2cpio.patch
+dpkg-source --commit
+apt-get source xarchiver
+patch -Np1 -i /root/git/bitbucket/stable/xfce/xarchiver/assume_name.patch
+patch -p0 -i /root/git/bitbucket/stable/xfce/xarchiver/assume_name.patch
+patch -p0 -i /root/git/bitbucket/stable/xfce/xarchiver/explicit_extension.patch
+dpkg-source --commit
+cd --
+cw work/xarchiver/
+cd work/xarchiver/
+apt-get source xarchiver
+cd xarchiver-0.5.2+20130119+dfsg/
+patch -Np1 -i /root/git/bitbucket/stable/xfce/xarchiver/xarchiver-0.5.2-rpm2cpio.patch
+dpkg-source --commit
+patch -p0 -i /root/git/bitbucket/stable/xfce/xarchiver/assume_name.patch
+patch -p0 -i /root/git/bitbucket/stable/xfce/xarchiver/explicit_extension.patch
+dpkg-source --commit
+patch -p0 -i /root/git/bitbucket/stable/xfce/xarchiver/xarchiver-0.5.2-default-archive-format.patch
+dpkg-source --commit
+patch -p0 -i /root/git/bitbucket/stable/xfce/xarchiver/xarchiver-0.5.2-drag-n-drop_escaped_path.patch
+dpkg-source --commit
+aaa-build
+apt-get source xarchiver
+cd xarchiver-0.5.2+20130119+dfsg/
+dch -v "0.5.2-unstable-aaa" --distribution unstable "added a shed load of patches from lsd linux stable/xarchiver should be good"
+dch -v "1:0.5.2+20130119+dfsg-3-sid-aaa" --distribution unstable "added a shed load of patches from lsd linux stable/xarchiver should be good"
+cd ..
+dpkg-source -b xarchiver-0.5.2+20130119+dfsg/
+dpkg-source -b xarchiver-0.5.2+20130119+dfsg-3-sid/
+cd xarchiver-0.5.2+20130119+dfsg-3-sid/
+patch -p0 -i /root/git/bitbucket/stable/xfce/xarchiver/xarchiver-0.5.2-add_xz_support.patch
+patch -uNp1 -i /root/git/bitbucket/stable/xfce/xarchiver/xarchiver-0.5.2-add_xz_support.patch
+patch -uNp1 -i /root/git/bitbucket/stable/xfce/xarchiver/xarchiver-0.5.2-add_xz_extract.patch
+patch -uNp1 -i /root/git/bitbucket/stable/xfce/xarchiver/xarchiver-0.5.2-xz_extract.patch
+patch -uNp1 -i /root/git/bitbucket/stable/xfce/xarchiver/xarchiver-0.5.2-xz-extract.patch
+dpkg-source --commit
+cd ..
+dpkg-source -b xarchiver-0.5.2+20130119+dfsg-3-sid/
+pbuilder --build xarchiver_0.5.2+20130119+dfsg-3-sid-aaa.dsc 
+./aaa-linkup 
+aaa-test 
+aa="Jubei Mitsuyoshi <jubei.house.of.five.masters@gmail.com>" && echo ${aa#<*}
+aa="Jubei Mitsuyoshi <jubei.house.of.five.masters@gmail.com>" && echo ${aa#*<}
+aa="Jubei Mitsuyoshi <jubei.house.of.five.masters@gmail.com>" && echo ${aa&*<}
+aa="Jubei Mitsuyoshi <jubei.house.of.five.masters@gmail.com>" && echo ${aa%*<}
+aa="Jubei Mitsuyoshi <jubei.house.of.five.masters@gmail.com>" && echo ${aa%<*}
+aa="Jubei Mitsuyoshi <jubei.house.of.five.masters@gmail.com>" && echo ${aa% <*}
+aa="Jubei Mitsuyoshi <jubei.house.of.five.masters@gmail.com>" && echo ${aa% <*} > test
+startx
+nvidia-xconfig 
+startx
+echo $DEBFULLNAME
+aptitude
+dh_make -f ../pacman-4.1.2.tar.gz
+cd ..
+wget ftp://ftp.archlinux.org/other/pacman/pacman-4.1.2.tar.gz
+man tar
+aptitude
+dpkg-depcheck -d ./configure
+dir
+dpkg-depcheck -d ./configure
+dpkg-depcheck
+dpkg-depcheck -d configure
+./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --enable-doc
+dpkg-depcheck -d ./configure
+man dpkg-depcheck
+dpkg-depcheck -d ./configure
+dpkg-source -b archlinux-pacman-4.1.2/
+wget ftp://ftp.archlinux.org/other/pacman/pacman-4.1.2.tar.gz
+./configure --help
+build
+tar xvzf archlinux-pacman-4.1.2.tar.gz 
+tar -cvzf archlinux-pacman-4.1.2.tar.gz pacman-4.1.2
+tar -cvzf archlinux-pacman-4.1.2.tar.gz archlinux-pacman-4.1.2
+tar -cvzf archlinux-pacman-4.1.2.orig.tar.gz archlinux-pacman-4.1.2
+dpkg-source -b archlinux-pacman-4.1.2/
+pbuilder --build archlinux-pacman_4.1.2-1.dsc 
+dpkg-source -b archlinux-pacman-4.1.2/
+pbuilder --build archlinux-pacman_4.1.2-1.dsc 
+aptitude
+dpkg-source -b archlinux-pacman-4.1.2/
+build
+pacman-key --init
+pacman-key --populate archlinux
+pacman -Sy
+pacman-key --populate archlinux
+pacman -Sy
+pacman -S archlinux-keyring
+pacman-key --populate archlinux
+tar -cvzf arch-install-scripts_112013.orig.tar.gz arch-install-scripts-112013/
+tar -cvzf timeshift_1.2.7.orig.tar.gz
+tar -cvzf timeshift_1.2.7.orig.tar.gz timeshift-1.2.7/
+aptitude
+tar -cvzf timeshift_1.2.7.orig.tar.gz timeshift-1.2.7/
+dquilt import ../timeshift_no_gksu.patch
+dquilt push
+dquilt refresh
+dquilt header -e
+cd ..
+dpkg-source -b timeshift-1.2.7/
+cd timeshift-1.2.7/
+dpkg-source --commit
+build
+pdebuild 
+build
+dpkg-source --commit
+dpkg-source -b timeshift-1.2.7/
+tar -cvzf timeshift_1.2.7.orig.tar.gz timeshift-1.2.7/
+dpkg-source -b timeshift-1.2.7/
+pbuilder --build timeshift_1.2.7-0~68~ubuntu14.04.1.dsc 
+tar -cvzf timeshift_1.2.7.orig.tar.gz timeshift-1.2.7/
+tar -cvzf timeshift_1.2.7aaasid.orig.tar.gz timeshift-1.2.7aaasid/
+dpkg-source -b timeshift-1.2.7aaasid/
+dpkg-source -b timeshift-1.2.7-aaasid/
+apt-get update 
+apt-get source timeshift
+dpkg-source -b timeshift-1.2.7/
+cd timeshift-1.2.7/
+dch -v "1.2.7aaasid" --distribution "unstable" "modified from ubuntu source to remove gksu dependency ie will only function correctly in root envirnment"
+apt-get source timeshift
+cd ..
+apt-get source timeshift
+cd timeshift-1.2.7/
+patch -p1 < ../timeshift_no_gksu.patch 
+tar -cvzf timeshift_1.2.7.orig.tar.gz timeshift-1.2.7/
+cd ..
+tar -cvzf timeshift_1.2.7.orig.tar.gz timeshift-1.2.7/
+cd timeshift-1.2.7/
+dch -v "1.2.7-aaasid" --distribution "unstable" "modified from ubuntu source to remove gksu dependency ie will only function correctly in root envirnment"
+cd ..
+dpkg-source -b timeshift-1.2.7/
+pbuilder --build timeshift_1.2.7-aaasid.dsc 

@@ -135,26 +135,26 @@
 # Also in official Debian repos
 # http://www.progchild.de/debian/#packages
 # Secure apt: apt-get install progchild-keyring
-#deb http://apt.progchild.de stable main
-#deb-src http://apt.progchild.de stable main
+# deb http://apt.progchild.de stable main
+# deb-src http://apt.progchild.de stable main
 
 # Gmusicbrowser for Debian Stable http://gmusicbrowser.org/download.html
 # It is already in normal Debian repos
-#deb http://gmusicbrowser.org/deb ./
+# deb http://gmusicbrowser.org/deb ./
 
 ## LUDOMATIC REPOSITORY http://apt.ludomatic.fr/?hl=en
 # sdlmame, sdlmess (both packages are in normal Debian repos)
-#deb http://apt.ludomatic.fr lenny non-free
-#deb-src http://apt.ludomatic.fr lenny non-free
+# deb http://apt.ludomatic.fr lenny non-free
+# deb-src http://apt.ludomatic.fr lenny non-free
 
 # Minitube http://flavio.tordini.org/minitube
 # Minitube is in Debian repos
 
 # RareWares/Debian Multi-Media Repository for Unstable
 # Info http://www.rarewares.org/debian.html
-#deb http://www.rarewares.org/debian/packages/unstable/ ./
+# deb http://www.rarewares.org/debian/packages/unstable/ ./
 # RareWares/Debian Multi-Media Repository for Unstable - Experimental Staging
-#deb http://www.rarewares.org/debian/packages/experimental/ ./
+# deb http://www.rarewares.org/debian/packages/experimental/ ./
 
 # My Media System http://mymediasystem.org/
 # deb http://www.prodeia.de/mms/sid binary/
@@ -162,7 +162,7 @@
 
 # Installing tovid/Debian - Tovid Wiki - http://tovid.wikia.com/wiki/Installing_tovid/Debian
 # Replace BRANCH with your Debian version: stable, testing, or unstable (the code names work as well, so you can use etch, lenny, or sid if you prefer)
-# deb     http://tovid.sourceforge.net/download/debian BRANCH contrib
+# deb http://tovid.sourceforge.net/download/debian BRANCH contrib
 # deb-src http://tovid.sourceforge.net/download/debian BRANCH contrib
 
 # Freevo
@@ -175,18 +175,18 @@
 #x86 Debian packages are built from SVN by Andraz Tori,
     #To install the package add this line to your sources list:
     #For i386 processors:
-    #deb http://www.kiberpipa.org/~minmax/cinelerra/builds/sid/ ./
+# deb http://www.kiberpipa.org/~minmax/cinelerra/builds/sid/ ./
     #For Pentium4 processors:
-    #deb http://www.kiberpipa.org/~minmax/cinelerra/builds/pentium4/ ./
+# deb http://www.kiberpipa.org/~minmax/cinelerra/builds/pentium4/ ./
     #For Athlon processors:
-    #deb http://www.kiberpipa.org/~minmax/cinelerra/builds/athlonxp/ ./
+# deb http://www.kiberpipa.org/~minmax/cinelerra/builds/athlonxp/ ./
    # Apt-source:
-    #deb-src http://www.kiberpipa.org/~minmax/cinelerra/builds/sid/ ./
+# deb-src http://www.kiberpipa.org/~minmax/cinelerra/builds/sid/ ./
     #AMD64 Debian packages are built from SVN by Valentina Messeri.
     #To install the package add this line to your sources list:
-    #deb http://giss.tv/~vale/debian64 ./
+# deb http://giss.tv/~vale/debian64 ./
     #Apt-source:
-    #deb-src http://giss.tv/~vale/debian64 ./
+# deb-src http://giss.tv/~vale/debian64 ./
 
 # PS3 Media Server • Easy setup guide for Ubuntu / Debian - http://www.ps3mediaserver.org/forum/viewtopic.php?f=3&t=13046
 # the info below is outdated see the forum post
@@ -215,13 +215,13 @@
 # Opera Web Browser Official packages. http://deb.opera.com/
 # Secure APT - wget -O - http://deb.opera.com/archive.key | apt-key add -
 # Opera Browser - Production release
-#deb http://deb.opera.com/opera/ stable non-free
-#deb http://deb.opera.com/opera/ testing non-free
-#deb http://deb.opera.com/opera/ unstable non-free
+# deb http://deb.opera.com/opera/ stable non-free
+# deb http://deb.opera.com/opera/ testing non-free
+# deb http://deb.opera.com/opera/ unstable non-free
 # Opera Browser - Beta release
-#deb http://deb.opera.com/opera-beta/ stable non-free
-#deb http://deb.opera.com/opera-beta/ testing non-free
-#deb http://deb.opera.com/opera-beta/ unstable non-free
+# deb http://deb.opera.com/opera-beta/ stable non-free
+# deb http://deb.opera.com/opera-beta/ testing non-free
+# deb http://deb.opera.com/opera-beta/ unstable non-free
 
 ##############
 ##  PRIVACY  ##
@@ -243,18 +243,18 @@
 # put the codename of your distribution (i.e. etch, lenny,squeeze, sid) in place of <DISTRIBUTION>. 
 # deb http://deb.torproject.org/torproject.org <DISTRIBUTION> main
 # Experimental
-#deb http://deb.torproject.org/torproject.org <DISTRIBUTION> main
-#deb http://deb.torproject.org/torproject.org experimental-<DISTRIBUTION> main
+# deb http://deb.torproject.org/torproject.org <DISTRIBUTION> main
+# deb http://deb.torproject.org/torproject.org experimental-<DISTRIBUTION> main
 
 # Peerguardian , moblock, mobloquer http://moblock-deb.sourceforge.net
 #gpg --keyserver wwwkeys.eu.pgp.net --recv 58712F29
 #gpg --export --armor 58712F29 | sudo apt-key add -
 #Debian (stable):
-#deb http://moblock-deb.sourceforge.net/debian squeeze main
-#deb-src http://moblock-deb.sourceforge.net/debian squeeze main
+# deb http://moblock-deb.sourceforge.net/debian squeeze main
+# deb-src http://moblock-deb.sourceforge.net/debian squeeze main
 #Debian  (testing/sid) use sid repo for testing and sid
-#deb http://moblock-deb.sourceforge.net/debian sid main
-#deb-src http://moblock-deb.sourceforge.net/debian sid main
+# deb http://moblock-deb.sourceforge.net/debian sid main
+# deb-src http://moblock-deb.sourceforge.net/debian sid main
 
 ################
 ### DESKTOPS ###
@@ -268,7 +268,7 @@
 # deb http://www.debian-desktop.org/pub/linux/debian/kde46-squeeze debian-desktop main
 # deb-src http://www.debian-desktop.org/pub/linux/debian/kde46-squeeze debian-desktop main
 # XFce 4.8 (squeeze, i386, amd64)
-#  deb http://www.debian-desktop.org/pub/linux/debian/xfce48-squeeze debian-desktop main
+# deb http://www.debian-desktop.org/pub/linux/debian/xfce48-squeeze debian-desktop main
 # deb-src http://www.debian-desktop.org/pub/linux/debian/xfce48-squeeze debian-desktop main
 
 # Debian Qt/KDE semi-official package repository http://qt-kde.debian.net/
@@ -312,9 +312,9 @@
 
 # Enlightenment E17
 # Enlightenment binary packages - http://packages.enlightenment.org/debian/
-#deb http://packages.enlightenment.org/debian lenny main extras
-#deb http://packages.enlightenment.org/debian squeeze main extras
-#deb http://packages.enlightenment.org/debian sid main extras   
+# deb http://packages.enlightenment.org/debian lenny main extras
+# deb http://packages.enlightenment.org/debian squeeze main extras
+# deb http://packages.enlightenment.org/debian sid main extras
 
 # Cathbards Debian/Mint Artwork repo
 # http://cathbard.com/cathbard-repo-howto.html
@@ -362,7 +362,7 @@
 #  Minecraft Overviewer - http://overviewer.org/
 #  Overviewer.org APT Repository - http://overviewer.org/debian/info/
 #  Secure APT: Warning appears to be unsigned
-#  deb http://overviewer.org/debian ./
+# deb http://overviewer.org/debian ./
 
 # X2Go - everywhere@home : http://www.x2go.org/doku.php/start
 # Secure APT: apt-key adv --recv-keys --keyserver keys.gnupg.net E1F958385BFE2B6E
@@ -374,7 +374,7 @@
 #  Baruwa APT Repo - http://apt.baruwa.org/
 #  Baruwa (swahili for letter or mail) is a web 2.0 MailScanner front-end
 #  Secure APT: wget -O - http://apt.baruwa.org/baruwa-apt-keys.gpg | apt-key add -
-#  deb http://apt.baruwa.org/debian unstable main
+# deb http://apt.baruwa.org/debian unstable main
 
 # OpenVAS - Open Vulnerability Assessment System - http://www.openvas.org/
 # OpenVAS - Install OpenVAS Packages - http://www.openvas.org/install-packages.html#openvas_debian_obs
@@ -393,7 +393,7 @@
 #  You need to have a JDK and JRE installed. openjdk-6-jre and openjdk-6-jdk are suggested.
 #  Debian Repository for Jenkins - http://pkg.jenkins-ci.org/debian/
 #  Secure APT: wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
-#  deb http://pkg.jenkins-ci.org/debian binary/
+# deb http://pkg.jenkins-ci.org/debian binary/
 
 # Ajenti - http://ajenti.org/
 # Ajenti - http://repo.ajenti.org/debian/
@@ -408,7 +408,7 @@
 # Vyatta4People.Org | Vyatta router automation and more! - http://www.vyatta4people.org/
 # Main Page - Unofficial Vyatta Wiki - http://www.vyattawiki.net/wiki/Main_Page
 # Repo! | Vyatta4People.Org - http://www.vyatta4people.org/repo/
-# deb  http://packages.vyatta4people.org/debian experimental main
+# deb http://packages.vyatta4people.org/debian experimental main
 
 # Vyatta.org | The Open Source Networking Community - http://www.vyatta.org/index.php
 # Understanding the Vyatta Package Repositories | Vyatta.org - http://www.vyatta.org/getting-started/package-repository
@@ -472,12 +472,12 @@
 
 # QRM keeps your data center up and running - http://www.openqrm.com/
 # Updated Package-Repository-URLs | openQRM - http://www.openqrm.com/?q=node/167
-# deb http://packages.openqrm.com/stable/debian/  ./
+# deb http://packages.openqrm.com/stable/debian/ ./
 
 # The Comprehensive Perl Archive Network -  http://www.cpan.org/
 # debian.pkgs.cpan.org -- debified CPAN packages
 #  note these packages are not signed
-#deb http://debian.pkgs.cpan.org/debian unstable main
+# deb http://debian.pkgs.cpan.org/debian unstable main
 
 # DebGem (beta), Ruby packages for Debian - http://debgem.com/
 # Usage & FAQ :: DebGem (beta), Ruby packages for Debian - http://debgem.com/usage
@@ -506,24 +506,24 @@
 # opennms http://www.opennms.org/wiki/Installation:Debian
 # Secure APT - wget -O - http://debian.opennms.org/OPENNMS-GPG-KEY | apt-key add -
 #Stable
-#deb http://debian.opennms.org stable main
-#deb-src http://debian.opennms.org stable main
+# deb http://debian.opennms.org stable main
+# deb-src http://debian.opennms.org stable main
 #Unstable
-#deb http://debian.opennms.org unstable main
-#deb-src http://debian.opennms.org unstable main
+# deb http://debian.opennms.org unstable main
+# deb-src http://debian.opennms.org unstable main
 
 # e-box http://www.ebox-platform.com/
-#deb http://ebox-platform.com/debian/stable/ ebox/
-#deb http://ebox-platform.com/debian/stable/ extra/
+# deb http://ebox-platform.com/debian/stable/ ebox/
+# deb http://ebox-platform.com/debian/stable/ extra/
 
 # OPenVZ http://debian.systs.org/debian/
 #Secure APT - #  apt-get install dso-archive-keyring
 # etch repository:
-#deb http://download.openvz.org/debian-systs/ etch openvz
-#deb-src http://download.openvz.org/debian-systs/ etch openvz
+# deb http://download.openvz.org/debian-systs/ etch openvz
+# deb-src http://download.openvz.org/debian-systs/ etch openvz
 # lenny repository:
-#deb http://download.openvz.org/debian-systs/ lenny openvz
-#deb-src http://download.openvz.org/debian-systs/ lenny openvz
+# deb http://download.openvz.org/debian-systs/ lenny openvz
+# deb-src http://download.openvz.org/debian-systs/ lenny openvz
 
 # Chef - Opscode - http://www.opscode.com/chef/
 # New APT Repository for Chef 0.9 - Blog - Opscode - http://www.opscode.com/blog/2010/07/01/new-apt-repository-for-chef-0-9/
@@ -536,11 +536,11 @@
 # Secure Apt - wget http://deb.kamailio.org/kamailiodebkey.gpg | apt-key add kamailiodebkey.gpg
 #Latest Kamailio stable release
 # Debian Lenny
-#deb http://deb.kamailio.org/kamailio lenny main
-#deb-src http://deb.kamailio.org/kamailio lenny main
+# deb http://deb.kamailio.org/kamailio lenny main
+# deb-src http://deb.kamailio.org/kamailio lenny main
 # Debian Squeeze
-#deb http://deb.kamailio.org/kamailio squeeze main
-#deb-src http://deb.kamailio.org/kamailio squeeze main
+# deb http://deb.kamailio.org/kamailio squeeze main
+# deb-src http://deb.kamailio.org/kamailio squeeze main
 
 # MongoDB - http://www.mongodb.org/
 # Ubuntu and Debian packages - MongoDB - http://www.mongodb.org/display/DOCS/Ubuntu+and+Debian+packages
@@ -554,20 +554,20 @@
 
 # MariaDB repository list  - http://mariadb.org/
 # http://downloads.askmonty.org/mariadb/repositories/
-# deb http://mirror.layerjet.com/mariadb/repo//  main
-# deb-src http://mirror.layerjet.com/mariadb/repo//  main
+# deb http://mirror.layerjet.com/mariadb/repo// main
+# deb-src http://mirror.layerjet.com/mariadb/repo// main
 
 # OurDelta - Enhanced, packaged convenience for MySQL and MariaDB - http://ourdelta.org/
 # Secure APT - wget -O- http://ourdelta.org/deb/ourdelta.gpg | sudo apt-key add -
 # MariaDB OurDelta repository for Debian 5.0 "Lenny" binary packages.
-# deb    http://mirror.ourdelta.org/deb    lenny    mariadb-ourdelta
-#deb-src http://mirror.ourdelta.org/deb    lenny    mariadb-ourdelta
+# deb http://mirror.ourdelta.org/deb lenny mariadb-ourdelta
+# deb-src http://mirror.ourdelta.org/deb lenny mariadb-ourdelta
 # OurDelta repository for Debian 5.0 "Lenny" binary packages.
-# deb    http://mirror.ourdelta.org/deb    lenny    ourdelta
-# deb-src http://mirror.ourdelta.org/deb lenny    ourdelta
+# deb http://mirror.ourdelta.org/deb lenny ourdelta
+# deb-src http://mirror.ourdelta.org/deb lenny ourdelta
 # OurDelta Sail (bleeding edge) repository for Debian 5.0 "Lenny" binary packages.
-# deb http://mirror.ourdelta.org/deb    lenny ourdelta-sail
-# deb-src http://mirror.ourdelta.org/deb  lenny ourdelta-sail
+# deb http://mirror.ourdelta.org/deb lenny ourdelta-sail
+# deb-src http://mirror.ourdelta.org/deb lenny ourdelta-sail
 
 # Open Access and Institutional Repositories with EPrints - http://www.eprints.org/
 # Installing EPrints 3 via apt (Debian/Ubuntu) - EPrints - http://wiki.eprints.org/w/Installing_EPrints_3_via_apt_(Debian/Ubuntu)
@@ -591,7 +591,7 @@
 # Mailspect apt Repository for Debian Linux -
 # http://wiki.mailspect.com/index.php/Mailspect_apt_Repository_for_Ubuntu_and_Debian_Linux
 # Secure APT - wget http://apt.mailspect.com/ovidiu@mailspect.com.gpg.key | sudo apt-key add -
-# deb  http://apt.mailspect.com/ mpp-testing  non-free
+# deb http://apt.mailspect.com/ mpp-testing non-free
 
 # NorduGrid Downloads - Repository Information http://download.nordugrid.org/repos.html
 # Secure APT - wget -q http://download.nordugrid.org/DEB-GPG-KEY-nordugrid.asc -O- | sudo apt-key add -
@@ -614,7 +614,7 @@
 # Condor Project Homepage - http://research.cs.wisc.edu/condor/
 # Condor Debian Repository - https://research.cs.wisc.edu/condor/debian/
 # Development only has amd64 packages
-# deb http://research.cs.wisc.edu/condor/debian/development/ squeeze contrib    
+# deb http://research.cs.wisc.edu/condor/debian/development/ squeeze contrib
 # Stable
 # deb http://research.cs.wisc.edu/condor/debian/stable/ squeeze contrib
 
@@ -701,7 +701,7 @@
 # Mepis is a Gnu/Linux distribution based on Debian Stable http://main.mepis-deb.org/
 # Sources.list -  http://www.mepis.org/docs/en/index.php?title=Sources.list_MEPIS_11
 # MEPIS improvements, overrides and updates--the MEPIS magic
-#deb ftp://ftp.mirrorservice.org/sites/ftp.mepis.org/mepis/ mepis-11.0 main
+# deb ftp://ftp.mirrorservice.org/sites/ftp.mepis.org/mepis/ mepis-11.0 main
 # Alternate HTTP URL of mepis.org mirror for those that can't use FTP
 # deb http://www.mirrorservice.org/sites/ftp.mepis.org/mepis/ mepis-11.0 main
 # MEPIS master pools, please use only if mirror is slow or down
@@ -717,8 +717,8 @@
 ######## KANOTIX ########
 # Kano's Scriptpage for KANOTIX - http://kanotix.com/files/
 # Kanotix Excalibur http://kanotix.com/files/excalibur/sources.list
-#deb http://kanotix.com/files/excalibur ./
-#deb-src http://kanotix.com/files/excalibur ./
+# deb http://kanotix.com/files/excalibur ./
+# deb-src http://kanotix.com/files/excalibur ./
 
 # Kanotix Dragonfire http://kanotix.com/files/dragonfire/sources.list
 # deb http://kanotix.com/files/dragonfire ./
@@ -761,8 +761,8 @@
 # deb-src http://deb.grml.org/ grml-testing main
 
 # OzOS | The Reality Different E17- http://www.cafelinux.org/OzOs/
-#deb http://cafelinux.org/Downloads/oz-os hungrytiger main
-#deb http://cafelinux.org/Downloads/oz-os tinwoodman main
+# deb http://cafelinux.org/Downloads/oz-os hungrytiger main
+# deb http://cafelinux.org/Downloads/oz-os tinwoodman main
 
 # Raspbian is a free operating system based on Debian for the Raspberry Pi. 
 # RaspbianFAQ - Raspbian : http://www.raspbian.org/RaspbianFAQ
@@ -790,7 +790,7 @@
 
 # Printer Driver Packages | The Linux Foundation
 #  http://www.linuxfoundation.org/collaborate/workgroups/openprinting/databasedriverpackages
-# deb http://www.openprinting.org/download/printdriver/debian/  lsb3.2 main contrib main-nonfree
+# deb http://www.openprinting.org/download/printdriver/debian/ lsb3.2 main contrib main-nonfree
 
 # The Samsung Unified Linux Driver Repository : http://www.bchemnet.com/suldr/
 # deb http://www.bchemnet.com/suldr/ debian extra
@@ -853,13 +853,13 @@
 # gpg --recv-key 1F9ADD375CA44993
 # gpg --export --armor 1F9ADD375CA44993 | sudo apt-key add -
 # Packages of QGIS 1.7 for Debian Lenny, Squeeze and Unstable for i386 and amd64 are available at:
-# deb     http://qgis.org/debian squeeze main
+# deb http://qgis.org/debian squeeze main
 # deb-src http://qgis.org/debian squeeze main
 # updated versions of GDAL and GRASS:
-# deb     http://debian.gfoss.it/ squeeze main
+# deb http://debian.gfoss.it/ squeeze main
 # deb-src http://debian.gfoss.it/ squeeze main
 # Nightly builds of the Master are available from following repository (i386 and amd64):
-# deb     http://qgis.org/debian-nightly squeeze main
+# deb http://qgis.org/debian-nightly squeeze main
 # deb-src http://qgis.org/debian-nightly squeeze main
 
 # Duke Nukem 3D http://wiki.eduke32.com/wiki/APT_repository#Debian_repositories
@@ -892,18 +892,18 @@
 # To keep apt happy about keys, run the following:
 #gpg --keyserver pgpkeys.mit.edu --recv-key EEA242F0
 #gpg -a --export EEA242F0 | sudo apt-key add -
-#deb http://www.mpellis.org.uk/debian/ testing main
-#deb-src http://www.mpellis.org.uk/debian/ testing main
-#deb http://www.mpellis.org.uk/debian/ unstable main
-#deb-src http://www.mpellis.org.uk/debian/ unstable main
+# deb http://www.mpellis.org.uk/debian/ testing main
+# deb-src http://www.mpellis.org.uk/debian/ testing main
+# deb http://www.mpellis.org.uk/debian/ unstable main
+# deb-src http://www.mpellis.org.uk/debian/ unstable main
 
 # C-Pluff, a plug-in framework for C - http://www.c-pluff.org/
 # http://www.c-pluff.org/download#debian
-#deb http://www.c-pluff.org/downloads/debian stable cpluff
-#deb-src http://www.c-pluff.org/downloads/debian stable cpluff
+# deb http://www.c-pluff.org/downloads/debian stable cpluff
+# deb-src http://www.c-pluff.org/downloads/debian stable cpluff
 # MinGW cross-compilation on Debian GNU/Linux
-#deb http://www.c-pluff.org/downloads/debian stable cpluff 3rdparty
-#deb-src http://www.c-pluff.org/downloads/debian stable cpluff 3rdparty
+# deb http://www.c-pluff.org/downloads/debian stable cpluff 3rdparty
+# deb-src http://www.c-pluff.org/downloads/debian stable cpluff 3rdparty
 
 
 
@@ -926,19 +926,19 @@
 # http://hadret.rootnode.net/debian/dists/unstable/main/binary-amd64/
 # Secure APT wget -O - http://hadret.rootnode.net/debian/duckbill.key | apt-key add -
 #Unstable:
-#deb http://hadret.rootnode.net/debian/ unstable main
-#deb-src http://hadret.rootnode.net/debian/ unstable main
+# deb http://hadret.rootnode.net/debian/ unstable main
+# deb-src http://hadret.rootnode.net/debian/ unstable main
 #Experimental:
-#deb http://hadret.rootnode.net/debian/ experimental main
-#deb-src http://hadret.rootnode.net/debian/ experimental main
+# deb http://hadret.rootnode.net/debian/ experimental main
+# deb-src http://hadret.rootnode.net/debian/ experimental main
 
 # FawtyToo: Packages : http://fawtytoo.org/index.php?menu=packages.php
 # deb http://www.fawtytoo.org/debian squeeze main contrib non-free
 
 #  PIC microcontroller  Lego Mindstorms http://debs.slavino.sk
 #  Secure APT wget -q http://debs.slavino.sk/repo.asc -O- |  apt-key add -
-#  deb http://debs.slavino.sk testing main non-free
-#  deb-src http://debs.slavino.sk testing main
+# deb http://debs.slavino.sk testing main non-free
+# deb-src http://debs.slavino.sk testing main
 
 # Terminator - http://software.jessies.org/terminator/
 # Description: Terminator is a cross-platform GPL terminal emulator with advanced features not yet found elsewhere.
@@ -948,13 +948,13 @@
 
 # Jitsi (SIP Communicator)  http://jitsi.org/
 # DebianRepository - http://www.jitsi.org/index.php/Main/DebianRepository
-# deb http://download.jitsi.org/deb/ unstable/  
+# deb http://download.jitsi.org/deb/ unstable/
 
 # Bitlbee http://code.bitlbee.org/debian/
 # These are Debian/Ubuntu package repositories. New packages are built nightly (if new changes are available).
 # Pick the branch + version + architecture you want and add it to your sources.list, similar to this:
 # deb http://code.bitlbee.org/debian/devel/testing/amd64/ ./
-# deb http://code.bitlbee.org/debian/devel/lenny/i386/ ./                                                                  
+# deb http://code.bitlbee.org/debian/devel/lenny/i386/ ./
 
 # WINE http://www.winehq.org/download/debian
 # Follow the instructions at: http://dev.carbon-project.org/debian/wine-unstable/
@@ -996,26 +996,26 @@
 # Debian Neuroscience Package Repository - http://neuro.debian.net/
 # http://neuro.debian.net/#package-authentication
 # Stable/Lenny
-#deb http://neuro.debian.net/debian lenny main contrib non-free
-#deb-src http://neuro.debian.net/debian lenny main contrib non-free
+# deb http://neuro.debian.net/debian lenny main contrib non-free
+# deb-src http://neuro.debian.net/debian lenny main contrib non-free
 # Testing/Squeeze
-#deb http://neuro.debian.net/debian squeeze main contrib non-free
-#deb-src http://neuro.debian.net/debian squeeze main contrib non-free
+# deb http://neuro.debian.net/debian squeeze main contrib non-free
+# deb-src http://neuro.debian.net/debian squeeze main contrib non-free
 # Unstable/Sid
-#deb http://neuro.debian.net/debian sid main contrib non-free
-#deb-src http://neuro.debian.net/debian sid main contrib non-free
+# deb http://neuro.debian.net/debian sid main contrib non-free
+# deb-src http://neuro.debian.net/debian sid main contrib non-free
 
 # Tryphon Debian Repository - http://debian.tryphon.org/
 # Secure APT - wget -q -O - http://debian.tryphon.org/release.asc | apt-key add -
 #Stable:
-#deb http://debian.tryphon.org stable main contrib
-#deb-src http://debian.tryphon.org stable main contrib
+# deb http://debian.tryphon.org stable main contrib
+# deb-src http://debian.tryphon.org stable main contrib
 #Testing:
-#deb http://debian.tryphon.org testing main contrib
-#deb-src http://debian.tryphon.org testing main contrib
+# deb http://debian.tryphon.org testing main contrib
+# deb-src http://debian.tryphon.org testing main contrib
 #Unstable:
-#deb http://debian.tryphon.org unstable main contrib
-#deb-src http://debian.tryphon.org unstable main contrib
+# deb http://debian.tryphon.org unstable main contrib
+# deb-src http://debian.tryphon.org unstable main contrib
 
 # aMule http://wiki.amule.org/index.php/HowTo_Compile_In_Debian#aMule_stable_release
 # aMule stable release
@@ -1033,25 +1033,25 @@
 # Description: Inverse.ca repository for SOGo and SOPE nightly builds
 # http://www.sogo.nu/english/support/faq/article/how-to-install-sogo-on-debian-2.html
 # Architectures: all, amd64, i386
-#deb http://inverse.ca/debian lenny lenny
-#deb-src http://inverse.ca/debian lenny lenny
+# deb http://inverse.ca/debian lenny lenny
+# deb-src http://inverse.ca/debian lenny lenny
 
 # Scribus http://www.scribus.net/?q=debian
 # Secure APT - gpg --keyserver wwwkeys.eu.pgp.net --recv-keys EEF818CF; gpg --armor --export EEF818CF | apt-key add -
-#deb http://debian.scribus.net/debian lenny main contrib non-free
-#deb-src http://debian.scribus.net/debian lenny main contrib non-free
+# deb http://debian.scribus.net/debian lenny main contrib non-free
+# deb-src http://debian.scribus.net/debian lenny main contrib non-free
 
 # Squeezebox Slimdevice Stable Repository
 # http://wiki.slimdevices.com/index.php/DebianPackage
-#deb http://debian.slimdevices.com/ stable main
+# deb http://debian.slimdevices.com/ stable main
 
 # Description: Waja's Lenny backports http://people.debian.org/~waja
 # Architectures: all, amd64, i386
-#deb http://ftp.cyconet.org/debian lenny-backports main contrib non-free
+# deb http://ftp.cyconet.org/debian lenny-backports main contrib non-free
 
 # OFSET's non-official Debian repository - http://debian.ofset.org/
-#deb http://debian.ofset.org squeeze main
-#deb-src http://debian.ofset.org squeeze main
+# deb http://debian.ofset.org squeeze main
+# deb-src http://debian.ofset.org squeeze main
 
 # ::: Replica9000's Apt Repository ::: - http://replica9000.bizland.com/linux/debian/rep/
 # deb http://debian.replica9000.net/ unstable main beta
@@ -1077,47 +1077,47 @@
 # deb-src http://packages.ntp.org/debian lenny main
 
 # http://cairographics.org/download/
-#deb http://cairographics.org/packages/debian/ unstable/
-#deb-src http://cairographics.org/packages/debian/ unstable/
+# deb http://cairographics.org/packages/debian/ unstable/
+# deb-src http://cairographics.org/packages/debian/ unstable/
 # current development Cairo snapshots:
-#deb http://cairographics.org/packages/debian/ experimental/
-#deb-src http://cairographics.org/packages/debian/ experimental/
+# deb http://cairographics.org/packages/debian/ experimental/
+# deb-src http://cairographics.org/packages/debian/ experimental/
 
 
 # Joey Hess's bleeding edge repository ( only contains a few new packages)
-#  deb http://kitenet.net/~joey/debian/unstable/ ./
+# deb http://kitenet.net/~joey/debian/unstable/ ./
 
 # Ekiga snapshot http://wiki.ekiga.org/index.php/Snapshots
-#deb http://snapshots.ekiga.net/snapshots/debian/ ./
+# deb http://snapshots.ekiga.net/snapshots/debian/ ./
 
 # Esmska - http://code.google.com/p/esmska/
  #Secure APT - wget -q -O - http://repo.palatinus.cz/repo.key | apt-key add -
- #deb http://repo.palatinus.cz/stable /
+# deb http://repo.palatinus.cz/stable /
 
 # Phoronix Test Suite
-#deb http://www.phoronix-test-suite.com/releases/repo pts.debian/
+# deb http://www.phoronix-test-suite.com/releases/repo pts.debian/
 
 # Unofficial Maintainers  http://unofficial.debian-maintainers.org/
 # Secure APT - apt-get install dmo-archive-keyring
 # Unofficial Maintainers (lenny/stable releases)
-#deb http://unofficial.debian-maintainers.org/ lenny main contrib non-free restricted
-#deb-src http://unofficial.debian-maintainers.org/ lenny main contrib non-free restricted
+# deb http://unofficial.debian-maintainers.org/ lenny main contrib non-free restricted
+# deb-src http://unofficial.debian-maintainers.org/ lenny main contrib non-free restricted
 # Unofficial Maintainers (squeeze/testing releases)
 # Note: This repository is not yet populated.
 # deb http://unofficial.debian-maintainers.org/ squeeze main contrib non-free restricted
 # deb-src http://unofficial.debian-maintainers.org/ squeeze main contrib non-free restricted
 # Unofficial Maintainers (sid/unstable releases)
-#deb http://unofficial.debian-maintainers.org/ sid main contrib non-free restricted
-#deb-src http://unofficial.debian-maintainers.org/ sid main contrib non-free restricted
+# deb http://unofficial.debian-maintainers.org/ sid main contrib non-free restricted
+# deb-src http://unofficial.debian-maintainers.org/ sid main contrib non-free restricted
 
 # Frostwire http://apt.debianchile.org/frostwire/
-#deb http://apt.debianchile.org/frostwire version main
-#deb-src http://apt.debianchile.org/frostwire version main
+# deb http://apt.debianchile.org/frostwire version main
+# deb-src http://apt.debianchile.org/frostwire version main
 
 
 # http://www.nanolx.org/index.php
-#deb http://www.nanolx.org/apt/ speedwave main
-#deb-src http://www.nanolx.org/apt/ speedwave main
+# deb http://www.nanolx.org/apt/ speedwave main
+# deb-src http://www.nanolx.org/apt/ speedwave main
 #gpg --keyserver pgp.mit.edu --recv-key 22455895
 #gpg --armor --export 22455895 | sudo apt-key add -
 
@@ -1135,14 +1135,14 @@
 
 
 deb http://http.kali.org/kali kali main non-free contrib
-#deb-src http://http.kali.org/kali kali main non-free contrib
+# deb-src http://http.kali.org/kali kali main non-free contrib
 
-#deb http://http.kali.org/kali kali-dev main non-free contrib
-#deb-src http://http.kali.org/kali kali-dev main non-free contrib
+# deb http://http.kali.org/kali kali-dev main non-free contrib
+# deb-src http://http.kali.org/kali kali-dev main non-free contrib
 
 ## Security updates
 deb http://security.kali.org/kali-security kali/updates main contrib non-free
-#deb-src http://security.kali.org/kali-security kali/updates main contrib non-free
+# deb-src http://security.kali.org/kali-security kali/updates main contrib non-free
 
 
 ###########################
@@ -1153,8 +1153,8 @@ deb http://security.kali.org/kali-security kali/updates main contrib non-free
 ## Experimental  ##
 ##################
 # Debian experimental http://wiki.debian.org/DebianExperimental
-#deb http://ftp.debian.org/debian experimental main
-#deb http://ftp.debian.org/debian experimental main
+# deb http://ftp.debian.org/debian experimental main
+# deb http://ftp.debian.org/debian experimental main
 
 
 ####################
@@ -1167,11 +1167,11 @@ deb-src http://ftp.dk.debian.org/debian unstable main contrib non-free
 ###################
 ## Debian jessie ##
 ###################
-#deb http://ftp.dk.debian.org/debian testing main contrib non-free
-#deb-src http://ftp.dk.debian.org/debian testing main contrib non-free
+# deb http://ftp.dk.debian.org/debian testing main contrib non-free
+# deb-src http://ftp.dk.debian.org/debian testing main contrib non-free
 
-#deb http://security.debian.org/ jessie/updates main contrib non-free
-#deb-src http://security.debian.org/ jessie/updates main contrib non-free
+# deb http://security.debian.org/ jessie/updates main contrib non-free
+# deb-src http://security.debian.org/ jessie/updates main contrib non-free
 
 
 ###########################
@@ -1183,16 +1183,16 @@ deb-src http://ftp.dk.debian.org/debian unstable main contrib non-free
 ###################
 
 ###### Ubuntu Main Repos
-#deb http://dk.archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse 
-#deb-src http://dk.archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse 
+# deb http://dk.archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse
+# deb-src http://dk.archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse
 
 ###### Ubuntu Partner Repo
-#deb http://archive.canonical.com/ubuntu trusty partner
-#deb-src http://archive.canonical.com/ubuntu trusty partner
+# deb http://archive.canonical.com/ubuntu trusty partner
+# deb-src http://archive.canonical.com/ubuntu trusty partner
 
 ###### Ubuntu Extras Repo
-#deb http://extras.ubuntu.com/ubuntu trusty main
-#deb-src http://extras.ubuntu.com/ubuntu trusty main
+# deb http://extras.ubuntu.com/ubuntu trusty main
+# deb-src http://extras.ubuntu.com/ubuntu trusty main
 
 
 ###################
@@ -1200,16 +1200,16 @@ deb-src http://ftp.dk.debian.org/debian unstable main contrib non-free
 ###################
 
 ###### Ubuntu Main Repos
-#deb http://dk.archive.ubuntu.com/ubuntu/ saucy main restricted universe multiverse 
-#deb-src http://dk.archive.ubuntu.com/ubuntu/ saucy main restricted universe multiverse 
+# deb http://dk.archive.ubuntu.com/ubuntu/ saucy main restricted universe multiverse
+# deb-src http://dk.archive.ubuntu.com/ubuntu/ saucy main restricted universe multiverse
 
 ###### Ubuntu Partner Repo
-#deb http://archive.canonical.com/ubuntu saucy partner
-#deb-src http://archive.canonical.com/ubuntu saucy partner
+# deb http://archive.canonical.com/ubuntu saucy partner
+# deb-src http://archive.canonical.com/ubuntu saucy partner
 
 ###### Ubuntu Extras Repo
-#deb http://extras.ubuntu.com/ubuntu saucy main
-#deb-src http://extras.ubuntu.com/ubuntu saucy main
+# deb http://extras.ubuntu.com/ubuntu saucy main
+# deb-src http://extras.ubuntu.com/ubuntu saucy main
 
 
 ###################
@@ -1218,22 +1218,22 @@ deb-src http://ftp.dk.debian.org/debian unstable main contrib non-free
 
 
 ###### Ubuntu Main Repos
-#deb http://dk.archive.ubuntu.com/ubuntu/ raring main restricted universe multiverse 
-#deb-src http://dk.archive.ubuntu.com/ubuntu/ raring main restricted universe multiverse 
+# deb http://dk.archive.ubuntu.com/ubuntu/ raring main restricted universe multiverse
+# deb-src http://dk.archive.ubuntu.com/ubuntu/ raring main restricted universe multiverse
 
 ###### Ubuntu Update Repos
-#deb http://dk.archive.ubuntu.com/ubuntu/ raring-security main restricted universe multiverse 
-#deb http://dk.archive.ubuntu.com/ubuntu/ raring-updates main restricted universe multiverse 
-#deb http://dk.archive.ubuntu.com/ubuntu/ raring-proposed main restricted universe multiverse 
-#deb http://dk.archive.ubuntu.com/ubuntu/ raring-backports main restricted universe multiverse 
-#deb-src http://dk.archive.ubuntu.com/ubuntu/ raring-security main restricted universe multiverse 
-#deb-src http://dk.archive.ubuntu.com/ubuntu/ raring-updates main restricted universe multiverse 
-#deb-src http://dk.archive.ubuntu.com/ubuntu/ raring-proposed main restricted universe multiverse 
-#deb-src http://dk.archive.ubuntu.com/ubuntu/ raring-backports main restricted universe multiverse 
+# deb http://dk.archive.ubuntu.com/ubuntu/ raring-security main restricted universe multiverse
+# deb http://dk.archive.ubuntu.com/ubuntu/ raring-updates main restricted universe multiverse
+# deb http://dk.archive.ubuntu.com/ubuntu/ raring-proposed main restricted universe multiverse
+# deb http://dk.archive.ubuntu.com/ubuntu/ raring-backports main restricted universe multiverse
+# deb-src http://dk.archive.ubuntu.com/ubuntu/ raring-security main restricted universe multiverse
+# deb-src http://dk.archive.ubuntu.com/ubuntu/ raring-updates main restricted universe multiverse
+# deb-src http://dk.archive.ubuntu.com/ubuntu/ raring-proposed main restricted universe multiverse
+# deb-src http://dk.archive.ubuntu.com/ubuntu/ raring-backports main restricted universe multiverse
 
 ###### Ubuntu Partner Repo
-#deb http://archive.canonical.com/ubuntu raring partner
-#deb-src http://archive.canonical.com/ubuntu raring partner
+# deb http://archive.canonical.com/ubuntu raring partner
+# deb-src http://archive.canonical.com/ubuntu raring partner
 
 
 
@@ -1244,26 +1244,26 @@ deb-src http://ftp.dk.debian.org/debian unstable main contrib non-free
 #apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 16126D3A3E5C1192
 #apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5
 ###### Ubuntu Main Repos
-#deb http://dk.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse 
-#deb-src http://dk.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse 
+# deb http://dk.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse
+# deb-src http://dk.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse
 
 ###### Ubuntu Update Repos
-#deb http://dk.archive.ubuntu.com/ubuntu/ precise-security main restricted universe multiverse 
-#deb http://dk.archive.ubuntu.com/ubuntu/ precise-updates main restricted universe multiverse 
-#deb http://dk.archive.ubuntu.com/ubuntu/ precise-proposed main restricted universe multiverse 
-#deb http://dk.archive.ubuntu.com/ubuntu/ precise-backports main restricted universe multiverse 
-#deb-src http://dk.archive.ubuntu.com/ubuntu/ precise-security main restricted universe multiverse 
-#deb-src http://dk.archive.ubuntu.com/ubuntu/ precise-updates main restricted universe multiverse 
-#deb-src http://dk.archive.ubuntu.com/ubuntu/ precise-proposed main restricted universe multiverse 
-#deb-src http://dk.archive.ubuntu.com/ubuntu/ precise-backports main restricted universe multiverse 
+# deb http://dk.archive.ubuntu.com/ubuntu/ precise-security main restricted universe multiverse
+# deb http://dk.archive.ubuntu.com/ubuntu/ precise-updates main restricted universe multiverse
+# deb http://dk.archive.ubuntu.com/ubuntu/ precise-proposed main restricted universe multiverse
+# deb http://dk.archive.ubuntu.com/ubuntu/ precise-backports main restricted universe multiverse
+# deb-src http://dk.archive.ubuntu.com/ubuntu/ precise-security main restricted universe multiverse
+# deb-src http://dk.archive.ubuntu.com/ubuntu/ precise-updates main restricted universe multiverse
+# deb-src http://dk.archive.ubuntu.com/ubuntu/ precise-proposed main restricted universe multiverse
+# deb-src http://dk.archive.ubuntu.com/ubuntu/ precise-backports main restricted universe multiverse
 
 ###### Ubuntu Partner Repo
-#deb http://archive.canonical.com/ubuntu precise partner
-#deb-src http://archive.canonical.com/ubuntu precise partner
+# deb http://archive.canonical.com/ubuntu precise partner
+# deb-src http://archive.canonical.com/ubuntu precise partner
 
 ###### Ubuntu Extras Repo
-#deb http://extras.ubuntu.com/ubuntu precise main
-#deb-src http://extras.ubuntu.com/ubuntu precise main
+# deb http://extras.ubuntu.com/ubuntu precise main
+# deb-src http://extras.ubuntu.com/ubuntu precise main
 
 
 
@@ -1275,8 +1275,8 @@ deb-src http://ftp.dk.debian.org/debian unstable main contrib non-free
 # SolusOS http://solusos.com/
 # Secure APT: apt-get install solusos-keyring
 # Official SolusOS repo
-#deb http://packages.solusos.com/ eveline main upstream import non-free
-#deb-src http://packages.solusos.com/ eveline main upstream import non-free
+# deb http://packages.solusos.com/ eveline main upstream import non-free
+# deb-src http://packages.solusos.com/ eveline main upstream import non-free
 
 
 ###########################
@@ -1288,15 +1288,15 @@ deb-src http://ftp.dk.debian.org/debian unstable main contrib non-free
 # LMDE FAQ - http://forums.linuxmint.com/viewtopic.php?f=197&t=91405
 # New mint-debian-mirrors package - http://forum.linuxmint.com/viewtopic.php?f=185&t=112047
 # Secure APT - apt-get install linuxmint-keyring
-#deb http://packages.linuxmint.com/ debian main upstream import incoming romeo backport
-#deb-src http://packages.linuxmint.com/ debian main upstream import incoming romeo backport
+# deb http://packages.linuxmint.com/ debian main upstream import incoming romeo backport
+# deb-src http://packages.linuxmint.com/ debian main upstream import incoming romeo backport
 
 ###########################
 ## SEMPLICE #
 ###########################
 # /etc/apt/sources.list.d/semplice.list, generated by mirrorselect 1.0
-#deb http://kent.dl.sourceforge.net/project/semplice-linux/archive unstable main contrib non-free
-#deb-src http://kent.dl.sourceforge.net/project/semplice-linux/archive unstable main contrib non-free
+# deb http://kent.dl.sourceforge.net/project/semplice-linux/archive unstable main contrib non-free
+# deb-src http://kent.dl.sourceforge.net/project/semplice-linux/archive unstable main contrib non-free
 
 
 ###########################
@@ -1304,8 +1304,8 @@ deb-src http://ftp.dk.debian.org/debian unstable main contrib non-free
 ###########################
 # Jens' unofficial debian-repository for the Code::Blocks - IDE - http://apt.jenslody.de/
 #Secure APT - apt-get install jens-lody-debian-keyring
-#deb http://apt.jenslody.de/testing jessie main
-#deb-src http://apt.jenslody.de/testing jessie main
+# deb http://apt.jenslody.de/testing jessie main
+# deb-src http://apt.jenslody.de/testing jessie main
 
 
 ###########################
@@ -1314,8 +1314,8 @@ deb-src http://ftp.dk.debian.org/debian unstable main contrib non-free
 # wxWidgets/wxPython repository at apt.wxwidgets.org
 # InstallingOnUbuntuOrDebian - wxPyWiki : http://wiki.wxpython.org/InstallingOnUbuntuOrDebian
 # Secure APT - wget -q http://apt.wxwidgets.org/key.asc -O-  | apt-key add -
-#deb http://apt.wxwidgets.org/ squeeze-wx main
-#deb-src http://apt.wxwidgets.org/ squeeze-wx main
+# deb http://apt.wxwidgets.org/ squeeze-wx main
+# deb-src http://apt.wxwidgets.org/ squeeze-wx main
 
 
 ##########
@@ -1330,7 +1330,7 @@ deb-src http://ftp.dk.debian.org/debian unstable main contrib non-free
 ## Smartgit #
 ###########################
 deb http://ppa.launchpad.net/eugenesan/ppa/ubuntu raring main
-#deb-src http://ppa.launchpad.net/eugenesan/ppa/ubuntu raring main
+# deb-src http://ppa.launchpad.net/eugenesan/ppa/ubuntu raring main
 
 
 ###########################
@@ -1338,35 +1338,35 @@ deb http://ppa.launchpad.net/eugenesan/ppa/ubuntu raring main
 ###########################
 
 deb http://ppa.launchpad.net/webupd8team/java/ubuntu raring main
-#deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu raring main
+# deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu raring main
 
 
 ###########################
 ## LINARO #
 ###########################
 ########################Overlay###################################
-#deb http://ppa.launchpad.net/linaro-maintainers/overlay/ubuntu raring main
-#deb-src http://ppa.launchpad.net/linaro-maintainers/overlay/ubuntu raring main
+# deb http://ppa.launchpad.net/linaro-maintainers/overlay/ubuntu raring main
+# deb-src http://ppa.launchpad.net/linaro-maintainers/overlay/ubuntu raring main
 
 ########################Linaro Staging Overlay###################################
-#deb http://ppa.launchpad.net/linaro-maintainers/staging-overlay/ubuntu raring main
-#deb-src http://ppa.launchpad.net/linaro-maintainers/staging-overlay/ubuntu raring main
+# deb http://ppa.launchpad.net/linaro-maintainers/staging-overlay/ubuntu raring main
+# deb-src http://ppa.launchpad.net/linaro-maintainers/staging-overlay/ubuntu raring main
 
 ########################Linaro tools###################################
-#deb http://ppa.launchpad.net/linaro-maintainers/tools/ubuntu raring main
-#deb-src http://ppa.launchpad.net/linaro-maintainers/tools/ubuntu raring main
+# deb http://ppa.launchpad.net/linaro-maintainers/tools/ubuntu raring main
+# deb-src http://ppa.launchpad.net/linaro-maintainers/tools/ubuntu raring main
 
 ########################Linaro Toolchain Backports###################################
-#deb http://ppa.launchpad.net/linaro-maintainers/toolchain/ubuntu raring main
-#deb-src http://ppa.launchpad.net/linaro-maintainers/toolchain/ubuntu raring main
+# deb http://ppa.launchpad.net/linaro-maintainers/toolchain/ubuntu raring main
+# deb-src http://ppa.launchpad.net/linaro-maintainers/toolchain/ubuntu raring main
 
 ########################Linaro Cross Build Tools###################################
-#deb http://ppa.launchpad.net/linaro-foundations/cross-build-tools/ubuntu raring main
-#deb-src http://ppa.launchpad.net/linaro-foundations/cross-build-tools/ubuntu raring main
+# deb http://ppa.launchpad.net/linaro-foundations/cross-build-tools/ubuntu raring main
+# deb-src http://ppa.launchpad.net/linaro-foundations/cross-build-tools/ubuntu raring main
 
 ######Daily builds of the Linaro Unity stack with desktop OpenGL##################
-#deb-src http://ppa.launchpad.net/linaro-graphics-wg/unity-gl-daily/ubuntu raring main
-#deb-src http://ppa.launchpad.net/linaro-graphics-wg/unity-gl-daily/ubuntu raring main
+# deb-src http://ppa.launchpad.net/linaro-graphics-wg/unity-gl-daily/ubuntu raring main
+# deb-src http://ppa.launchpad.net/linaro-graphics-wg/unity-gl-daily/ubuntu raring main
 
 
 ###########################################
@@ -1374,8 +1374,8 @@ deb http://ppa.launchpad.net/webupd8team/java/ubuntu raring main
 ###########################################
 # Unofficial Debian packages from Kirya.net http://packages.kirya.net/
 # wget -O - http://packages.kirya.net/Kirya.netDebianpackagesVerificationKey.asc | apt-key add -
-#deb http://packages.kirya.net/debian/ sid main contrib non-free
-#deb-src http://packages.kirya.net/debian/ sid main contrib non-free 
+# deb http://packages.kirya.net/debian/ sid main contrib non-free
+# deb-src http://packages.kirya.net/debian/ sid main contrib non-free
 
 
 ##############
@@ -1385,7 +1385,7 @@ deb http://ppa.launchpad.net/webupd8team/java/ubuntu raring main
 # Download [wiki.mate-desktop.org] - http://wiki.mate-desktop.org/download#debian
 # Secure APT: apt-get install mate-archive-keyring
 # To install MATE, add the following line to your /etc/apt/sources.list file
-#deb http://repo.mate-desktop.org/debian jessie main
+# deb http://repo.mate-desktop.org/debian jessie main
 
 ##############
 ## DEBCREATE ##
@@ -1393,18 +1393,18 @@ deb http://ppa.launchpad.net/webupd8team/java/ubuntu raring main
 # Debcreate - Debian package builder (Also in slam's repo)
 # http://gtk-apps.org/content/show.php/Debreate+-+Debian+package+builder?content=101776
 # https://sourceforge.net/forum?group_id=257869
-#deb http://debreate.sf.net/apt debreate main
+# deb http://debreate.sf.net/apt debreate main
 
 ##################
 ## gpaste ##
 ##################
-#deb http://ppa.launchpad.net/webupd8team/gnome3/ubuntu raring main
+# deb http://ppa.launchpad.net/webupd8team/gnome3/ubuntu raring main
 
 ##################
 ## EMERALD DOCKBARX AVANT WINDOW NAVIGATOR... all need porting##
 ##################
-#deb http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu raring main
-#deb-src http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu raring main
+# deb http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu raring main
+# deb-src http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu raring main
 
 ##############
 ## Emdebian ##
@@ -1413,7 +1413,7 @@ deb http://ppa.launchpad.net/webupd8team/java/ubuntu raring main
 # Also see http://wiki.debian.org/Embedded_Debian
 # Secure APT:apt-get install emdebian-archive-keyring
 # deb http://www.emdebian.org/debian/ squeeze main
-#deb http://www.emdebian.org/debian/ testing main
+# deb http://www.emdebian.org/debian/ testing main
 # deb http://www.emdebian.org/debian/ unstable main
 
 #############
@@ -1426,41 +1426,43 @@ deb http://ppa.launchpad.net/webupd8team/java/ubuntu raring main
 #############
 ## most recent cuda ##
 #############
-#deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1210/x86_64 /
-#deb-src http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1204/x86_64 /
+# deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1210/x86_64 /
+# deb-src http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1204/x86_64 /
 
 
 #############
 ## gambas 3,5 ##
 #############
-deb http://ppa.launchpad.net/nemh/gambas3/ubuntu trusty main
-#deb-src http://ppa.launchpad.net/nemh/gambas3/ubuntu trusty main
+# deb http://ppa.launchpad.net/nemh/gambas3/ubuntu trusty main
+# deb-src http://ppa.launchpad.net/nemh/gambas3/ubuntu trusty main
 
 
 #############
 ## Lubntu emerald plus much other stuff, spacefm,udevil ##
 #############
-#deb http://ppa.launchpad.net/mati75/lubuntu/ubuntu saucy main
-#deb-src http://ppa.launchpad.net/mati75/lubuntu/ubuntu saucy main
+# deb http://ppa.launchpad.net/mati75/lubuntu/ubuntu saucy main
+# deb-src http://ppa.launchpad.net/mati75/lubuntu/ubuntu saucy main
 
 #############
 ## latest geany from ubuntu ##
 #############
-#deb http://ppa.launchpad.net/geany-dev/ppa/ubuntu raring main
-#deb-src http://ppa.launchpad.net/geany-dev/ppa/ubuntu raring main
+# deb http://ppa.launchpad.net/geany-dev/ppa/ubuntu raring main
+# deb-src http://ppa.launchpad.net/geany-dev/ppa/ubuntu raring main
 
 #############
 ## ubuntu tweak ##
 #############
-#deb http://ppa.launchpad.net/tualatrix/ppa/ubuntu saucy main
-#deb http://ppa.launchpad.net/tualatrix/ppa/ubuntu saucy main
+# deb http://ppa.launchpad.net/tualatrix/ppa/ubuntu saucy main
+# deb http://ppa.launchpad.net/tualatrix/ppa/ubuntu saucy main
 
 #############
 ## Time Shift selene ##
 #############
-deb http://ppa.launchpad.net/teejee2008/ppa/ubuntu trusty main
-#deb http://ppa.launchpad.net/teejee2008/ppa/ubuntu trusty main
+# deb http://ppa.launchpad.net/teejee2008/ppa/ubuntu trusty main
+# deb-src http://ppa.launchpad.net/teejee2008/ppa/ubuntu trusty main
 
+
+#deb [trusted=yes] https://github.com/Jubei-Mitsuyoshi/aaa-debian-repo/blob/master unstable main
 #automaticaly added entries ppa script
 
 

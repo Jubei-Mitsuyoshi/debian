@@ -125,6 +125,22 @@ function Test()
 }
 
 
+##
+#  usage : in_array( $needle, $haystack )
+# return : 0 - found
+#          1 - not found
+##
+InArray() {
+	local needle=$1; shift
+	local item
+	for item in "$@"; do
+		[[ $item = $needle ]] && return 0 # Found
+	done
+	return 1 # Not Found
+}
+
+
+
 
 function CheckMyDeps()
 {
@@ -154,12 +170,30 @@ done
 
 
 
-
+[[ "$(id -u)" != "0" ]] && Fuck "This script must be run as root"
 
 CheckMyDeps "wget pbuilder reprepro cat grep"
 
+function CloneIt()
+{
+	
+	#$1 packages name
+	#$2 git url and type ie git/https etc
+aaa_escape=0
+while [[ $aaa_escape -eq 0 ]]; do
 
-
+	Info "downloading $2/$1".git
+	git clone "$2/$1".git
+	if [[ ! $? -eq 0 ]]; then
+		Warn "git clone $2/$1 bugged out, mostly due to bad internet"
+		Warn "since with this build i cant miss a package i need to try again"
+		Warn "if thats not good for you ${aaa_ctrl_c} to quit"
+		AnyKey
+	else
+		aaa_escape=1
+	fi
+done
+}
 
 
 
@@ -309,11 +343,10 @@ fi
 
 
 
-function CleanMyRepo()
+function PurgeMyRepo()
 {
 
-	#first argument repo name
-		#xxxxxx ...variable name name
+
 		
 	#second argument space delimited list of package names to match
 		#xxxxxx ...variable name name
@@ -325,26 +358,46 @@ done
 }
 
 
+function CleanMyRepo()
+{
+		#first argument repo name
+		#xxxxxx ...variable name name
+	
+	for file_base in `find . -maxdepth 1 -mindepth 1 -type f -name "*.deb"`; do 
+		local file_n1=${file_base#./}
+		local file_n2=${file_n1%%_*.*}
+		Warn "removing previous $file_n2"
+		reprepro -Vb "$aaa_localrepo_dir" remove "$1" "$file_n2"
+	done
+	
+
+
+}
+
+
+
 function PatchEm()
 {
-
-	case "$1" in
 	
-		#nemo patches#######################################################################################################################################
-		
-		nemo) patch -p1 < "$aaa_patch_dir/remove_elevated_privelages_banner.patch" 
-			#allow pup-vm to replace gvfs
-			Test sed -i 's/gvfs (>= 1.3.2)/gvfs (>= 1.3.2) | pup-volume-monitor/' ./debian/control ;;
+	# seems the hardening wrapper is gone, this just makes sure
+	[[ "$aaa_cinnamon_release_list $aaa_cinnamon_git_list" == *"$1"* ]] && sed -i '/hardening-wrapper/d' ./debian/control
+	case "$1" in
+		#cinnamon build dynamic patches#######################################################################################################################################
+			#nemo patches#######################################################################################################################################
 			
-		#nemo-preview patches################################################################################################################################
-		
-		nemo-preview) mkdir -p aaa-tmp
-							cd aaa-tmp
-							#DownLoad "http://dk.archive.ubuntu.com/ubuntu/pool/main/i/intltool/intltool_0.50.2-2_all.deb"
-							#reprepro -b "$aaa_localrepo_dir" includedeb  $aaa_work_repo *.deb || Fuck "something wrong with-- reprepro ---check the output"
-							rm -f * >/dev/null 2>&1 
-							cd ..
-							rm -fr aaa-tmp ;;
+			nemo) patch -p1 < "$aaa_patch_dir/remove_elevated_privelages_banner.patch" 
+				#allow pup-vm to replace gvfs
+				Test sed -i 's/gvfs (>= 1.3.2)/gvfs (>= 1.3.2) | pup-volume-monitor/' ./debian/control ;;
+				
+			#nemo-preview patches################################################################################################################################
+			
+			nemo-preview) mkdir -p aaa-tmp
+								cd aaa-tmp
+								#DownLoad "http://dk.archive.ubuntu.com/ubuntu/pool/main/i/intltool/intltool_0.50.2-2_all.deb"
+								#reprepro -b "$aaa_localrepo_dir" includedeb  $aaa_work_repo *.deb || Fuck "something wrong with-- reprepro ---check the output"
+								rm -f * >/dev/null 2>&1 
+								cd ..
+								rm -fr aaa-tmp ;;
 							
 		#libgnome2-0#########################################################################################################################################
 		
@@ -356,13 +409,12 @@ function PatchEm()
 			
 		#Cinnamon#########################################################################################################################################
 		
-		Cinnamon) Test sed -i 's/;cinnamon-fallback-mount-helper//' ./files/usr/share/cinnamon-session/sessions
-							Test sed -i 's/nm-applet;//' ./files/usr/share/cinnamon-session/sessions ;;
+		Cinnamon) Test sed -i 's/;cinnamon-fallback-mount-helper//' ./files/usr/share/cinnamon-session/sessions/cinnamon.session
+							Test sed -i 's/nm-applet;//' ./files/usr/share/cinnamon-session/sessions/cinnamon.session ;;
 							
 		#winexe#########################################################################################################################################
 		
-		winexe) Test sed -i 's/;cinnamon-fallback-mount-helper//' ./files/usr/share/cinnamon-session/sessions
-							Test sed -i 's/nm-applet;//' ./files/usr/share/cinnamon-session/sessions ;;
+		winexe) Debug ;;
 		
 		#winexe#########################################################################################################################################
 	#cat postinst > test
@@ -413,6 +465,72 @@ Info "now type startx"
 }
 
 
+function SwitchDistro()
+{
+	Info "Switching distro to $1"
+	aaa_debian_distro="$1"
 
+case "$aaa_debian_distro" in
+
+	kali) aaa_mirror="$aaa_kali_mirror" 
+		aaa_pkg_tag="$aaa_pkg_tag_kali"
+		aaa_base_components="main contrib non-free" 
+		aaa_debootstrap_opts="('--variant=buildd' '--keyring=$aaa_kali_keyring' '--include=kali-archive-keyring')" ;;
+	testing) aaa_mirror="$aaa_deb_mirror" 
+		aaa_pkg_tag="$aaa_pkg_tag_testing"
+		aaa_debootstrap_opts="('--variant=buildd' '--keyring=$aaa_deb_keyring')" 
+		aaa_base_components="main contrib non-free" ;;
+	stable) aaa_mirror="$aaa_deb_mirror" 
+		aaa_debootstrap_opts="('--variant=buildd' '--keyring=$aaa_deb_keyring')" 
+		aaa_pkg_tag="$aaa_pkg_tag_stable"
+		aaa_base_components="main contrib non-free" ;;
+	unstable) aaa_mirror="$aaa_deb_mirror" 
+		aaa_pkg_tag="$aaa_pkg_tag_unstable"
+		aaa_debootstrap_opts="('--variant=buildd' '--keyring=$aaa_deb_keyring')"
+		aaa_base_components="main contrib non-free" ;;
+	ubuntu) aaa_mirror="$aaa_ubuntu_mirror" 
+		aaa_pkg_tag="$aaa_pkg_tag_ubuntu"
+		aaa_extra_packages="$aaa_extra_packages ubuntu-archive-keyring" 
+		aaa_debootstrap_opts="('--variant=buildd' '--keyring=$aaa_ubuntu_keyring' '--include=ubuntu-archive-keyring')"
+		aaa_base_components="main restricted universe multiverse" ;;
+esac
+
+
+aaa_cores=$((    $(cat /proc/cpuinfo | grep processor | wc -l)+1    ))
+
+if [[ -z "${architecture}" ]]; then	
+	aaa_buildopts="$aaa_extra_build_opts -j$aaa_cores"
+	aaa_base_gz="$aaa_debian_distro-base.tgz"
+else
+	aaa_buildopts="--arch $architecture $aaa_extra_build_opts -j$aaa_cores"
+	aaa_base_gz="$aaa_debian_distro-$architecture-base.tgz"
+fi
+
+
+#possible extra debootstrapopt
+# -m$aaa_maintainer
+
+aaa_apt_cache_dir="$aaa_apt_cache_base_dir/$aaa_debian_distro"
+
+echo "MIRRORSITE=\"$aaa_mirror\"
+OTHERMIRROR=\"deb [trusted=yes] file://$aaa_localrepo_dir $aaa_work_repo main\"
+BINDMOUNTS=\"$aaa_bindmounts\"
+HOOKDIR=\"$aaa_pbuilder_hookdir\"
+EXTRAPACKAGES=\"$aaa_extra_packages\"
+
+APTCACHE=\"$aaa_apt_cache_dir\"
+DEBEMAIL=\"$aaa_maintainer\"
+BUILDRESULT=\"$aaa_build_result\"
+COMPONENTS=\"$aaa_base_components\"
+DEBBUILDOPTS=\"$aaa_buildopts\"
+DEBOOTSTRAPOPTS=$aaa_debootstrap_opts
+BUILDUSERNAME=\"\"
+AUTO_DEBSIGN=no
+DISTRIBUTION=$aaa_debian_distro
+APTCACHEHARDLINK=$aaa_hardlink
+BASETGZ=\"$aaa_base_gz_dir/$aaa_base_gz\"
+BUILDPLACE=\"$aaa_build_location\"" > "$HOME/.pbuilderrc"
+
+}
 
 
