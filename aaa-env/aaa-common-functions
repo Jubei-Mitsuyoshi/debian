@@ -361,13 +361,13 @@ done
 function CleanMyRepo()
 {
 		#first argument repo name
-		#xxxxxx ...variable name name
+		#second arg repo basedir
 	
 	for file_base in `find . -maxdepth 1 -mindepth 1 -type f -name "*.deb"`; do 
 		local file_n1=${file_base#./}
 		local file_n2=${file_n1%%_*.*}
 		Warn "removing previous $file_n2"
-		reprepro -Vb "$aaa_localrepo_dir" remove "$1" "$file_n2"
+		Test reprepro -Vb "$2" remove "$1" "$file_n2"
 	done
 	
 

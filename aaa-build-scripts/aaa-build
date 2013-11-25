@@ -16,8 +16,6 @@ usage: ${0##*/} [options] </path/to/pkg/dir>
   -i < include built .changes to extra local 
 	repos work|testing|unstable|stable|saucy>
   
-  -c
-  -c <clean repos before inclusion>
   
   -g
   -g <also include packages into git repo>
@@ -79,7 +77,7 @@ export AAA_SUPRESS_LOCAL_PBUILDERRC="yes"
 #if no command arguments /etc/pbuilderrc is used instead which is  fallback
 rm -rf $HOME/.pbuilderrc
 
-while getopts ":cgd:i:" opt; do
+while getopts ":gd:i:" opt; do
   case $opt in
     d) Info "< -d $OPTARG > passed" 
 		case $OPTARG in
@@ -97,7 +95,6 @@ while getopts ":cgd:i:" opt; do
 									  *) Fuck "<-i $OPTARG> is not valid, needs to be -i<$aaa_work_repo,stable,unstable,testing or saucy>" ;;
 		esac ;;
 		
-	c) clean_repo=1 ;;
 	g) add_to_git_repo=1 ;;
    \?) Fuck "Invalid option: -$OPTARG" ;;
     :) Fuck "Option -$OPTARG requires a distro name, kali,stable,unstable,testing or ubuntu" ;;
@@ -106,10 +103,6 @@ done
 #shift the options and args out the way http://wiki.bash-hackers.org/howto/getopts_tutorial
 shift $((OPTIND-1))
 #and lets parse it
-
-if [[ ! $repo_name ]] && [[ $clean_repo -eq 1 ]]; then
-	Fuck "if clean is requested -i <repo name> must be passed aswell"
-fi
 
 [[ -z $1 ]] && Fuck "need directory target"
 [[ -d $1/debian ]] || Fuck "target dir does not contain a debian subdir"
@@ -140,10 +133,12 @@ Test pbuilder --build *.dsc
 
 cd "$aaa_build_result"
 
-[[ $clean_repo -eq 1 ]] && CleanMyRepo "$repo_name"
+
 
 for rname in $repo_name ; do 
-	Test reprepro -b "$aaa_localrepo_dir" include $rname *.changes
+	CleanMyRepo "$rname" "$aaa_localrepo_dir"
+	Test reprepro -b "$aaa_localrepo_dir" include "$rname" *.changes
+	[[ $add_to_git_repo -eq 1 ]] && CleanMyRepo "$rname" "$aaa_git_repo_dir"
 	[[ $add_to_git_repo -eq 1 ]] && Test reprepro -b "$aaa_git_repo_dir" include $aaa_debian_distro *.changes
 done
 
