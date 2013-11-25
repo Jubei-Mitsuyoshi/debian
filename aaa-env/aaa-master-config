@@ -207,7 +207,7 @@ aaa_pkg_tag_ubuntu="aaasaucy"
 
 
 
-############################## aaa-build-cinnamon-pbuilder ##################################
+############################## aaa-build-cinnamon ##################################
 
 ##########################################################
 #locatin for cinnamon releases download and storage
@@ -291,11 +291,13 @@ case "$enable_tmpfs" in
 	yes) aaa_work_dir="$aaa_tmpfs_location/aaa-work-dir"
 		aaa_build_location="$aaa_tmpfs_location/aaa-build"
 		aaa_build_result="$aaa_tmpfs_location/aaa-build-result"
-		aaa_hardlink="no" ;;
+		aaa_hardlink="no"
+		export TMPDIR="$aaa_tmpfs_location" ;;
 	no) aaa_work_dir="$aaa_work_dir_hdd"
 		aaa_build_result="$aaa_build_result_hdd"
 		aaa_build_location="$aaa_hdd_build_location"
-		aaa_hardlink="yes" ;;
+		aaa_hardlink="yes"
+		export TMPDIR="$aaa_hdd_build_location" ;;
 esac
 
 aaa_cores=$((    $(cat /proc/cpuinfo | grep processor | wc -l)+1    ))

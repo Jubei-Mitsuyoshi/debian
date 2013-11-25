@@ -425,8 +425,9 @@ function PatchEm()
 }
 
 
-function ProcessBeb() {
+function PatchDeb() {
 rm -fr "$1/tmp"
+TMPDIR=`mktemp -d /tmp/deb.XXXXXXXXXX`
 MakeADir "$1/tmp"
 dpkg-deb -x *.deb "$1/tmp"
 dpkg-deb --control *.deb "$1/tmp/DEBIAN"

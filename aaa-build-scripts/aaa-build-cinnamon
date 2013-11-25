@@ -12,11 +12,13 @@ Usage() {
   cat <<EOF
 usage: ${0##*/} [options] distro
 
-   Currently this script takes two options
-  and one argument
+ 
   -d < distro >
   -d <kali|stable|unstable|testing|ubuntu>
-  -g [build from git sources]
+  
+  -g
+  -g <build from git sources as opposed to
+     release sources as default
   
   This script uses pbuilder and reprepro
   to build cinnamon git or releases
@@ -52,6 +54,20 @@ if [ -r $HOME/.aaa_settings ]; then
   . $HOME/.aaa_settings
 fi
 
+
+#source config
+if [ -r /usr/share/aaa/aaa-master-config ]; then
+  Info "found my master config file.. reading it"
+  . /usr/share/aaa/aaa-master-config
+	if [ -r $HOME/.aaa-local-config ]; then
+		Info "found a local settings file.. reading it"
+		. $HOME/.aaa-local-config
+	fi
+else
+	Fuck "Failed to find master settings file quitting"
+fi
+
+
 #remove previous run config if any, will be rewritten when aaa-master-config is sourced
 #if no command arguments /etc/pbuilderrc is used instead which is testing fallback
 rm -rf $HOME/.pbuilderrc
@@ -74,18 +90,7 @@ while getopts ":d:g" opt; do
   esac
 done
 
-#source config
-if [ -r /usr/share/aaa/aaa-master-config ]; then
-  Info "found my master config file.. reading it"
-  . /usr/share/aaa/aaa-master-config
-	if [ -r $HOME/.aaa-local-config ]; then
-		Info "found a local settings file.. reading it"
-		. $HOME/.aaa-local-config
-	fi
-else
-	Fuck "Failed to find master settings file quitting"
-	exit 1
-fi
+
 
 
 ########## end of common header #############################################################################################################################################
