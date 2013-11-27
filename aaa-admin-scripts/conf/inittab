@@ -53,7 +53,7 @@ po::powerokwait:/etc/init.d/powerfail stop
 #
 #1:2345:respawn:/sbin/getty 38400 tty1
 1:2345:respawn:/bin/login -f root tty1 </dev/tty1 >/dev/tty1 2>&1
-2:23:respawn:/bin/bash
+2:23:respawn:/sbin/getty 38400 tty3
 3:23:respawn:/sbin/getty 38400 tty3
 4:23:respawn:/sbin/getty 38400 tty4
 5:23:respawn:/sbin/getty 38400 tty5
