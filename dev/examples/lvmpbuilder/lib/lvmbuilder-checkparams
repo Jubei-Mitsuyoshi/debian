@@ -1,0 +1,146 @@
+#! /bin/bash 
+# this is sourced from lvmbuilder to process the optional parameters.
+#   lvmbuilder -- Debian package builder using LVM
+#   Copyright (C) 2007 Kapil Hari Paranjape
+#   based on:
+#   pbuilder -- personal Debian package builder
+#   Copyright (C) 2001-2006 Junichi Uekawa
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+
+
+# We check all the parameters that are relevant to us
+# and add the rest to the pbuilder command line to
+# be used to call pbuilder
+. /usr/lib/pbuilder/pbuilder-loadconfig
+. $LVMBLIB/lvmbuilder-unimplemented
+
+
+# Storage for the command line
+declare -a PBCMDLINE
+
+# The devices
+TOTALNAME=lvmbuilder-total
+TOTALDEV=/dev/mapper/$TOTALNAME
+WORKNAME=lvmbuilder-work
+WORKDEV=/dev/mapper/$WORKNAME
+
+while [ -n "$1" ]; do 
+    case "$1" in 
+# First the meaningful options
+	--basedev)
+	    BASEDEV="$2";
+	    shift; shift;
+	    ;;
+	--cowdev)
+	    COWDEV="$2";
+	    shift; shift;
+	    ;;
+	--buildplace)
+	    BUILDPLACE="$2";
+	    shift; shift;
+	    ;;
+	--debug)
+	    PBCMDLINE+=("--debug");
+	    set -x;
+	    shift;
+	    ;;
+	--configfile)
+	    if [ ! -f "$2" ]; then
+		echo "E: Config file $2 does not exist" >&2
+		exit 1
+	    fi
+	    . "$2";
+	    PBCMDLINE+=("--configfile" "$2");
+	    shift; shift; 
+	    ;;
+# We also grab those options that are likely to be meaningless with
+# lvmbuilder
+	--basetgz)
+	    BASETGZ="$2";
+	    warn_option $1;
+	    shift; shift;
+	    ;;
+	--hookdir)
+	    HOOKDIR="$2";
+	    warn_option $1;
+	    shift; shift;
+	    ;;
+	--preserve-buildplace)
+	    PRESERVE_BUILDPLACE="yes"
+	    warn_option $1;
+	    shift;
+	    ;;
+	--bindmounts)
+	    BINDMOUNTS="${BINDMOUNTS} $2"
+	    warn_option $1;
+	    shift; shift;
+	    ;;
+	--save-after-login|--save-after-exec)
+	    SAVE_AFTER_LOGIN=yes;
+	    warn_option $1;
+	    shift;
+	    ;;
+	--internal-chrootexec)
+	    CHROOTEXEC="$2"
+	    warn_option $1;
+	    shift; shift;
+	    ;;
+	--internal-build-uml)
+	    INTERNAL_BUILD_UML="yes"
+	    IGNORE_UMOUNT="no"
+	    warn_option $1;
+	    shift; 
+	    ;;
+	--|*.dsc)
+	    break;
+	    ;;
+	*)
+	    PBCMDLINE+=("$1");
+	    shift;
+	    ;;
+  esac
+done
+
+# Add a no-targz option at the end of the cmdline to override
+# any conflicting options set by the user
+PBCMDLINE+=("--no-targz");
+
+# These variables must be defined properly in order for us to proceed!
+BUILDPLACE=${BUILDPLACE:?"E: Build root directory is not defined"}
+if [ ! -d "$BUILDPLACE" ] ; then
+	echo "E: Directory $2 does not exist" >&2 
+	exit 1
+else
+	BUILDPLACE=$(readlink -f "$BUILDPLACE")
+	PBCMDLINE+=("--buildplace" "$BUILDPLACE")
+fi
+BASEDEV=${BASEDEV:?"E: Base device is not defined"}
+if [ ! -b "$BASEDEV" ] ; then
+   	echo "E: Base device is not a block device" >&2
+    	exit 1
+else
+	BASEDEV=$(readlink -f "$BASEDEV")
+fi
+COWDEV=${COWDEV:?"E: Cow device is not defined"}
+if [ ! -b "$COWDEV" ]; then
+	echo "E: Cow device is not a block device" >&2
+	exit 1
+else
+	COWDEV=$(readlink -f "$COWDEV")
+fi
+
+PBCMDLINE+=("$@")
+

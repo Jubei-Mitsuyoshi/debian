@@ -1,0 +1,50 @@
+The files under this directory were written by Kapil Hari Paranjape
+<kapil@imsc.res.in> and are based on pbuilder by Junichi Uekawa.
+
+They are placed under the GPL (see the header of each file for
+details).
+
+These files are scripts to help pbuilder run with the linux device mapper.
+
+I hope the files are reasonably well commented. If not please ask me.
+
+The order of things is roughly as follows.
+
+1. Create/assign two block devices for build work. The BASEDEV device
+   should have enough space to hold the basic debian buildd root
+   (an unpacked base.tgz from pbuilder). The COWDEV device should have
+   enough space to actually perform the build.
+
+   WARNING: All data on these two devices will be wiped out
+   in the process of using lvmbuilder. You have been warned.
+
+1a.You could use a script like "sample_device_creator" to create
+   two block devices. This creates "loop"back block devices out
+   of files.
+
+   WARNING: This is a sample script which I no longer use.
+   Instead I have two real block devices reserved for build work.
+
+2. You should edit your ~/.pbuilderrc and add two lines
+	BASEDEV=<fullpath of base block device>
+	COWDEV=<fullpath of cow block device>
+   you can also give these on the command line with
+	--basedev <fullpath of base block device>
+   and
+	--cowdev <fullpath of cow block device>
+
+3. Edit the lvmbuilder script to give the location of the lib
+   subdirectory.
+
+4. After this you can use lvmbuilder in place of pbuilder for
+   the "create", "update", "build", "login" and "execute" operations.
+   A number of command line options of pbuilder do not make
+   sense in the lvm context --- these should generate error
+   messages. See the file STRATEGY for details.
+
+
+Hope this helps!
+--
+Kapil Hari Paranjape
+Wed, 15 Aug 2007 09:55:17 +0530
+

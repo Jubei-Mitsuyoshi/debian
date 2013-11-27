@@ -1,0 +1,89 @@
+#! /bin/bash
+#   lvmbuilder -- Debian package builder using LVM
+#   Copyright (C) 2007 Kapil Hari Paranjape
+#   based on:
+#   pbuilder -- personal Debian package builder
+#   Copyright (C) 2001-2006 Junichi Uekawa
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+
+# lvmbuilder by Kapil Hari Paranjape <kapil@debian.org> 2007 Aug 15
+# pbuilder by Junichi Uekawa <dancer@debian.org> 2001 Aug 25
+
+set -e 
+
+# Base directory for LVM stuff
+LVMBLIB=./lib 'LVMBLIB needs to be defined'
+
+# For safe file creation
+umask 0022
+
+# command line operation
+OP="$1"
+shift
+
+case "$OP" in
+    --create|create)
+	. ${LVMBLIB}/lvmbuilder-checkparams
+	. ${LVMBLIB}/lvmbuilder-modules
+	clean_basedev
+	mount $BASEDEV $BUILDPLACE
+	trap unmount_basedev exit
+	pbuilder "$OP" "${PBCMDLINE[@]}"
+	;;
+    --update|update)
+	. ${LVMBLIB}/lvmbuilder-checkparams
+	. ${LVMBLIB}/lvmbuilder-modules
+	mount $BASEDEV $BUILDPLACE
+	trap unmount_basedev exit
+	pbuilder "$OP" "${PBCMDLINE[@]}"
+	;;
+    --clean|clean)
+	. ${LVMBLIB}/lvmbuilder-checkparams
+	. ${LVMBLIB}/lvmbuilder-modules
+	clean_basedev
+	. /usr/lib/pbuilder/pbuilder-checkparams
+	if [ -n "$APTCACHE" ]; then
+	    echo "Cleaning [$APTCACHE]"
+	    clean_subdirectories "$APTCACHE" || true
+	fi
+	;;
+    --build|build|--login|login|--execute|execute)
+	. ${LVMBLIB}/lvmbuilder-checkparams
+	. ${LVMBLIB}/lvmbuilder-modules
+    	setup_workplace
+    	trap takedown_workplace exit
+	pbuilder "$OP" "${PBCMDLINE[@]}"
+	;;
+    --dumpconfig|dumpconfig)
+	. ${LVMBLIB}/lvmbuilder-checkparams
+	. ${LVMBLIB}/lvmbuilder-modules
+	echo " -> start dump config"
+	echo "  -> set"
+	set;
+	echo "  -> env"
+	env;
+	echo " -> end dump config"
+	;;
+    --debuild|debuild)
+	echo "E: The debuild mode of pbuilder is currently not supported by lvmbuilder."  >&2
+	exit 1
+	;;
+    *)
+	. ${LVMBLIB}/lvmbuilder-modules
+	showhelp
+	;;
+esac
+

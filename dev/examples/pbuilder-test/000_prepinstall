@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# prepare environment for further testing.
+
+apt-get update
+apt-get -y "${APTGETOPT[@]}" install binfmtc sudo
+
+
+# add users if required.
+addgroup --gid 1555 user1
+addgroup --gid 1556 test1
+addgroup --gid 1557 test2
+adduser --uid 1555 --gid 1555 user1 --disabled-login --gecos ''
+adduser user1 test1
+adduser user1 test2

@@ -303,7 +303,6 @@ fi
 
 MakeADir "$aaa_build_location"
 MakeADir "$aaa_work_dir"
-MakeADir "$aaa_build_result"
 
 
 }
@@ -360,14 +359,14 @@ done
 
 function CleanMyRepo()
 {
-		#first argument repo name
-		#second arg repo basedir
+		#first argument repo basedir
+		#second arg repo name
 	
 	for file_base in `find . -maxdepth 1 -mindepth 1 -type f -name "*.deb"`; do 
 		local file_n1=${file_base#./}
 		local file_n2=${file_n1%%_*.*}
 		Warn "removing previous $file_n2"
-		Test reprepro -Vb "$2" remove "$1" "$file_n2"
+		Test reprepro -Vb "$1" remove "$2" "$file_n2"
 	done
 	
 
@@ -388,16 +387,7 @@ function PatchEm()
 			nemo) patch -p1 < "$aaa_patch_dir/remove_elevated_privelages_banner.patch" 
 				#allow pup-vm to replace gvfs
 				Test sed -i 's/gvfs (>= 1.3.2)/gvfs (>= 1.3.2) | pup-volume-monitor/' ./debian/control ;;
-				
-			#nemo-preview patches################################################################################################################################
-			
-			nemo-preview) mkdir -p aaa-tmp
-								cd aaa-tmp
-								#DownLoad "http://dk.archive.ubuntu.com/ubuntu/pool/main/i/intltool/intltool_0.50.2-2_all.deb"
-								#reprepro -b "$aaa_localrepo_dir" includedeb  $aaa_work_repo *.deb || Fuck "something wrong with-- reprepro ---check the output"
-								rm -f * >/dev/null 2>&1 
-								cd ..
-								rm -fr aaa-tmp ;;
+		
 							
 		#libgnome2-0#########################################################################################################################################
 		
@@ -416,7 +406,9 @@ function PatchEm()
 		
 		winexe) Debug ;;
 		
-		#winexe#########################################################################################################################################
+		#nvidia-cuda-toolkit#########################################################################################################################################
+		
+		nvidia-cuda-toolkit) Debug ;;
 	#cat postinst > test
 	
 	esac
@@ -426,17 +418,19 @@ function PatchEm()
 
 
 function PatchDeb() {
-rm -fr "$1/tmp"
-TMPDIR=`mktemp -d /tmp/deb.XXXXXXXXXX`
-MakeADir "$1/tmp"
-dpkg-deb -x *.deb "$1/tmp"
-dpkg-deb --control *.deb "$1/tmp/DEBIAN"
-cd "$1/tmp"
-PatchEm "$2"
-cd ..
-rm -f *.deb
-dpkg -b "$1/tmp" "$2"
-
+	
+	# $1 is full deb name
+local pkg_raw="$1"
+local here=$(pwd)
+local tmpdir=`mktemp -d --tmpdir=$aaa_work_dir deb.XXXXXXXXXX`
+Debug "$tmpdir"
+dpkg-deb -x "$pkg_raw" "$tmpdir"
+dpkg-deb --control "$pkg_raw" "$tmpdir/DEBIAN"
+cd "$tmpdir"
+PatchEm ${pkg_raw%%_*.*}
+cd $here
+dpkg -b "$tmpdir" "$here/$pkg_raw".aaa.deb
+rm -rf "$tmpdir"
 
 }
 

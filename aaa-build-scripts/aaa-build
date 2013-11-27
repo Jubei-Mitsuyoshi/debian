@@ -10,15 +10,19 @@ usage: ${0##*/} [options] </path/to/pkg/dir>
   -d < distro >
   -d <kali|stable|unstable|testing|ubuntu>
   
-  -i <"local repo name local repo name ..">
-		space delimited list or single
-		element
-  -i < include built .changes to extra local 
-	repos work|testing|unstable|stable|saucy>
-  
-  
-  -g
+  -i < include built .changes to local 
+	repo, default from master config
+	overwrtten by -d
+	
   -g <also include packages into git repo>
+  
+  -w <also include packages into work repo>
+  
+  -q <supress normal output, just print
+  reqired fields>
+  
+  -u <update/create pbuilder immage before
+   build>
   
   This script uses pbuilder and reprepro
   to build the package in the current dir
@@ -71,13 +75,12 @@ if [ -r $HOME/.aaa_settings ]; then
 fi
 
 # get options and arguments http://wiki.bash-hackers.org/howto/getopts_tutorial
-export AAA_DEBIAN_DISTRO=""
-export AAA_SUPRESS_LOCAL_PBUILDERRC="yes"
+
 #remove previous run config if any, will be rewritten when aaa-master-config is sourced
 #if no command arguments /etc/pbuilderrc is used instead which is  fallback
 rm -rf $HOME/.pbuilderrc
 
-while getopts ":gd:i:" opt; do
+while getopts ":ugwid:" opt; do
   case $opt in
     d) Info "< -d $OPTARG > passed" 
 		case $OPTARG in
@@ -85,17 +88,11 @@ while getopts ":gd:i:" opt; do
 										SwitchDistro "$OPTARG" ;;
 									  *) Fuck "<-d $OPTARG> is not valid, needs to be <-d kali,stable,unstable,testing or ubuntu>" ;;
 		esac ;;
-	
-	i) Info "< -i $OPTARG > passed" 
-	
-		case $OPTARG in
-		$aaa_work_repo|testing|unstable|stable|saucy) Info "-i $OPTARG is valid, will include result .changes in repo name,s $OPTARG"
-									include_chng=1 
-									repo_name="$OPTARG" ;;
-									  *) Fuck "<-i $OPTARG> is not valid, needs to be -i<$aaa_work_repo,stable,unstable,testing or saucy>" ;;
-		esac ;;
-		
+	u) update=1 ;;
+	q) quiet=1 ;;
+	i) add_to_repo=1 ;;
 	g) add_to_git_repo=1 ;;
+	w) add_to_work_repo=1 ;;
    \?) Fuck "Invalid option: -$OPTARG" ;;
     :) Fuck "Option -$OPTARG requires a distro name, kali,stable,unstable,testing or ubuntu" ;;
   esac
@@ -113,33 +110,88 @@ shift $((OPTIND-1))
 ########## end of common header #############################################################################################################################################
 
 [[ "$(id -u)" != "0" ]] && Fuck "This script must be run as root"
+	
+	
+	#check script dependencies
+	CheckMyDeps "reprepro pbuilder dpkg-source"
+	[[ $aaa_setup_build_base_complete == yes ]] || Fuck "this script needs the base build environment setup, run aaa_setup-build-base"
+	[[ $aaa_setup_build_env_complete == "yes" ]] || Fuck "this script needs the build environment setup, run aaa-setup-build-env"
 
 
-#check script dependencies
-CheckMyDeps "reprepro pbuilder dpkg-source"
-[[ $aaa_setup_build_base_complete == yes ]] || Fuck "this script needs the base build environment setup, run aaa_setup-build-base"
-[[ $aaa_setup_build_env_complete == "yes" ]] || Fuck "this script needs the build environment setup, run aaa-setup-build-env"
+if [[ $quiet -eq 1 ]]; then
 
-#setup working dirs
-CleanMyBuildArea
+	#setup working dirs
+	rm -rf "$aaa_work_dir" > /dev/null 2>&1
+	rm -rf "$aaa_build_location" > /dev/null 2>&1
+	rm -rf "$aaa_build_result" > /dev/null 2>&1
+	
+	mkdir -p "$aaa_build_location" > /dev/null 2>&1 || exit 1
+	mkdir -p "$aaa_work_dir" > /dev/null 2>&1 || exit 1
+	
+	#update / create base immage
+	if [[ -e "$aaa_base_gz_dir/$aaa_base_gz" ]]; then
+		if [[ $update -eq 1 ]]; then
+			pbuilder --update > /dev/null 2>&1 || exit 1
+		fi
+	else
+		if [[ $update -eq 1 ]]; then
+			pbuilder --create > /dev/null 2>&1 || exit 1
+		fi
+	fi
+	
+#	cd "$1"
+#	debchange --release --no-force-save-on-release --force-distribution --distribution "$aaa_debian_distro" "" > /dev/null 2>&1 || exit 1
+#	cd ..
+	
+	# build  source package
+	dpkg-source -b "$1" > /dev/null 2>&1  || exit 1
+	
+	pbuilder --build *.dsc > /dev/null 2>&1  || exit 1
+	
+	cd "$aaa_build_result"
+	
+	[[ $add_to_repo -eq 1 ]] && CleanMyRepo "$aaa_localrepo_dir" "$aaa_debian_distro" > /dev/null 2>&1 || exit 1
+	[[ $add_to_repo -eq 1 ]] && reprepro -b "$aaa_localrepo_dir" include "$aaa_debian_distro" *.changes > /dev/null 2>&1 || exit 1
+	[[ $add_to_work_repo -eq 1 ]] && CleanMyRepo "$aaa_localrepo_dir" "$aaa_work_repo" > /dev/null 2>&1 || exit 1
+	[[ $add_to_work_repo -eq 1 ]] && reprepro -b "$aaa_localrepo_dir" includedeb "$aaa_work_repo" *.deb > /dev/null 2>&1 || exit 1
+	[[ $add_to_git_repo -eq 1 ]] && CleanMyRepo "$aaa_git_repo_dir" "$aaa_debian_distro" > /dev/null 2>&1 || exit 1
+	[[ $add_to_git_repo -eq 1 ]] && reprepro -b "$aaa_git_repo_dir" "include $aaa_debian_distro *.changes" > /dev/null 2>&1 || exit 1
+	
+	list=$(ls *.deb)
+	for output in $list; do
+		echo ${output%.deb}
+	done
 
-#update / create base immage
-UpdateBase
+else
 
-# build  source package
-dpkg-source -b "$1"
-
-Test pbuilder --build *.dsc
-
-cd "$aaa_build_result"
-
-
-
-for rname in $repo_name ; do 
-	CleanMyRepo "$rname" "$aaa_localrepo_dir"
-	Test reprepro -Vb "$aaa_localrepo_dir" include "$rname" *.changes
-	[[ $add_to_git_repo -eq 1 ]] && CleanMyRepo "$rname" "$aaa_git_repo_dir"
-	[[ $add_to_git_repo -eq 1 ]] && Test reprepro -Vb "$aaa_git_repo_dir" include $aaa_debian_distro *.changes
-done
-
+	#setup working dirs
+	CleanMyBuildArea
+	
+	#update / create base immage
+	[[ $update -eq 1 ]] && UpdateBase
+	
+#	cd "$1"
+#	debchange --release --no-force-save-on-release --force-distribution --distribution "$aaa_debian_distro" ""
+#	cd ..
+	
+	# build  source package
+	Test dpkg-source -b "$1"
+	
+	Test pbuilder --build *.dsc
+	
+	cd "$aaa_build_result"
+	
+	if [[ $add_to_repo -eq 1 ]]; then
+		CleanMyRepo "$aaa_localrepo_dir" "$aaa_debian_distro"
+		Test reprepro -Vb "$aaa_localrepo_dir" include "$aaa_debian_distro" *.changes
+	fi
+	if [[ $add_to_work_repo -eq 1 ]]; then
+		CleanMyRepo "$aaa_localrepo_dir" "$aaa_work_repo"
+		Test reprepro -Vb "$aaa_localrepo_dir" includedeb "$aaa_work_repo" *.deb
+	fi
+	if [[ $add_to_git_repo -eq 1 ]]; then
+		CleanMyRepo "$aaa_git_repo_dir" "$aaa_debian_distro"
+		Test reprepro -Vb "$aaa_git_repo_dir" include "$aaa_debian_distro" *.changes
+	fi
+fi
 

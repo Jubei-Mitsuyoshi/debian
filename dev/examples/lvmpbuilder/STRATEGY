@@ -1,0 +1,29 @@
+1. We require that the user has defined (either
+   in the environment or in one of the pbuilderrc
+   files), two devices:
+   	BASEDEV
+   	  This is the device where the persistent
+   	  ext2 filesystem containing the basic build
+   	  file system lies (what is usually kept
+   	  in base.tgz). This file system should be
+   	  e2fsck -f clean. create/update/clean go here.
+   	COWDEV
+   	  This is the device to which the writes
+   	  will actually go during the build/login/execute.
+
+2. For create/update/clean, we just mount BASEDEV in the appropriate
+   place and run pbuilder create/update/clean --no-tgz. We run an
+   e2fsck -f at the end.
+
+3. For all other operations:
+        a. we create a new device TOTALDEV consisting of BASEDEV
+           extended by zeroes by the size of COWDEV.
+        d. we create a snapshot version WORKDEV of TOTALDEV with
+           the writes going to COWDEV.
+        e. we resize2fs the filesystem WORKDEV. This 
+           step could be *slow*.
+        f. we mount WORKDEV in the appropriate place and run
+           pbuilder with the appropriate command.
+        g. on exit or error we must unmount WORKDEV and 
+           remove WORKDEV and TOTALDEV.
+

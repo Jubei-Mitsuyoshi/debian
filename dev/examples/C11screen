@@ -1,0 +1,9 @@
+#!/bin/bash
+# example file to be used with --hookdir
+#
+# invoke GNU screen if build fails.
+
+export debian_chroot="pbuilder"
+apt-get install -y "${APTGETOPT[@]}" screen vim less
+cd /tmp/buildd/*/debian/..
+screen </dev/tty > /dev/tty 2> /dev/tty

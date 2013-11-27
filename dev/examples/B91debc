@@ -1,0 +1,10 @@
+#!/bin/bash
+# example file to be used with --hookdir
+#
+# 343894: a script to run debc command, contributed from q-funk.
+
+apt-get install -y "${APTGETOPT[@]}" devscripts
+cd /tmp/buildd/*/debian
+cd ..
+debc
+#EOF

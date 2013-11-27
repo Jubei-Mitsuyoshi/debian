@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# run the program without parameters, or run it with --help parameter,
+# and check that it returns the expected return-code. Suitable test
+# for non-interactive non-GUI operation.
+
+set +e 
+program
+case $? in
+     1) exit 0;;
+     *) exit 1;;
+esac
+
+

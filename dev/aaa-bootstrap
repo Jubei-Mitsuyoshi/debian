@@ -1,0 +1,47 @@
+archinstall-bootstrap.sh
+
+#!/bin/bash
+# This script is inspired on the archbootstrap script.
+
+PACKAGES=(acl attr bzip2 curl expat glibc gpgme gnupg libarchive libassuan libgcrypt libgpg-error libssh2 lzo2 openssl pacman xz zlib pacman-mirrorlist coreutils bash grep gawk file filesystem tar ncurses readline libcap util-linux pcre arch-install-scripts)
+# Change the mirror as necessary
+MIRROR='http://mirrors.kernel.org/archlinux' 
+# You can set the ARCH variable to i686 or x86_64
+ARCH=`uname -m`
+LIST=`mktemp`
+CHROOT_DIR=archinstall-chroot
+DIR=archinstall-pkg
+mkdir -p "$DIR"
+mkdir -p "$CHROOT_DIR"
+# Create a list with urls for the arch packages
+for REPO in core community extra; do  
+        wget -q -O- "$MIRROR/$REPO/os/$ARCH/" |sed  -n "s|.*href=\"\\([^\"]*\\).*|$MIRROR\\/$REPO\\/os\\/$ARCH\\/\\1|p"|grep -v 'sig$'|uniq >> $LIST  
+done
+# Download and extract each package.
+for PACKAGE in ${PACKAGES[*]}; do
+        URL=`grep "$PACKAGE-[0-9]" $LIST|head -n1`
+        FILE=`echo $URL|sed 's/.*\/\([^\/][^\/]*\)$/\1/'`
+        wget "$URL" -c -O "$DIR/$FILE" 
+        xz -dc "$DIR/$FILE" | tar x -k -C "$CHROOT_DIR"
+done
+# Create mount points
+mkdir -p "$CHROOT_DIR/dev" "$CHROOT_DIR/proc" "$CHROOT_DIR/sys" "$CHROOT_DIR/mnt"
+mount -t proc proc "$CHROOT_DIR/proc/"
+mount -t sysfs sys "$CHROOT_DIR/sys/"
+mount -o bind /dev "$CHROOT_DIR/dev/"
+mkdir -p "$CHROOT_DIR/dev/pts"
+mount -t devpts pts "$CHROOT_DIR/dev/pts/"
+
+# Hash for empty password  Created by doing: openssl passwd -1 -salt ihlrowCo and entering an empty password (just press enter)
+echo 'root:$1$ihlrowCo$sF0HjA9E8up9DYs258uDQ0:10063:0:99999:7:::' > "$CHROOT_DIR/etc/shadow"
+echo "root:x:0:0:root:/root:/bin/bash" > "$CHROOT_DIR/etc/passwd" 
+touch "$CHROOT_DIR/etc/group"
+echo "myhost" > "$CHROOT_DIR/etc/hostname"
+test -e "$CHROOT_DIR/etc/mtab" || echo "rootfs / rootfs rw 0 0" > "$CHROOT_DIR/etc/mtab"
+[ -f "/etc/resolv.conf" ] && cp "/etc/resolv.conf" "$CHROOT_DIR/etc/"
+sed -ni '/^[ \t]*CheckSpace/ !p' "$CHROOT_DIR/etc/pacman.conf"
+sed -i "s/^[ \t]*SigLevel[ \t].*/SigLevel = Never/" "$CHROOT_DIR/etc/pacman.conf"
+echo "Server = $MIRROR/\$repo/os/$ARCH" >> "$CHROOT_DIR/etc/pacman.d/mirrorlist"
+
+chroot $CHROOT_DIR /usr/bin/pacman -Sy 
+chroot $CHROOT_DIR /bin/bash

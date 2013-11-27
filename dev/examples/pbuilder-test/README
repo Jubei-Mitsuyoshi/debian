@@ -1,0 +1,2 @@
+This directory contains skeleton files for debian/pbuilder-test, which
+is used when examples/B92test-pkg hook is installed.

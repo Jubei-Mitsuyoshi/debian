@@ -1,0 +1,21 @@
+#!/bin/sh
+
+DIST=$1
+
+BUILD_ARCH=$(dpkg-architecture -qDEB_BUILD_ARCH)
+MIRROR=http://ftp.at.debian.org
+
+if [ -z $DIST ]; then
+    echo "No distribution given."
+    exit 1
+fi
+
+wget -q ${MIRROR}/debian/dists/$DIST/main/source/Sources.gz -O Sources.main.gz
+wget -q ${MIRROR}/debian/dists/$DIST/contrib/source/Sources.gz -O Sources.contrib.gz
+zcat Sources.main.gz Sources.contrib.gz > Sources
+
+grep -E "^Package|^Architecture|^$" Sources | paste -s -d "=" | sed "s/==/\n/g" | sed "s/=/ /g" | cut -d " " -f 2,4- > list.$DIST
+grep -E " all| any| $BUILD_ARCH" list.$DIST | cut -d " " -f 1 > list.$DIST.$BUILD_ARCH
+
+rm -f Sources.main.gz Sources.contrib.gz
+

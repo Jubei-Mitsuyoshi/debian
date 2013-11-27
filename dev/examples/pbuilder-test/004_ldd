@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# simple test to see that the program is installed in the correct
+# place and looks sane through ldd.
+
+ldd /usr/bin/program

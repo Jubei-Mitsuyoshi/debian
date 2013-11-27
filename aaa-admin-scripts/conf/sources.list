@@ -1135,14 +1135,14 @@
 
 
 deb http://http.kali.org/kali kali main non-free contrib
-# deb-src http://http.kali.org/kali kali main non-free contrib
+deb-src http://http.kali.org/kali kali main non-free contrib
 
 # deb http://http.kali.org/kali kali-dev main non-free contrib
 # deb-src http://http.kali.org/kali kali-dev main non-free contrib
 
 ## Security updates
 deb http://security.kali.org/kali-security kali/updates main contrib non-free
-# deb-src http://security.kali.org/kali-security kali/updates main contrib non-free
+deb-src http://security.kali.org/kali-security kali/updates main contrib non-free
 
 
 ###########################
@@ -1304,7 +1304,7 @@ deb-src http://ftp.dk.debian.org/debian unstable main contrib non-free
 ###########################
 # Jens' unofficial debian-repository for the Code::Blocks - IDE - http://apt.jenslody.de/
 #Secure APT - apt-get install jens-lody-debian-keyring
-# deb http://apt.jenslody.de/testing jessie main
+deb http://apt.jenslody.de/testing jessie main
 # deb-src http://apt.jenslody.de/testing jessie main
 
 
@@ -1460,10 +1460,6 @@ deb http://ppa.launchpad.net/webupd8team/java/ubuntu raring main
 #############
 # deb http://ppa.launchpad.net/teejee2008/ppa/ubuntu trusty main
 # deb-src http://ppa.launchpad.net/teejee2008/ppa/ubuntu trusty main
-
-
-#deb [trusted=yes] https://github.com/Jubei-Mitsuyoshi/aaa-debian-repo/blob/master unstable main
-#automaticaly added entries ppa script
 
 
 

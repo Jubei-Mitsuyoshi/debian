@@ -178,11 +178,11 @@ to remove annoying red banner when running under root" ;;
 	if [[ $? -eq 0 ]]; then
 		#add package to result repo and working repo
 		cd "$aaa_build_result"
-		CleanMyRepo "$aaa_work_repo" "$aaa_localrepo_dir"
-		CleanMyRepo "$aaa_debian_distro" "$aaa_localrepo_dir"
+		CleanMyRepo  "$aaa_localrepo_dir" "$aaa_work_repo"
+		CleanMyRepo  "$aaa_localrepo_dir" "$aaa_debian_distro"
 		Test reprepro -b "$aaa_localrepo_dir" includedeb $aaa_work_repo *.deb
 		Test reprepro -b "$aaa_localrepo_dir" include $aaa_debian_distro *.changes
-		[[ $aaa_git_repo_dir ]] && reprepro -b "$aaa_git_repo_dir" include $aaa_debian_distro *.changes  > /dev/null 2>&1
+		[[ $aaa_git_repo_dir ]] && reprepro -b "$aaa_git_repo_dir" include $aaa_debian_distro *.changes
 	
 	else
 		FailOkFilter "$pkg_name"

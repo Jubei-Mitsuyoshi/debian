@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# make sure test file compiles and links against the library, and
+# runs.  the source file ends with '.c' which is excluded by
+# run-parts, because it contains '.'
+
+gcc debian/pbuilder-test/002_sample.c -o /tmp/002_sample.out $(libecasoundc-config --libs --cflags
+)
+/tmp/002_sample.out

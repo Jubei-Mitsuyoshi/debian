@@ -16,3 +16,11 @@ dpkg-depcheck -d ./configure
 make package
 
 dpkg-sourcegksu -b 
+for rname in $repo_name ; do 
+	CleanMyRepo "$rname" "$aaa_localrepo_dir"
+	Test reprepro -Vb "$aaa_localrepo_dir" include "$rname" *.changes
+	[[ $add_to_git_repo -eq 1 ]] && CleanMyRepo "$rname" "$aaa_git_repo_dir"
+	[[ $add_to_git_repo -eq 1 ]] && Test reprepro -Vb "$aaa_git_repo_dir" include $aaa_debian_distro *.changes
+	[[ $add_to_work_repo -eq 1 ]] && CleanMyRepo "$rname" "$aaa_work_repo"
+	[[ $add_to_work_repo -eq 1 ]] && Test reprepro -Vb "$aaa_work_repo" include $aaa_debian_distro *.changes
+done

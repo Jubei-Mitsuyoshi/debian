@@ -1,0 +1,12 @@
+#!/bin/sh
+# example file to be used with --hookdir
+#
+# an example to make a note that this is a chroot in / 
+# suggested by Turbo Fredriksson
+
+# this shell is executed before logging in to chroot via login/execute.
+
+echo "This is a chroot made by pbuilder" > /CHROOT
+
+
+

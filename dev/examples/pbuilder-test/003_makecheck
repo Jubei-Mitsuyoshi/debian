@@ -1,0 +1,4 @@
+#!/bin/bash
+# run upstream-provided make check.
+
+make check

@@ -1,0 +1,76 @@
+#!/bin/bash
+#
+# rebuild - builds every package in a clean cowbuilder environment
+# Usage: rebuild list
+#
+# Copyright (C) 2007 Bastian Venthur
+#
+# License: GPL 2
+#
+# Version: 2007-06-06
+#  * Included many patches from Gregor Herrmann
+# Version: 2007-02-21
+#  * Initial release
+
+
+LIST=$1
+DIST=${2:-testing}
+MIRROR=http://ftp.at.debian.org
+
+LOGDIR=$(pwd)/"logs"
+BUILDDIR=$(pwd)/"build"
+BASEPATH="/var/cache/pbuilder/testing-base.cow"
+
+# source lsb-functions for nice log messages
+. /lib/lsb/init-functions
+
+function build {
+    PACKAGE=$1
+    
+    mkdir -p $BUILDDIR/$PACKAGE
+    cd $BUILDDIR/$PACKAGE
+
+    #apt-get source $PACKAGE -t $DIST > /dev/null 2> $LOGDIR/.$PACKAGE
+    G=$(grep-dctrl -S -n -s Directory,Version -r ^$PACKAGE\$ ../../Sources)
+    set -- $G
+    DIR=$1
+    VER=`echo $2 | sed s/^.*://`
+    dget -x ${MIRROR}/debian/${DIR}/${PACKAGE}_${VER}.dsc > /dev/null 2> $LOGDIR/.$PACKAGE
+    
+    cd $(find . -type d ! -name .)
+    mkdir -p $BUILDDIR/$PACKAGE/result
+    pdebuild --pbuilder cowbuilder --use-pdebuild-internal --buildresult $BUILDDIR/$PACKAGE/result/ -- --basepath $BASEPATH >> $LOGDIR/.$PACKAGE 2>&1
+    
+    if [ $? -eq 0 ]; then
+	mv $LOGDIR/.$PACKAGE $LOGDIR/succeeded-$PACKAGE
+	log_action_end_msg 0
+    else
+	mv $LOGDIR/.$PACKAGE $LOGDIR/failed-$PACKAGE
+	log_action_end_msg 1
+    fi
+
+    cd $BUILDDIR
+    rm -rf $PACKAGE
+}
+
+
+[ -d $LOGDIR ] || mkdir $LOGDIR
+
+if [ ! -e "$LIST" ]; then
+    log_failure_msg "No Buildlist given."
+    exit 1
+fi
+
+while read package; do
+    # Create Lockfile (ln -s is atomic and fails if link already exists)
+    ln -s $package $LOGDIR/.$package.lock 2> /dev/null || continue
+
+    # Build the package if not already built
+    if [ ! -e $LOGDIR/succeeded-$package -a ! -e $LOGDIR/failed-$package ]; then
+        log_action_begin_msg "$(date +%F\ %T) Building $package "
+        build $package
+    fi
+
+    # Remove Lockfile
+    rm -f $LOGDIR/.$package.lock
+done < $LIST

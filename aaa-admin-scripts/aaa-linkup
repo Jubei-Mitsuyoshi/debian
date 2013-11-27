@@ -38,7 +38,7 @@ if [[ ! clean -eq 1 ]]; then
 			aaa-fallback.session) [[ -L "/usr/share/cinnamon-session/sessions/${file#./}" ]] || ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "/usr/share/cinnamon-session/sessions/${file#./}" ;;
 			grub2.png) [[ -L "/boot/grub/${file#./}" ]] || ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "/boot/grub/${file#./}" ;;
 			grub) [[ -L "/etc/default/${file#./}" ]] || ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "/etc/default/${file#./}" ;;
-			inittab) [[ -L "/etc/${file#./}" ]] || ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "/etc/${file#./}" ;;
+			inittab|bash.bashrc) [[ -L "/etc/${file#./}" ]] || ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "/etc/${file#./}" ;;
 			xorg.conf) [[ -L "/etc/X11/${file#./}" ]] || ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "/etc/X11/${file#./}" ;;
 			.bash_aliases|.bashrc|.quiltrc) [[ -L "$HOME/${file#./}" ]] || ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "$HOME/${file#./}" ;;
 			sources.list) [[ -L "/etc/apt/${file#./}" ]] || ln -s -b --suffix=.aaa-backup "$(pwd)/${file#./}" "/etc/apt//${file#./}" ;;
@@ -64,7 +64,7 @@ else
 					mv -f "/etc/default/${file#./}.aaa-backup" "/etc/default/${file#./}" >/dev/null 2>&1 ;;
 			grub2.png) [[ -L "/boot/grub/${file#./}" ]] && rm -f "/boot/grub/${file#./}"
 					mv -f "/boot/grub/${file#./}.aaa-backup" "/boot/grub/${file#./}" >/dev/null 2>&1 ;;
-			inittab) [[ -L "/etc/${file#./}" ]] && rm -f "/etc/${file#./}"
+			inittab|bash.bashrc) [[ -L "/etc/${file#./}" ]] && rm -f "/etc/${file#./}"
 					mv -f "/etc/${file#./}.aaa-backup" "/etc/${file#./}" >/dev/null 2>&1 ;;
 			xorg.conf) [[ -L "/etc/X11/${file#./}" ]] && rm -f "/etc/X11/${file#./}"
 						mv -f "/etc/X11/${file#./}.aaa-backup" "/etc/X11/${file#./}" >/dev/null 2>&1 ;;
