@@ -321,7 +321,12 @@ aaa_bindmounts=("$aaa_localrepo_dir""$aaa_tmp")
 #possible extra debootstrapopt
 # -m$aaa_maintainer
 
+
+
+export AAA_HOST_ARCH=${ARCH:="$(dpkg --print-architecture)"}
 export DEBEMAIL="$aaa_maintainer"
 export DEBFULLNAME="${aaa_maintainer% <*}"
 
 aaa_apt_cache_dir="$aaa_apt_cache_base_dir/$aaa_debian_distro"
+
+

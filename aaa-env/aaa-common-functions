@@ -92,9 +92,10 @@ function Warn()
 
 function Debug()
 {
-
-		echo -e "${bldpur}debug-->${bldwht}$@${txtrst}"
-		AnyKey
+		if [[ $AAA_DEBUG == yes ]]; then
+			echo -e "${bldpur}debug-->${bldwht}$@${txtrst}"
+			AnyKey
+		fi
 }
 
 function MenuInactive()
@@ -340,18 +341,25 @@ fi
 
 }
 
+function ListDebs()
+{
+cd debian
+echo $(grep "Package" control | sed 's/Package: //')
+
+
+}
+
 
 
 function PurgeMyRepo()
 {
 
-
+		#first argument repo basedir
+		#second arg repo name (unstable kali etc)
 		
-	#second argument space delimited list of package names to match
-		#xxxxxx ...variable name name
-Warn "removing all previous $2 packages"
-for pack_names in $2; do
-	reprepro -Vb "$aaa_localrepo_dir" removematched $1 "*$pack_names*"  > /dev/null 2>&1
+Warn "removing all previous $3 packages from $2 in $1"
+for pack_name in $3; do
+	reprepro -Vb "$1"  --architecture $aaa_host_arch removematched $2 "*$pack_name*"  > /dev/null 2>&1
 done
 
 }
@@ -360,19 +368,25 @@ done
 function CleanMyRepo()
 {
 		#first argument repo basedir
-		#second arg repo name
+		#second argument -p purge all tag versions
+
 	
 	for file_base in `find . -maxdepth 1 -mindepth 1 -type f -name "*.deb"`; do 
 		local file_n1=${file_base#./}
-		local file_n2=${file_n1%%_*.*}
-		Warn "removing previous $file_n2"
-		Test reprepro -Vb "$1" remove "$2" "$file_n2"
+		[[ $2 == -p ]] || local file_n2=${file_n1%_*.*}
+		[[ $2 == -p ]] && local file_n2=${file_n1%%_*.*}
+		
+			Debug "name=$file_n2 basedir=$1 purge=$2"
+			for dist in $aaa_extra_repos; do
+				Warn "removing previous package ${bldblu}$file_n2${txtrst} from distro=${bldblu}$dist${txtrst} basedir=${bldblu}$1${txtrst}"
+				#reprepro -Vb "$1" list "$dist" "$file_n2"
+				reprepro -Vb "$1" remove "$dist" "$file_n2"
+			done
+				
 	done
 	
 
-
 }
-
 
 
 function PatchEm()
