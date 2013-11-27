@@ -11,7 +11,7 @@ if [ -r $HOME/.aaa_settings ]; then
 fi
 
 #source config
-if [ -r /usr/share/aaa/aaa-master-config ]; then
+if [ -r /etc/aaa-master-config ]; then
   axe_info "found my master config file.. reading it"
 	if [ -r $HOME/.aaa-local-config ]; then
 		axe_info "found a local settings file.. reading it"

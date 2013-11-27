@@ -15,9 +15,9 @@ usage: ${0##*/}
   options or arguments, when called it
   may setup a custom tmpfs dir at 
   $aaa_tmpfs_location ( depending on
-  the settings in /usr/share/aaa/aaa-master-config
+  the settings in /etc/aaa-master-config
   the size can be configured in 
-  /usr/share/aaa/aaa-master-config
+  /etc/aaa-master-config
   It will also setup your personal
   gpg key for auto package signing
   if you desire
@@ -56,9 +56,9 @@ export AAA_SUPRESS_LOCAL_PBUILDERRC="yes"
 
 
 #source config
-if [[ -e /usr/share/aaa/aaa-master-config ]]; then
+if [[ -e /etc/aaa-master-config ]]; then
   Info "found my master config file.. reading it"
-	. /usr/share/aaa/aaa-master-config
+	. /etc/aaa-master-config
 	if [[ -e $HOME/.aaa-local-config ]]; then
 		Info "[aaa-setup-pbuilder]found a local  config file.. reading it"
 		. $HOME/.aaa-local-config
@@ -99,7 +99,7 @@ if [[ $enable_tmpfs == yes ]]; then
 	Block "the size can be configured in aaa-master-config"
 	Warn "my master config says you desire to use a tmpfs to
 do your building, ie enable_tmpfs=$enable_tmpfs if this not actually
-the case please edit /usr/share/aaa/aaa-master-config"
+the case please edit /etc/aaa-master-config"
 	AnyKey
     total_mem=$(free -m |awk '/^Mem:/{print $2}')
     if [[ $total_mem -lt 2048 ]]; then
@@ -109,7 +109,7 @@ the case please edit /usr/share/aaa/aaa-master-config"
 		read -s -n1 aaa_tmpchr
 		if [[ $aaa_tmpchr == q ]]; then
 			Warn "you chose to quit this script bcause your memory was to
-small to setup an effective tmpfs, so you need to edit edit /usr/share/aaa/aaa-master-config
+small to setup an effective tmpfs, so you need to edit edit /etc/aaa-master-config
 and change some stuff ( particuarly enable_tmpfs=no ) and run ${0##*/} again, untill
 this script sucessfully completes none of the other scripts will work !"
 			AnyKey
@@ -158,7 +158,7 @@ this script sucessfully completes none of the other scripts will work !"
 else
 	Warn "my master config says you DO NOT desire to use a tmpfs to
 do your building, ie enable_tmpfs=$enable_tmpfs if this not actually
-the case please quit now and edit /usr/share/aaa/aaa-master-config"
+the case please quit now and edit /etc/aaa-master-config"
 	AnyKey
 	SaveSettings "aaa_setup_build_base_complete" "yes"
 fi

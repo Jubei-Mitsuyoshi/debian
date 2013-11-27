@@ -69,12 +69,14 @@ aaa_work_dir_hdd="/var/cache/aaa/aaa-work-dir"
 
 ##########################################################
 #location for patches applid to builds
-aaa_patch_dir="/usr/share/aaa/patches"
+#WARNING ABSOLUTE PATHS IN MAKEFILES AND LINK SCRIPTS
+aaa_patch_dir="/etc/aaa/patches"
 ##########################################################
 
 ####################################################
 #pbuilder hook dir
-aaa_pbuilder_hookdir="/usr/share/aaa/pbuilder/hooks"
+#WARNING HARD PATHS IN MAKEFILES AND LINK SCRIPTS
+aaa_pbuilder_hookdir="/etc/aaa/pbuilder/hooks"
 ####################################################
 
 ####################################################

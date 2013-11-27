@@ -35,28 +35,29 @@ function MakeADir()
 	
 }
 
-hook_path="/usr/share/aaa/pbuilder/hooks"
-patch_path="/usr/share/aaa/patches"
+conf_path="/etc/aaa"
 bin_path="/usr/bin"
-conf_path="/usr/share/aaa"
 
-patch_dirs=$(ls -d */)
+
+hook_path="$conf_path/pbuilder/hooks"
+patch_path="$conf_path/patches"
+
 
 binlinks="aaa-common-functions \
 aaa-setup-build-env \
 aaa-setup-build-base"
 	
-hooklinks="D05deps"
+hooklinks="D05deps A10change_distro.sh"
 
-conflinks="aaa-master-config"
+etclinks="aaa-master-config"
 
 for f in $binlinks; do 
 	[[ $clean_up ]] && rm -f "$bin_path/$f"
 	[[ $clean_up ]] || ln -s -f "$(pwd)/$f" "$bin_path/$f"
 done
 
-MakeADir /usr/share/aaa/patches
-MakeADir /usr/share/aaa/pbuilder/hooks
+MakeADir "$conf_path/patches"
+MakeADir "$conf_path/pbuilder/hooks"
 	
 for file in `find . -maxdepth 1 -mindepth 1 -type f -name "*.patch"`; do 
 	[[ $clean_up ]] && rm -f "$patch_path/${file#./}"
@@ -68,12 +69,12 @@ for f in $hooklinks; do
 	[[ $clean_up ]] || ln -s -f "$(pwd)/$f" "$hook_path/$f"
 done
 
-for f in $conflinks; do 
-	[[ $clean_up ]] && rm -f "$conf_path/$f"
-	[[ $clean_up ]] || ln -s -f "$(pwd)/$f" "$conf_path/$f"
+for f in $etclinks; do 
+	[[ $clean_up ]] && rm -f "/etc/$f"
+	[[ $clean_up ]] || ln -s -f "$(pwd)/$f" "/etc/$f"
 done
 
-for patch_dir in `ls -d */`; do 
+for patch_dir in `find . -maxdepth 1 -mindepth 1 -type d`; do 
 	MakeADir "$patch_path/${patch_dir%%/}"
 	[[ $clean_up ]] && rm -fr "$patch_path/${patch_dir%%/}"
 	if [[ ! $clean_up ]]; then

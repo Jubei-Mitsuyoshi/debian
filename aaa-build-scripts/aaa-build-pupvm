@@ -39,9 +39,9 @@ fi
 
 
 #source config
-if [ -r /usr/share/aaa/aaa-master-config ]; then
+if [ -r /etc/aaa-master-config ]; then
   Info "found my master config file.. reading it"
-  . /usr/share/aaa/aaa-master-config
+  . /etc/aaa-master-config
 	if [ -r $HOME/.aaa-local-config ]; then
 		Info "found a local settings file.. reading it"
 		. $HOME/.aaa-local-config
