@@ -30,7 +30,6 @@ usage: ${0##*/} [options] </path/to/pkg/dir>
   -u <update/create pbuilder immage before
    build>
    
-  
   This script uses pbuilder and reprepro
   to build the package in the current dir
   result is found at the location
@@ -125,15 +124,6 @@ shift $((OPTIND-1))
 	[[ $aaa_setup_build_base_complete == yes ]] || Fuck "this script needs the base build environment setup, run aaa_setup-build-base"
 	[[ $aaa_setup_build_env_complete == "yes" ]] || Fuck "this script needs the build environment setup, run aaa-setup-build-env"
 
-function Stamp()
-{
-	
-	local version=$(dpkg-parsechangelog --show-field Version)
-
-	 dch -v "$version-$aaa_pkg_tag" --force-distribution --distribution "$aaa_debian_distro" "this change is an automated stamp of the package to show which distro it was built under , no changes are made except version number addition"
- 
-	
-}
 
 if [[ $quiet -eq 1 ]]; then
 
@@ -158,11 +148,17 @@ if [[ $quiet -eq 1 ]]; then
 
 	
 	# build  source package
-	dpkg-source -b "$1" > /dev/null 2>&1  || exit 1
+	cp -R -p "$1" "$aaa_work_dir/$1" 2>&1 || exit 1
+	cp -R -p *.orig.tar.gz "$aaa_work_dir" 2>&1 || exit 1
+	cd "$aaa_work_dir/$1"
+	Stamp 2>&1 || exit 1
+	cd ..
 	
-	pbuilder --build *.dsc > /dev/null 2>&1  || exit 1
+	dpkg-source -b "$1" 2>&1 || exit 1
 	
-	cd "$aaa_build_result"
+	pbuilder --build *.dsc 2>&1 || exit 1
+	
+	cd "$aaa_build_result" 2>&1 || exit 1
 	
 	if [[ $add_to_repo -eq 1 ||  $add_to_work_repo -eq 1 ]]; then
 		CleanMyRepo "$aaa_localrepo_dir" $purge > /dev/null 2>&1

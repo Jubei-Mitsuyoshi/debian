@@ -389,6 +389,17 @@ function CleanMyRepo()
 }
 
 
+function Stamp()
+{
+	
+	local version=$(dpkg-parsechangelog --show-field Version)
+
+	 dch -v "$version-$aaa_pkg_tag" --force-distribution --distribution "$aaa_debian_distro" "this change is an automated stamp of the package to show which distro it was built under , no changes are made except version number addition"
+ 
+	
+}
+
+
 function PatchEm()
 {
 	
