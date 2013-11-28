@@ -1,3 +1,0 @@
-#!/bin/sh
-
-xhost + #turns off access control list for x

@@ -1,4 +1,0 @@
-[Cinnamon Session]
-Name=Cinnamon
-RequiredComponents=gnome-panel;metacity;cinnamon-settings-daemon;notification-daemon;nm-applet;
-DesktopName=GNOME

@@ -1,3 +1,0 @@
-#! /bin/sh
-exec cinnamon-session --session aaa-fallback "$@"
-
