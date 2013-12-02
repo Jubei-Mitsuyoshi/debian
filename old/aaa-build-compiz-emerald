@@ -1,0 +1,206 @@
+#!/bin/bash
+
+################ common header identical except for usage, getopts etc #########################################################################################################
+shopt -s extglob
+
+cd "$HOME"
+
+Usage() {
+  cat <<EOF
+usage: ${0##*/} [options] distro
+
+  Currently this script takes one option
+  and argument
+  -d < distro >
+  -d <kali|stable|unstable|testing|ubuntu>
+  
+  This script uses pbuilder and reprepro
+  to build compiz-0.9.10+13.10.20131011
+  and emerald-0.9.5
+  from ubuntu saucy for the desired distro
+  (including kali)
+  all packaging follows debian guidelines
+  
+
+EOF
+}
+
+if [[ $1 = @(-h|--help) ]]; then
+  Usage
+  exit 1
+fi
+
+#source common functions
+if [[ -r /usr/bin/aaa-common-functions ]]; then
+	. /usr/bin/aaa-common-functions
+	if [[ ! $? -eq 0 ]]; then
+		echo " failed to source common functions at /usr/bin/aaa-common-functions"
+		echo "quitting !! "
+		exit 1
+	fi
+else
+	echo " failed to find common functions at /usr/bin/aaa-common-functions"
+	echo "quitting !! "
+	exit 1
+fi
+
+#source settings
+if [ -r $HOME/.aaa_settings ]; then
+  Info "found a settings file.. reading it"
+  . $HOME/.aaa_settings
+fi
+
+# get options and arguments
+export AAA_DEBIAN_DISTRO=""
+export AAA_SUPRESS_LOCAL_PBUILDERRC="yes"
+#remove previous run config if any, will be rewritten when aaa-master-config is sourced
+#if no command arguments /etc/pbuilderrc is used instead which is testing fallback
+rm -rf $HOME/.pbuilderrc
+
+while getopts ":d:" opt; do
+  case $opt in
+    d) Info "-d $OPTARG" 
+		case $OPTARG in
+	kali|testing|unstable|stable|ubuntu) Info "-d $OPTARG is valid, building for $OPTARG"
+										export AAA_DEBIAN_DISTRO="$OPTARG"
+										export AAA_SUPRESS_LOCAL_PBUILDERRC="no" ;;
+									  *) Fuck "<-d $OPTARG> is not valid, needs to be <-d kali,stable,unstable,testing or ubuntu>"  ;;
+ 
+		esac ;;
+   \?) Fuck "Invalid option: -$OPTARG" ;;
+    :) Fuck "Option -$OPTARG requires a distro name, kali,stable,unstable,testing or ubuntu" ;;
+  esac
+done
+
+#source config
+if [ -r /etc/aaa-master-config ]; then
+  Info "found my master config file.. reading it"
+  . /etc/aaa-master-config
+	if [ -r $HOME/.aaa-local-config ]; then
+		Info "found a local settings file.. reading it"
+		. $HOME/.aaa-local-config
+	fi
+else
+	Fuck "Failed to find master settings file quitting"
+	exit 1
+fi
+
+########## end of common header #############################################################################################################################################
+
+
+
+function ModDEbFiles()
+{	
+	
+
+  	local version=$(dpkg-parsechangelog --show-field Version)
+	local name=$(dpkg-parsechangelog --show-field Source)
+	case "$name" in
+			compiz) dch -v "$version$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
+many changes applied from the original ubuntu
+package, all unity references removed, gconf schems
+modified, other various changes" ;;
+			emerald) dch -v "$version$aaa_pkg_tag" --distribution "$aaa_debian_distro" "recompiled for $aaa_pkg_tag by me
+no patches from upstream code" ;;
+	esac
+
+# set package type
+#MakeADir "./debian/source"
+#echo "3.0 (quilt)" > "./debian/source/format"
+
+
+
+}
+
+[[ "$(id -u)" != "0" ]] && Fuck "This script must be run as root"
+
+
+#check script dependencies
+CheckMyDeps "reprepro pbuilder sed dpkg-source"
+[[ $aaa_setup_build_base_complete == yes ]] || Fuck "this script needs the base build environment setup, run aaa_setup-build-base"
+[[ $aaa_setup_build_env_complete == "yes" ]] || Fuck "this script needs the build environment setup, run aaa-setup-build-env"
+
+
+# clean out work and destination repo of old packages
+CleanMyRepo  $aaa_work_repo "compiz libdecoration0"
+CleanMyRepo $aaa_debian_distro "compiz libdecoration0"
+
+#setup working dirs
+CleanMyBuildArea
+MakeADir "$aaa_compiz_cache_dir/$aaa_debian_distro"
+
+#update / create base immage
+#UpdateBase
+
+###################### COMPIZ ####################################################
+
+cd "$aaa_work_dir"
+
+DownLoad "http://de.archive.ubuntu.com/ubuntu/pool/main/p/pkgbinarymangler/dh-translations_118_all.deb"
+DownLoad "http://de.archive.ubuntu.com/ubuntu/pool/main/x/xorg-gtest/libxorg-gtest-dev_0.7.1-0ubuntu1_all.deb"
+DownLoad "http://de.archive.ubuntu.com/ubuntu/pool/main/x/xorg-gtest/libxorg-gtest-data_0.7.1-0ubuntu1_all.deb"
+
+reprepro -b "$aaa_localrepo_dir" includedeb  $aaa_work_repo *.deb || Fuck "something wrong with-- reprepro -b $aaa_localrepo_dir include testing *.changes ---check the output"
+
+rm -f * >/dev/null 2>&1
+
+CloneIt aaa-compiz "$aaa_jubei_git_url"
+cd aaa-compiz
+
+Test pbuilder --build *.dsc
+Debug
+cd "$aaa_build_result"
+Test reprepro -b "$aaa_localrepo_dir" includedeb $aaa_work_repo *.deb
+Test reprepro -b "$aaa_localrepo_dir" include $aaa_debian_distro *.changes
+
+
+cd "$HOME"
+		
+Debug
+
+###################### EMERALD ####################################################
+
+CleanMyBuildArea
+
+CleanMyRepo $aaa_debian_distro "emerald libemeraldengine"
+
+cd "$aaa_work_dir"
+
+
+DownLoad "https://launchpad.net/~nilarimogard/+archive/webupd8/+files/emerald_0.9.5-0%7Ewebupd8%7Eraring2.debian.tar.gz"
+DownLoad "https://launchpad.net/~nilarimogard/+archive/webupd8/+files/emerald_0.9.5-0%7Ewebupd8%7Eraring2.dsc"
+DownLoad "https://launchpad.net/~nilarimogard/+archive/webupd8/+files/emerald_0.9.5.orig.tar.gz"
+
+
+dpkg-source -x --skip-patches emerald_0.9.5-0~webupd8~raring2.dsc
+
+rm -f * >/dev/null 2>&1
+cd emerald-0.9.5
+ 
+ #change deps, change format
+ 
+sed -i 's/compiz-dev (>= 1:0.7.2),/compizconfig-settings-manager, libwnck1.0-cil-dev,/' "./debian/control"
+
+sed -i 's/quilt/native/' "./debian/source/format"
+
+#stamp pkg
+ModDEbFiles
+
+cd .. && dpkg-source -b emerald-0.9.5
+
+pbuilder --build "emerald_0.9.5-$aaa_pkg_tag.dsc" || Fuck "something wrong with pdebuild check the output"
+
+cd "$aaa_build_result"
+
+
+reprepro -b "$aaa_localrepo_dir" include $aaa_debian_distro "emerald_0.9.5-$aaa_pkg_tag""_amd64.changes" || Fuck "something wrong with-- reprepro -b $aaa_localrepo_dir include testing *.changes ---check the output"
+
+find . -maxdepth 1 -mindepth 1 -type f -exec mv -f '{}' "$aaa_compiz_cache_dir/$aaa_debian_distro" \;
+
+cd $HOME
+CleanMyRepo  $aaa_work_repo "compiz libdecoration0 emerald libemeraldengine dh-migrations dh-translations libxorg-gtest-dev libxorg-gtest-data"
+rm -rf "$aaa_work_dir"
+rm -rf "$aaa_build_location"
+rm -rf "$aaa_build_result"
+
+

@@ -1,0 +1,17 @@
+echo -e "\033[31m====== Installing Depends ======\033[m"
+				apt-get -y install screen hostapd dsniff dhcp3-server ipcalc aircrack-ng
+				echo -e "\033[32m====== Done Installing Depends ======\033[m"
+				echo -e "\033[31m====== Installing Easy-Creds ======\033[m"
+				git clone git://github.com/brav0hax/easy-creds.git /opt/easy-creds
+				ln -s /opt/easy-creds/easy-creds.sh  /usr/bin/easy-creds
+				cd /root/ &>/dev/null
+				echo -e "\033[32m===== All Done ======\033[m"
+				echo "Launching easy-creds in new window !"
+				gnome-terminal -t "Easy-Creds" -e easy-creds 2>/dev/null & sleep 2				
+			else
+				echo -e "\e[32m[-] Ok,maybe later !\e[0m"
+			fi
+		else
+			echo "Easy-Creds is installed."
+			echo "Launching easy-creds in new window !"
+			gnome-terminal -t "Easy-Creds" -e easy-creds 2>/dev/null & sleep 2	

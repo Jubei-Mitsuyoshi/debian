@@ -1,0 +1,20 @@
+	if [[ $install = Y || $install = y ]] ; then
+				mkdir /opt/PwnSTAR_0.9
+				cd /opt/PwnSTAR_0.9
+				wget http://pwn-star.googlecode.com/files/PwnSTAR_0.9.tgz
+				tar -zxvf PwnSTAR_0.9.tgz 
+				mv hotspot_3 /var/www/ && mv portal_hotspot /var/www/ && mv portal_pdf /var/www/ && mv portal_simple /var/www/
+				#rm $0
+				echo "PwnStar should now be installed. Launching it !"
+				sleep 3
+				gnome-terminal -t "PwnStar" -e /opt/PwnSTAR_0.9/PwnSTAR_0.9 2>/dev/null & sleep 2
+				pause
+				sniffspoof
+				exit 1
+			else
+				echo -e "\e[32m[-] Ok,maybe later !\e[0m"
+			fi
+		else
+			echo "PwnStar is installed, Launching it now!"
+			sleep 1
+			gnome-terminal -t "PwnStar" -e /opt/PwnSTAR_0.9/PwnSTAR_0.9 2>/dev/null & sleep 2

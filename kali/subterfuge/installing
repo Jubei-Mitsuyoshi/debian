@@ -1,0 +1,26 @@
+echo "This will install Subterfuge. Do you want to install it ? (Y/N)"
+	read install
+	if [[ $install = Y || $install = y ]] ; then
+		echo -e "\e[31m[+] Installing Subterfuge now!\e[0m"
+		cd /tmp
+		wget http://subterfuge.googlecode.com/files/SubterfugePublicBeta5.0.tar.gz
+		tar zxvf SubterfugePublicBeta5.0.tar.gz
+		cd subterfuge
+		python install.py
+		cd ../
+		rm -rf subterfuge/
+		rm SubterfugePublicBeta5.0.tar.gz
+		echo -e "\e[32m[-] Done Installing Subterfuge!\e[0m"		
+	else
+		echo -e "\e[32m[-] Ok,maybe later !\e[0m"
+	fi
+}
+##### Subterfuge
+function subterfuge {
+	if [ ! -f /usr/local/bin/unicornscan ]; then
+			installsubterfuge
+		else
+			echo "Subterfuge is installed."
+			echo -e "\e[31m[+] Launching Subterfuge now!\e[0m"
+			echo "leave the window that opens open until done using."
+			gnome-terminal -t "Subterfuge" -e subterfuge 2>/dev/null & sleep 2		
